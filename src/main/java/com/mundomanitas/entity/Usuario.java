@@ -2,6 +2,7 @@ package com.mundomanitas.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Entity
 @Table(name = "usuario")
@@ -21,8 +22,12 @@ public class Usuario {
     @Column(name = "contrasena", nullable = false, length = 255)
     private String contrasena;
 
-    @Column(name = "tipo", nullable = false)
-    private String tipo;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "idRol", nullable = false)
+    private Rol rol;
+
+    @Column(name = "activo", nullable = false)
+    private boolean activo = true;
 
     @Column(name = "fechaRegistro", nullable = false)
     private LocalDateTime fechaRegistro;
@@ -66,12 +71,27 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
-    public String getTipo() {
-        return tipo;
+    public Rol getRol() {
+        return rol;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    @Transient
+    public String getTipo() {
+        return rol == null || rol.getCodigo() == null
+            ? ""
+            : rol.getCodigo().toLowerCase(Locale.ROOT);
     }
 
     public LocalDateTime getFechaRegistro() {

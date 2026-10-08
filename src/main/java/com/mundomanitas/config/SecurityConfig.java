@@ -24,12 +24,8 @@ public class SecurityConfig {
         CustomUserDetailsService userDetailsService,
         PasswordEncoder passwordEncoder
     ) {
-
-        DaoAuthenticationProvider authenticationProvider =
-            new DaoAuthenticationProvider(userDetailsService);
-
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
-
         return new ProviderManager(authenticationProvider);
     }
 
@@ -39,16 +35,13 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager,
         CustomUserDetailsService userDetailsService
     ) throws Exception {
-
         http
             .authenticationManager(authenticationManager)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/login",
-                    "/css/**",
-                    "/js/**",
-                    "/img/**"
-                ).permitAll()
+                .requestMatchers("/login", "/css/**", "/js/**", "/img/**").permitAll()
+                .requestMatchers("/dashboard", "/").hasAuthority("MODULO_DASHBOARD")
+                .requestMatchers("/cursos/**").hasAuthority("MODULO_CURSOS")
+                .requestMatchers("/perfil").hasAuthority("MODULO_PERFIL")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

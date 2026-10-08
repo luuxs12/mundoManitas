@@ -17,68 +17,7 @@
 
     <div class="app-layout">
 
-        <aside class="sidebar">
-
-            <div class="sidebar-brand">
-                <div class="brand-icon">M</div>
-
-                <div>
-                    <strong>Mundo Manitas</strong>
-                    <span>Plataforma educativa</span>
-                </div>
-            </div>
-
-            <nav class="sidebar-menu">
-
-                <span class="menu-title">PRINCIPAL</span>
-
-                <a th:href="@{/dashboard}" class="menu-item">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 11.5 12 4l9 7.5"></path>
-                        <path d="M5 10v10h14V10"></path>
-                        <path d="M9 20v-6h6v6"></path>
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
-
-                <a th:href="@{/cursos}" class="menu-item active">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
-                        <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
-                    </svg>
-                    <span>Cursos</span>
-                </a>
-
-                <a th:href="@{/perfil}" class="menu-item">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4"></circle>
-                        <path d="M4 21a8 8 0 0 1 16 0"></path>
-                    </svg>
-                    <span>Mi perfil</span>
-                </a>
-
-            </nav>
-
-            <div class="sidebar-bottom">
-
-                <form th:action="@{/logout}" method="post">
-                    <button class="logout-button" type="submit">
-                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M10 17l5-5-5-5"></path>
-                            <path d="M15 12H3"></path>
-                            <path d="M14 3h4a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-4"></path>
-                        </svg>
-                        <span>Cerrar sesión</span>
-                    </button>
-                </form>
-
-            </div>
-
-        </aside>
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
         <main class="main-content">
 

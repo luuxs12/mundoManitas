@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="contenido">
+    <section class="dashboard-welcome">
+        <div class="welcome-content">
+            <span class="welcome-label">PANEL DE PADRE</span>
+            <h1>Hola, <span th:text="${nombre}">Padre Mundo Manitas</span></h1>
+            <p>Este panel concentra el acceso asignado para el seguimiento académico del estudiante vinculado.</p>
+        </div>
+        <div class="welcome-decoration">
+            <div class="code-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg><strong>Padre</strong><small>Seguimiento académico</small></div>
+        </div>
+    </section>
+
+    <section class="role-dashboard card">
+        <div class="card-heading"><div><span>ACCESO</span><h3>Resumen de cuenta</h3></div></div>
+        <div class="role-dashboard-grid">
+            <div class="role-info"><div class="role-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></div><div><span>Usuario</span><strong th:text="${nombre}">Usuario</strong></div></div>
+            <div class="role-info"><div class="role-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></div><div><span>Correo</span><strong th:text="${correo}">correo</strong></div></div>
+            <div class="role-info"><div class="role-info-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg></div><div><span>Accesos habilitados</span><strong th:text="${#lists.size(modulosSidebar)}">1</strong></div></div>
+        </div>
+    </section>
+</th:block>
+</body>
+</html>

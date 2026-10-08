@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="contenido">
+    <section class="dashboard-welcome">
+        <div class="welcome-content">
+            <span class="welcome-label">PANEL DOCENTE</span>
+            <h1>Hola, <span th:text="${nombre}">Docente Mundo Manitas</span></h1>
+            <p>Consulta el resumen del contenido educativo registrado en la plataforma.</p>
+        </div>
+        <div class="welcome-decoration"><div class="code-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path></svg><strong>Docente</strong><small>Contenido educativo</small></div></div>
+    </section>
+
+    <section class="stats-grid">
+        <article class="stat-card card"><div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path></svg></div><div><span>Módulos educativos</span><strong th:text="${totalModulosEducativos}">0</strong></div></article>
+        <article class="stat-card card"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m10 8 6 4-6 4V8Z"></path></svg></div><div><span>Videos</span><strong th:text="${totalVideos}">0</strong></div></article>
+        <article class="stat-card card"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v16H7z"></path><path d="M9 8h6M9 12h6M9 16h4"></path></svg></div><div><span>Ejercicios</span><strong th:text="${totalEjercicios}">0</strong></div></article>
+    </section>
+</th:block>
+</body>
+</html>

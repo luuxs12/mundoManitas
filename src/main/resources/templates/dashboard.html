@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Dashboard | Mundo Manitas</title>
 
     <link rel="stylesheet" th:href="@{/css/base.css}">
@@ -17,68 +16,7 @@
 
     <div class="app-layout">
 
-        <aside class="sidebar">
-
-            <div class="sidebar-brand">
-                <div class="brand-icon">M</div>
-
-                <div>
-                    <strong>Mundo Manitas</strong>
-                    <span>Plataforma educativa</span>
-                </div>
-            </div>
-
-            <nav class="sidebar-menu">
-
-                <span class="menu-title">PRINCIPAL</span>
-
-                <a th:href="@{/dashboard}" class="menu-item active">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M3 11.5 12 4l9 7.5"></path>
-                        <path d="M5 10v10h14V10"></path>
-                        <path d="M9 20v-6h6v6"></path>
-                    </svg>
-                    <span>Dashboard</span>
-                </a>
-
-                <a th:href="@{/cursos}" class="menu-item">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
-                        <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
-                    </svg>
-                    <span>Cursos</span>
-                </a>
-
-                <a th:href="@{/perfil}" class="menu-item">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="12" cy="8" r="4"></circle>
-                        <path d="M4 21a8 8 0 0 1 16 0"></path>
-                    </svg>
-                    <span>Mi perfil</span>
-                </a>
-
-            </nav>
-
-            <div class="sidebar-bottom">
-
-                <form th:action="@{/logout}" method="post">
-                    <button class="logout-button" type="submit">
-                        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M10 17l5-5-5-5"></path>
-                            <path d="M15 12H3"></path>
-                            <path d="M14 3h4a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-4"></path>
-                        </svg>
-                        <span>Cerrar sesión</span>
-                    </button>
-                </form>
-
-            </div>
-
-        </aside>
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
         <main class="main-content">
 
@@ -91,295 +29,50 @@
 
                 <div class="topbar-user">
 
-                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">A</div>
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">
+                        M
+                    </div>
 
                     <div class="user-info">
-                        <strong th:text="${nombre}">Alumno Mundo Manitas</strong>
-                        <span th:text="${tipo}">estudiante</span>
+
+                        <strong th:text="${nombre}">
+                            Usuario Mundo Manitas
+                        </strong>
+
+                        <span th:text="${rolNombre}">
+                            Rol
+                        </span>
+
                     </div>
 
                 </div>
 
             </header>
 
-            <section class="dashboard-welcome">
-
-                <div class="welcome-content">
-
-                    <span class="welcome-label">BIENVENIDO</span>
-
-                    <h1>
-                        Hola, <span th:text="${nombre}">Alumno Mundo Manitas</span>
-                    </h1>
-
-                    <p>
-                        Accede a los contenidos de Mundo Manitas y revisa la información disponible en tu cuenta.
-                    </p>
-
-                    <a th:href="@{/cursos}" class="btn btn-light">
-                        <span>Ver cursos</span>
-                        <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M5 12h14"></path>
-                            <path d="m13 6 6 6-6 6"></path>
-                        </svg>
-                    </a>
-
-                </div>
-
-                <div class="welcome-decoration">
-
-                    <div class="code-card">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="m8 9-3 3 3 3"></path>
-                            <path d="m16 9 3 3-3 3"></path>
-                            <path d="m14 5-4 14"></path>
-                        </svg>
-                        <strong>Mundo Manitas</strong>
-                        <small>Aprende y crea</small>
-                    </div>
-
-                </div>
-
-            </section>
-
-            <div th:if="${tipo == 'estudiante'}">
-
-                <section class="stats-grid">
-
-                    <article class="stat-card card">
-
-                        <div class="stat-icon purple">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
-                                <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>Cursos inscritos</span>
-                            <strong th:text="${totalCursos}">0</strong>
-                        </div>
-
-                    </article>
-
-                    <article class="stat-card card">
-
-                        <div class="stat-icon blue">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="m10 8 6 4-6 4V8Z"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>En progreso</span>
-                            <strong th:text="${enProgreso}">0</strong>
-                        </div>
-
-                    </article>
-
-                    <article class="stat-card card">
-
-                        <div class="stat-icon green">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="m8 12 2.5 2.5L16 9"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>Completados</span>
-                            <strong th:text="${completados}">0</strong>
-                        </div>
-
-                    </article>
-
-                    <article class="stat-card card">
-
-                        <div class="stat-icon orange">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="9"></circle>
-                                <path d="M12 7v5l3 2"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>Por iniciar</span>
-                            <strong th:text="${porIniciar}">0</strong>
-                        </div>
-
-                    </article>
-
-                </section>
-
-                <section class="dashboard-grid">
-
-                    <section class="card dashboard-card">
-
-                        <div class="card-heading">
-
-                            <div>
-                                <span>APRENDIZAJE</span>
-                                <h3>Continúa tus cursos</h3>
-                            </div>
-
-                            <a th:href="@{/cursos}">Ver todos</a>
-
-                        </div>
-
-                        <div class="continue-course" th:each="curso : ${cursosActivos}">
-
-                            <div class="course-mini-icon" th:text="${#strings.substring(curso.titulo, 0, 1)}">
-                                C
-                            </div>
-
-                            <div class="continue-course-info">
-
-                                <strong th:text="${curso.titulo}">
-                                    Curso
-                                </strong>
-
-                                <span>
-                                    <span th:text="${curso.nivel}">Nivel</span>
-                                    · Módulo de aprendizaje
-                                </span>
-
-                                <div class="course-progress-row">
-
-                                    <div class="progress-bar">
-                                        <span th:style="|width: ${curso.porcentaje}%;|"></span>
-                                    </div>
-
-                                    <small th:text="|${curso.porcentaje}%|">
-                                        0%
-                                    </small>
-
-                                </div>
-
-                            </div>
-
-                            <a th:href="@{/cursos/{id}(id=${curso.idModulo})}" class="course-arrow"
-                                aria-label="Ver curso">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M5 12h14"></path>
-                                    <path d="m13 6 6 6-6 6"></path>
-                                </svg>
-                            </a>
-
-                        </div>
-
-                        <div class="dashboard-empty" th:if="${#lists.isEmpty(cursosActivos)}">
-                            <span>No tienes cursos en progreso.</span>
-                        </div>
-
-                    </section>
-
-                    <section class="card dashboard-card">
-
-                        <div class="card-heading">
-
-                            <div>
-                                <span>ACTIVIDAD</span>
-                                <h3>Tu progreso</h3>
-                            </div>
-
-                        </div>
-
-                        <div class="progress-circle" th:style="|--progress: ${progresoGeneral}%;|">
-
-                            <div>
-                                <strong th:text="|${progresoGeneral}%|">0%</strong>
-                                <span>General</span>
-                            </div>
-
-                        </div>
-
-                        <p class="progress-message">
-                            Tu progreso general se calcula a partir de los módulos registrados en tu cuenta.
-                        </p>
-
-                    </section>
-
-                </section>
-
-            </div>
-
-            <section class="role-dashboard card" th:if="${tipo != 'estudiante'}">
-
-                <div class="card-heading">
-
-                    <div>
-                        <span>MI CUENTA</span>
-                        <h3>Información de acceso</h3>
-                    </div>
-
-                </div>
-
-                <div class="role-dashboard-grid">
-
-                    <div class="role-info">
-
-                        <div class="role-info-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="8" r="4"></circle>
-                                <path d="M4 21a8 8 0 0 1 16 0"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>Usuario</span>
-                            <strong th:text="${nombre}">Usuario Mundo Manitas</strong>
-                        </div>
-
-                    </div>
-
-                    <div class="role-info">
-
-                        <div class="role-info-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <rect x="3" y="5" width="18" height="14" rx="2"></rect>
-                                <path d="m3 7 9 6 9-6"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>Correo electrónico</span>
-                            <strong th:text="${correo}">usuario@mundomanitas.com</strong>
-                        </div>
-
-                    </div>
-
-                    <div class="role-info">
-
-                        <div class="role-info-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z"></path>
-                                <path d="m9 12 2 2 4-4"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <span>Tipo de usuario</span>
-                            <strong class="role-name" th:text="${tipo}">
-                                docente
-                            </strong>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
+            <th:block th:if="${tipo == 'estudiante'}">
+                <th:block th:replace="~{fragments/dashboard/estudiante :: contenido}">
+                </th:block>
+            </th:block>
+
+            <th:block th:if="${tipo == 'padre'}">
+                <th:block th:replace="~{fragments/dashboard/padre :: contenido}">
+                </th:block>
+            </th:block>
+
+            <th:block th:if="${tipo == 'docente'}">
+                <th:block th:replace="~{fragments/dashboard/docente :: contenido}">
+                </th:block>
+            </th:block>
+
+            <th:block th:if="${tipo == 'administrador'}">
+                <th:block th:replace="~{fragments/dashboard/administrador :: contenido}">
+                </th:block>
+            </th:block>
+
+            <th:block th:if="${tipo == 'sistemas'}">
+                <th:block th:replace="~{fragments/dashboard/sistemas :: contenido}">
+                </th:block>
+            </th:block>
 
         </main>
 

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="contenido">
+    <section class="dashboard-welcome">
+        <div class="welcome-content">
+            <span class="welcome-label">PANEL ADMINISTRATIVO</span>
+            <h1>Hola, <span th:text="${nombre}">Administrador Mundo Manitas</span></h1>
+            <p>Revisa el resumen operativo de usuarios y docentes registrados en Mundo Manitas.</p>
+        </div>
+        <div class="welcome-decoration"><div class="code-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg><strong>Administrador</strong><small>Gestión operativa</small></div></div>
+    </section>
+
+    <section class="stats-grid">
+        <article class="stat-card card"><div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></div><div><span>Docentes</span><strong th:text="${totalDocentes}">0</strong></div></article>
+        <article class="stat-card card"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div><div><span>Usuarios totales</span><strong th:text="${totalUsuarios}">0</strong></div></article>
+        <article class="stat-card card"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path></svg></div><div><span>Usuarios activos</span><strong th:text="${usuariosActivos}">0</strong></div></article>
+    </section>
+</th:block>
+</body>
+</html>
