@@ -89,6 +89,37 @@ public class AdminContenidoController {
         return "redirect:/admin/contenido";
     }
 
+    /**
+     * Actualiza un módulo existente desde el panel de contenido.
+     *
+     * <p>Si la sesión pertenece a un docente, solo puede editar los módulos
+     * que tenga asignados; la administración no envía {@code idDocente} y
+     * puede editar cualquiera.</p>
+     */
+    @PostMapping("/admin/modulos/{id}")
+    public String actualizarModulo(
+        @PathVariable Integer id,
+        @RequestParam String titulo,
+        @RequestParam(required = false) String descripcion,
+        @RequestParam String nivel,
+        @RequestParam(required = false) Integer orden,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
+        try {
+            cursoService.actualizarModulo(
+                id,
+                new ModuloRequest(titulo, descripcion, nivel, orden),
+                idDocenteDe(authentication)
+            );
+            flash.addFlashAttribute("exito", "Módulo actualizado correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/admin/contenido?idModulo=" + id;
+    }
+
     @PostMapping("/admin/modulos/{id}/eliminar")
     public String eliminarModulo(
         @PathVariable Integer id,
@@ -132,6 +163,34 @@ public class AdminContenidoController {
         return "redirect:/admin/contenido?idModulo=" + idModulo;
     }
 
+    /**
+     * Actualiza un video y devuelve al módulo desde el que se editó.
+     */
+    @PostMapping("/admin/videos/{id}")
+    public String actualizarVideo(
+        @PathVariable Integer id,
+        @RequestParam Integer idModulo,
+        @RequestParam String titulo,
+        @RequestParam String url,
+        @RequestParam(required = false) Integer duracion,
+        @RequestParam(required = false) Integer orden,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
+        try {
+            cursoService.actualizarVideo(
+                id,
+                new VideoRequest(idModulo, titulo, url, duracion, orden),
+                idDocenteDe(authentication)
+            );
+            flash.addFlashAttribute("exito", "Video actualizado correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/admin/contenido?idModulo=" + idModulo;
+    }
+
     @PostMapping("/admin/videos/{id}/eliminar")
     public String eliminarVideo(
         @PathVariable Integer id,
@@ -168,6 +227,34 @@ public class AdminContenidoController {
                 respuestaCorrecta
             ), idDocenteDe(authentication));
             flash.addFlashAttribute("exito", "Ejercicio agregado correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/admin/contenido?idModulo=" + idModulo;
+    }
+
+    /**
+     * Actualiza un ejercicio conservando su respuesta correcta.
+     */
+    @PostMapping("/admin/ejercicios/{id}")
+    public String actualizarEjercicio(
+        @PathVariable Integer id,
+        @RequestParam Integer idModulo,
+        @RequestParam String titulo,
+        @RequestParam String tipo,
+        @RequestParam(required = false) String contenido,
+        @RequestParam(required = false) String respuestaCorrecta,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
+        try {
+            cursoService.actualizarEjercicio(
+                id,
+                new EjercicioRequest(idModulo, titulo, tipo, contenido, respuestaCorrecta),
+                idDocenteDe(authentication)
+            );
+            flash.addFlashAttribute("exito", "Ejercicio actualizado correctamente.");
         } catch (ReglaNegocioException ex) {
             flash.addFlashAttribute("error", ex.getMessage());
         }

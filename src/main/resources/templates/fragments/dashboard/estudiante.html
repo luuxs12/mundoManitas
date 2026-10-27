@@ -22,22 +22,22 @@
     </section>
 
     <section class="stats-grid">
-        <article class="stat-card card">
+        <a class="stat-card card" th:href="@{/cursos}">
             <div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path></svg></div>
             <div><span>Cursos disponibles</span><strong th:text="${totalCursos}">0</strong></div>
-        </article>
-        <article class="stat-card card">
+        </a>
+        <a class="stat-card card" th:href="@{/cursos}">
             <div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m10 8 6 4-6 4V8Z"></path></svg></div>
             <div><span>En progreso</span><strong th:text="${enProgreso}">0</strong></div>
-        </article>
-        <article class="stat-card card">
+        </a>
+        <a class="stat-card card" th:href="@{/cursos}">
             <div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path></svg></div>
             <div><span>Completados</span><strong th:text="${completados}">0</strong></div>
-        </article>
-        <article class="stat-card card">
+        </a>
+        <a class="stat-card card" th:href="@{/cursos}">
             <div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></div>
             <div><span>Por iniciar</span><strong th:text="${porIniciar}">0</strong></div>
-        </article>
+        </a>
     </section>
 
     <section class="dashboard-grid">

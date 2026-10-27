@@ -5,7 +5,8 @@ public record EjercicioDto(
     Integer idModulo,
     String titulo,
     String tipo,
-    String contenido
+    String contenido,
+    String respuestaCorrecta
 ) {
     public Integer getIdEjercicio() {
         return idEjercicio;
@@ -25,5 +26,9 @@ public record EjercicioDto(
 
     public String getContenido() {
         return contenido;
+    }
+
+    public String getRespuestaCorrecta() {
+        return respuestaCorrecta;
     }
 }

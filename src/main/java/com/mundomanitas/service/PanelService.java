@@ -101,35 +101,40 @@ public class PanelService {
             String.valueOf(cursos.size()),
             "Contenido bajo tu responsabilidad",
             "info",
-            "curso"
+            "curso",
+            "/docente/cursos"
         ));
         kpis.add(new KpiView(
             "Alumnos",
             String.valueOf(alumnos.size()),
             inscripciones + " inscripciones en total",
             "neutral",
-            "alumnos"
+            "alumnos",
+            "/docente/cursos"
         ));
         kpis.add(new KpiView(
             "Progreso promedio",
             promedio + "%",
             "Avance medio de tus cursos",
             promedio >= 60 ? "ok" : promedio >= 30 ? "warn" : "danger",
-            "progreso"
+            "progreso",
+            "/docente/cursos"
         ));
         kpis.add(new KpiView(
             "Necesitan apoyo",
             String.valueOf(enRiesgo),
             "Alumnos por debajo del 30%",
             enRiesgo == 0 ? "ok" : "warn",
-            "alerta"
+            "alerta",
+            "/docente/cursos"
         ));
         kpis.add(new KpiView(
             "Completados",
             String.valueOf(completados),
             "Alumnos que terminaron un curso",
             "ok",
-            "check"
+            "check",
+            "/docente/cursos"
         ));
 
         return kpis;
@@ -219,35 +224,40 @@ public class PanelService {
             String.valueOf(usuarios),
             estudiantes + " estudiantes · " + docentes + " docentes",
             "info",
-            "alumnos"
+            "alumnos",
+            "/admin/usuarios"
         ));
         kpis.add(new KpiView(
             "Cursos activos",
             String.valueOf(cursos),
             inscripciones + " inscripciones registradas",
             "neutral",
-            "curso"
+            "curso",
+            "/admin/contenido"
         ));
         kpis.add(new KpiView(
             "Progreso global",
             promedioGlobal + "%",
             "Promedio de toda la plataforma",
             promedioGlobal >= 60 ? "ok" : promedioGlobal >= 30 ? "warn" : "danger",
-            "progreso"
+            "progreso",
+            "/admin#rendimiento"
         ));
         kpis.add(new KpiView(
             "Alumnos en riesgo",
             String.valueOf(enRiesgo),
             "Con avance menor al 30%",
             enRiesgo == 0 ? "ok" : "warn",
-            "alerta"
+            "alerta",
+            "/admin#rendimiento"
         ));
         kpis.add(new KpiView(
             "Docentes",
             String.valueOf(docentes),
             "Responsables de contenido",
             "neutral",
-            "docente"
+            "docente",
+            "/admin/usuarios"
         ));
         kpis.add(new KpiView(
             "Postulaciones",
@@ -256,7 +266,8 @@ public class PanelService {
                 ? "Sin solicitudes por revisar"
                 : "Docentes pendientes de validación",
             pendientes == 0 ? "ok" : "warn",
-            "postulacion"
+            "postulacion",
+            "/admin/postulaciones"
         ));
 
         return kpis;

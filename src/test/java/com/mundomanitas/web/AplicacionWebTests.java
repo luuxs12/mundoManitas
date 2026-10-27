@@ -1,5 +1,7 @@
 package com.mundomanitas.web;
 
+import com.mundomanitas.entity.Modulo;
+import com.mundomanitas.repository.ModuloRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,6 +26,9 @@ class AplicacionWebTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ModuloRepository moduloRepository;
 
     @Test
     void loginEsPublico() throws Exception {
@@ -115,7 +121,45 @@ class AplicacionWebTests {
             .andExpect(content().string(containsString("Cuentas de la plataforma")));
 
         mockMvc.perform(get("/admin/contenido"))
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Editar módulo")));
+    }
+
+    @Test
+    @WithUserDetails("admin@mundomanitas.com")
+    void elAdministradorPuedeEditarUnModuloYElCambioPersiste() throws Exception {
+        mockMvc.perform(post("/admin/modulos")
+                .param("titulo", "Módulo temporal CRUD")
+                .param("descripcion", "Creado por una prueba")
+                .param("nivel", "basico")
+                .param("orden", "99")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/admin/contenido"));
+
+        Modulo modulo = moduloRepository.findAllByOrderByOrdenAsc().stream()
+            .filter(candidato -> "Módulo temporal CRUD".equals(candidato.getTitulo()))
+            .findFirst()
+            .orElseThrow();
+
+        mockMvc.perform(post("/admin/modulos/" + modulo.getIdModulo())
+                .param("titulo", "Módulo temporal editado")
+                .param("descripcion", "Descripción actualizada")
+                .param("nivel", "intermedio")
+                .param("orden", "98")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/admin/contenido?idModulo=" + modulo.getIdModulo()));
+
+        Modulo actualizado = moduloRepository.findById(modulo.getIdModulo()).orElseThrow();
+        assertEquals("Módulo temporal editado", actualizado.getTitulo());
+        assertEquals("Descripción actualizada", actualizado.getDescripcion());
+        assertEquals("intermedio", actualizado.getNivel());
+        assertEquals(98, actualizado.getOrden());
+
+        mockMvc.perform(post("/admin/modulos/" + modulo.getIdModulo() + "/eliminar").with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/admin/contenido"));
     }
 
     @Test

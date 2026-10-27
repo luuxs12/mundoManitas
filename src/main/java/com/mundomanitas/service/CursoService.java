@@ -566,6 +566,47 @@ public class CursoService {
         return crearEjercicio(request);
     }
 
+    /**
+     * Variante con control de propiedad para el panel del docente.
+     */
+    @Transactional
+    public ModuloDto actualizarModulo(Integer idModulo, ModuloRequest request, Integer idDocente) {
+        verificarPropiedad(idModulo, idDocente);
+        return actualizarModulo(idModulo, request);
+    }
+
+    /**
+     * Edita un video comprobando el curso de origen y el de destino.
+     */
+    @Transactional
+    public VideoDto actualizarVideo(Integer idVideo, VideoRequest request, Integer idDocente) {
+        Video video = cursoDao.buscarVideo(idVideo)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Video no encontrado"));
+
+        verificarPropiedad(video.getIdModulo(), idDocente);
+        verificarPropiedad(request.idModulo(), idDocente);
+
+        return actualizarVideo(idVideo, request);
+    }
+
+    /**
+     * Edita un ejercicio comprobando el curso de origen y el de destino.
+     */
+    @Transactional
+    public EjercicioDto actualizarEjercicio(
+        Integer idEjercicio,
+        EjercicioRequest request,
+        Integer idDocente
+    ) {
+        Ejercicio ejercicio = cursoDao.buscarEjercicio(idEjercicio)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Ejercicio no encontrado"));
+
+        verificarPropiedad(ejercicio.getIdModulo(), idDocente);
+        verificarPropiedad(request.idModulo(), idDocente);
+
+        return actualizarEjercicio(idEjercicio, request);
+    }
+
     @Transactional
     public void eliminarEjercicio(Integer idEjercicio, Integer idDocente) {
         Ejercicio ejercicio = cursoDao.buscarEjercicio(idEjercicio)
@@ -683,7 +724,8 @@ public class CursoService {
             ejercicio.getIdModulo(),
             ejercicio.getTitulo(),
             ejercicio.getTipo(),
-            ejercicio.getContenido()
+            ejercicio.getContenido(),
+            ejercicio.getRespuestaCorrecta()
         );
     }
 }

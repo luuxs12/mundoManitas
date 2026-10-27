@@ -120,24 +120,76 @@
                             </thead>
 
                             <tbody>
-                                <tr th:each="modulo : ${modulos}">
-                                    <td th:text="${modulo.orden}">1</td>
-                                    <td>
-                                        <a th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}"
-                                            th:text="${modulo.titulo}">Módulo</a>
-                                    </td>
-                                    <td>
-                                        <span class="badge badge-muted"
-                                            th:text="${#strings.capitalize(modulo.nivel)}">Básico</span>
-                                    </td>
-                                    <td>
-                                        <form class="inline-form"
-                                            th:action="@{/admin/modulos/{id}/eliminar(id=${modulo.idModulo})}"
-                                            method="post">
-                                            <button class="btn btn-secondary btn-sm" type="submit">Eliminar</button>
-                                        </form>
-                                    </td>
-                                </tr>
+                                <th:block th:each="modulo : ${modulos}">
+                                    <tr>
+                                        <td th:text="${modulo.orden}">1</td>
+                                        <td>
+                                            <a th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}"
+                                                th:text="${modulo.titulo}">Módulo</a>
+                                            <span class="cell-sub" th:if="${modulo.descripcion}"
+                                                th:text="${modulo.descripcion}">Descripción</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-muted"
+                                                th:text="${#strings.capitalize(modulo.nivel)}">Básico</span>
+                                        </td>
+                                        <td>
+                                            <form class="inline-form"
+                                                th:action="@{/admin/modulos/{id}/eliminar(id=${modulo.idModulo})}"
+                                                method="post">
+                                                <button class="btn btn-secondary btn-sm" type="submit">Eliminar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <tr class="edit-row">
+                                        <td colspan="4">
+                                            <details>
+                                                <summary>Editar módulo</summary>
+
+                                                <form class="stack-form"
+                                                    th:action="@{/admin/modulos/{id}(id=${modulo.idModulo})}"
+                                                    method="post">
+                                                    <div class="form-grid">
+                                                        <div class="form-field">
+                                                            <label>Título</label>
+                                                            <input class="form-control" name="titulo"
+                                                                th:value="${modulo.titulo}" required maxlength="100">
+                                                        </div>
+
+                                                        <div class="form-field">
+                                                            <label>Nivel</label>
+                                                            <select class="form-control" name="nivel">
+                                                                <option value="basico"
+                                                                    th:selected="${modulo.nivel == 'basico'}">Básico</option>
+                                                                <option value="intermedio"
+                                                                    th:selected="${modulo.nivel == 'intermedio'}">Intermedio</option>
+                                                                <option value="avanzado"
+                                                                    th:selected="${modulo.nivel == 'avanzado'}">Avanzado</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="form-field">
+                                                            <label>Orden</label>
+                                                            <input class="form-control" type="number" name="orden"
+                                                                min="1" th:value="${modulo.orden}">
+                                                        </div>
+
+                                                        <div class="form-field">
+                                                            <label>Descripción</label>
+                                                            <input class="form-control" name="descripcion"
+                                                                maxlength="255" th:value="${modulo.descripcion}">
+                                                        </div>
+                                                    </div>
+
+                                                    <button class="btn btn-primary btn-sm" type="submit"
+                                                        style="margin-top: 14px;">
+                                                        Guardar cambios
+                                                    </button>
+                                                </form>
+                                            </details>
+                                        </td>
+                                    </tr>
+                                </th:block>
                             </tbody>
                         </table>
                     </div>
@@ -160,18 +212,59 @@
                         </div>
 
                         <div class="user-rows" th:if="${videos != null and !#lists.isEmpty(videos)}">
-                            <div class="user-row" th:each="video : ${videos}">
-                                <div class="user-row-copy">
-                                    <strong th:text="${video.titulo}">Video</strong>
-                                    <span th:text="${video.url}">https://...</span>
+                            <th:block th:each="video : ${videos}">
+                                <div class="user-row">
+                                    <div class="user-row-copy">
+                                        <strong th:text="${video.titulo}">Video</strong>
+                                        <span th:text="${video.url}">https://...</span>
+                                    </div>
+                                    <form class="inline-form"
+                                        th:action="@{/admin/videos/{id}/eliminar(id=${video.idVideo})}"
+                                        method="post">
+                                        <input type="hidden" name="idModulo" th:value="${idModulo}">
+                                        <button class="btn btn-secondary btn-sm" type="submit">Quitar</button>
+                                    </form>
                                 </div>
-                                <form class="inline-form"
-                                    th:action="@{/admin/videos/{id}/eliminar(id=${video.idVideo})}"
-                                    method="post">
-                                    <input type="hidden" name="idModulo" th:value="${idModulo}">
-                                    <button class="btn btn-secondary btn-sm" type="submit">Quitar</button>
-                                </form>
-                            </div>
+
+                                <details style="margin-bottom: 10px;">
+                                    <summary>Editar video</summary>
+
+                                    <form class="stack-form"
+                                        th:action="@{/admin/videos/{id}(id=${video.idVideo})}"
+                                        method="post">
+                                        <input type="hidden" name="idModulo" th:value="${idModulo}">
+
+                                        <div class="form-field">
+                                            <label>Título</label>
+                                            <input class="form-control" name="titulo"
+                                                th:value="${video.titulo}" required maxlength="100">
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>URL</label>
+                                            <input class="form-control" name="url"
+                                                th:value="${video.url}" required maxlength="255">
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Duración (segundos)</label>
+                                            <input class="form-control" type="number" name="duracion"
+                                                min="0" th:value="${video.duracion}">
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Orden</label>
+                                            <input class="form-control" type="number" name="orden"
+                                                min="1" th:value="${video.orden}">
+                                        </div>
+
+                                        <button class="btn btn-primary btn-sm" type="submit"
+                                            style="margin-top: 12px;">
+                                            Guardar cambios
+                                        </button>
+                                    </form>
+                                </details>
+                            </th:block>
                         </div>
 
                         <div class="dashboard-empty" th:if="${videos == null or #lists.isEmpty(videos)}">
@@ -188,18 +281,65 @@
                         </div>
 
                         <div class="user-rows" th:if="${ejercicios != null and !#lists.isEmpty(ejercicios)}">
-                            <div class="user-row" th:each="ejercicio : ${ejercicios}">
-                                <div class="user-row-copy">
-                                    <strong th:text="${ejercicio.titulo}">Ejercicio</strong>
-                                    <span th:text="${ejercicio.tipo}">cuestionario</span>
+                            <th:block th:each="ejercicio : ${ejercicios}">
+                                <div class="user-row">
+                                    <div class="user-row-copy">
+                                        <strong th:text="${ejercicio.titulo}">Ejercicio</strong>
+                                        <span th:text="${ejercicio.tipo}">cuestionario</span>
+                                    </div>
+                                    <form class="inline-form"
+                                        th:action="@{/admin/ejercicios/{id}/eliminar(id=${ejercicio.idEjercicio})}"
+                                        method="post">
+                                        <input type="hidden" name="idModulo" th:value="${idModulo}">
+                                        <button class="btn btn-secondary btn-sm" type="submit">Quitar</button>
+                                    </form>
                                 </div>
-                                <form class="inline-form"
-                                    th:action="@{/admin/ejercicios/{id}/eliminar(id=${ejercicio.idEjercicio})}"
-                                    method="post">
-                                    <input type="hidden" name="idModulo" th:value="${idModulo}">
-                                    <button class="btn btn-secondary btn-sm" type="submit">Quitar</button>
-                                </form>
-                            </div>
+
+                                <details style="margin-bottom: 10px;">
+                                    <summary>Editar ejercicio</summary>
+
+                                    <form class="stack-form"
+                                        th:action="@{/admin/ejercicios/{id}(id=${ejercicio.idEjercicio})}"
+                                        method="post">
+                                        <input type="hidden" name="idModulo" th:value="${idModulo}">
+
+                                        <div class="form-field">
+                                            <label>Título</label>
+                                            <input class="form-control" name="titulo"
+                                                th:value="${ejercicio.titulo}" required maxlength="100">
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Tipo</label>
+                                            <select class="form-control" name="tipo">
+                                                <option value="cuestionario"
+                                                    th:selected="${ejercicio.tipo == 'cuestionario'}">Cuestionario</option>
+                                                <option value="completar"
+                                                    th:selected="${ejercicio.tipo == 'completar'}">Completar</option>
+                                                <option value="abierta"
+                                                    th:selected="${ejercicio.tipo == 'abierta'}">Respuesta abierta</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Contenido (JSON)</label>
+                                            <textarea class="form-control" name="contenido" rows="3"
+                                                th:text="${ejercicio.contenido}"></textarea>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Respuesta correcta (JSON)</label>
+                                            <textarea class="form-control" name="respuestaCorrecta" rows="3"
+                                                th:text="${ejercicio.respuestaCorrecta}"></textarea>
+                                        </div>
+
+                                        <button class="btn btn-primary btn-sm" type="submit"
+                                            style="margin-top: 12px;">
+                                            Guardar cambios
+                                        </button>
+                                    </form>
+                                </details>
+                            </th:block>
                         </div>
 
                         <div class="dashboard-empty" th:if="${ejercicios == null or #lists.isEmpty(ejercicios)}">

@@ -427,6 +427,24 @@ select.form-control {
     border-bottom: 0;
 }
 
+.data-table tr.edit-row td {
+    padding: 0 14px 12px;
+    background: var(--surface);
+}
+
+.data-table tbody tr.edit-row:hover {
+    background: var(--surface);
+}
+
+.data-table tr.edit-row summary {
+    padding: 4px 0;
+    font-size: 11px;
+}
+
+.data-table tr.edit-row .form-grid {
+    margin-top: 4px;
+}
+
 .data-table a {
     color: var(--primary);
     font-weight: 600;

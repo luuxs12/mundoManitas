@@ -111,20 +111,18 @@
    Rejilla de indicadores
    ------------------------------------------------------------------ */
 
-.stats-grid,
-.kpi-grid {
+.stats-grid {
     margin-top: 18px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
 }
 
-.kpi-grid.five {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
-.kpi-grid.six {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+.kpi-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
 }
 
 .stat-card {
@@ -133,6 +131,14 @@
     display: flex;
     align-items: center;
     gap: 14px;
+    border-radius: var(--radius-lg);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+a.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-raised);
 }
 
 .stat-icon {
@@ -187,61 +193,140 @@
     line-height: 1;
 }
 
-/* KPI editorial con línea superior de color */
+/* KPI accionable: cada tarjeta enlaza al apartado que la explica */
 .kpi-card {
+    --tone: var(--primary);
+    --tone-soft: var(--primary-soft);
     position: relative;
-    padding: 18px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 18px 17px;
+    overflow: hidden;
     border: 1px solid var(--border);
-    border-top: 3px solid var(--primary);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     background: var(--surface);
     box-shadow: var(--shadow-card);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--tone);
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-raised);
 }
 
 .kpi-card.tone-ok {
-    border-top-color: var(--success);
+    --tone: var(--success);
+    --tone-soft: var(--success-soft);
 }
 
 .kpi-card.tone-info {
-    border-top-color: var(--info);
+    --tone: var(--info);
+    --tone-soft: var(--info-soft);
 }
 
 .kpi-card.tone-warn {
-    border-top-color: var(--warning);
+    --tone: var(--warning);
+    --tone-soft: var(--warning-soft);
 }
 
 .kpi-card.tone-danger {
-    border-top-color: var(--danger);
+    --tone: var(--danger);
+    --tone-soft: var(--danger-soft);
 }
 
 .kpi-card.tone-neutral {
-    border-top-color: var(--accent);
+    --tone: var(--accent);
+    --tone-soft: var(--accent-soft);
+}
+
+.kpi-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.kpi-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    background: var(--tone-soft);
+    color: var(--tone);
+}
+
+.kpi-icon svg {
+    width: 16px;
+    height: 16px;
 }
 
 .kpi-label {
     display: block;
+    padding-top: 6px;
     color: var(--muted-dark);
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: .1em;
+    line-height: 1.35;
     text-transform: uppercase;
 }
 
 .kpi-value {
     display: block;
-    margin-top: 10px;
+    margin-top: 12px;
     font-family: var(--font-display);
-    font-size: 34px;
+    font-size: 32px;
     line-height: 1;
     letter-spacing: -.02em;
 }
 
 .kpi-detail {
     display: block;
-    margin-top: 8px;
+    margin-top: 7px;
+    padding-right: 26px;
     color: var(--muted);
     font-size: 11.5px;
     line-height: 1.45;
+}
+
+.kpi-arrow {
+    position: absolute;
+    right: 16px;
+    bottom: 15px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--tone-soft);
+    color: var(--tone);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity .16s ease, transform .16s ease;
+}
+
+.kpi-card:hover .kpi-arrow,
+.kpi-card:focus-visible .kpi-arrow {
+    opacity: 1;
+    transform: none;
+}
+
+.kpi-arrow svg {
+    width: 13px;
+    height: 13px;
 }
 
 /* ------------------------------------------------------------------
@@ -499,10 +584,7 @@
    ------------------------------------------------------------------ */
 
 @media (max-width: 1180px) {
-    .stats-grid,
-    .kpi-grid,
-    .kpi-grid.five,
-    .kpi-grid.six {
+    .stats-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -532,9 +614,7 @@
     }
 
     .stats-grid,
-    .kpi-grid,
-    .kpi-grid.five,
-    .kpi-grid.six {
+    .kpi-grid {
         grid-template-columns: 1fr;
     }
 

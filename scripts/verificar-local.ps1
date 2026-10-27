@@ -348,6 +348,80 @@ Probar "administrador accede al panel general" {
     "200"
 }
 
+Probar "panel admin muestra KPIs accionables" {
+    $cliente = Iniciar-Sesion "admin@mundomanitas.com" "123456"
+    $respuesta = $cliente.GetAsync("admin").Result
+    if ([int]$respuesta.StatusCode -ne 200) { throw "status $([int]$respuesta.StatusCode)" }
+
+    $html = Contenido $respuesta
+    if ($html -notmatch 'class="kpi-card') { throw "sin tarjetas KPI" }
+    if ($html -notmatch 'href="/admin/postulaciones"') { throw "KPI de postulaciones sin enlace" }
+    if ($html -notmatch 'href="/admin/usuarios"') { throw "KPI de usuarios sin enlace" }
+    "KPIs enlazados"
+}
+
+Probar "administrador edita el contenido y el cambio persiste" {
+    $cliente = Iniciar-Sesion "admin@mundomanitas.com" "123456"
+
+    $pagina = Contenido ($cliente.GetAsync("admin/contenido").Result)
+
+    $campos = New-Object 'System.Collections.Generic.Dictionary[string,string]'
+    $campos.Add("titulo", "Modulo temporal de verificacion")
+    $campos.Add("descripcion", "Creado por verificar-local.ps1")
+    $campos.Add("nivel", "basico")
+    $campos.Add("orden", "97")
+    $campos.Add("_csrf", (Csrf $pagina))
+
+    $alta = $cliente.PostAsync(
+        "admin/modulos",
+        (New-Object System.Net.Http.FormUrlEncodedContent($campos))
+    ).Result
+
+    if ([int]$alta.StatusCode -ne 200) { throw "alta devolvio $([int]$alta.StatusCode)" }
+
+    $pagina = Contenido ($cliente.GetAsync("admin/contenido").Result)
+    $coincidencia = [regex]::Match(
+        $pagina,
+        'href="/admin/contenido\?idModulo=(\d+)"[\s\S]{0,160}?Modulo temporal de verificacion'
+    )
+
+    if (-not $coincidencia.Success) { throw "no se encontro el modulo creado" }
+    $idModulo = $coincidencia.Groups[1].Value
+
+    $campos = New-Object 'System.Collections.Generic.Dictionary[string,string]'
+    $campos.Add("titulo", "Modulo temporal editado")
+    $campos.Add("descripcion", "Descripcion actualizada")
+    $campos.Add("nivel", "intermedio")
+    $campos.Add("orden", "96")
+    $campos.Add("_csrf", (Csrf $pagina))
+
+    $edicion = $cliente.PostAsync(
+        "admin/modulos/$idModulo",
+        (New-Object System.Net.Http.FormUrlEncodedContent($campos))
+    ).Result
+
+    if ([int]$edicion.StatusCode -ne 200) { throw "edicion devolvio $([int]$edicion.StatusCode)" }
+
+    $detalle = Contenido ($cliente.GetAsync("admin/contenido?idModulo=$idModulo").Result)
+    if ($detalle -notmatch "Modulo temporal editado") { throw "el titulo no se actualizo" }
+    if ($detalle -notmatch "Descripcion actualizada") { throw "la descripcion no se actualizo" }
+
+    $campos = New-Object 'System.Collections.Generic.Dictionary[string,string]'
+    $campos.Add("_csrf", (Csrf $detalle))
+
+    $baja = $cliente.PostAsync(
+        "admin/modulos/$idModulo/eliminar",
+        (New-Object System.Net.Http.FormUrlEncodedContent($campos))
+    ).Result
+
+    if ([int]$baja.StatusCode -ne 200) { throw "baja devolvio $([int]$baja.StatusCode)" }
+
+    $final = Contenido ($cliente.GetAsync("admin/contenido").Result)
+    if ($final -match "Modulo temporal editado") { throw "el modulo no se elimino" }
+
+    "crear, editar y eliminar OK (modulo $idModulo)"
+}
+
 Write-Output ""
 Write-Output "=== Ultimas lineas del log ==="
 Get-Content $outLog -Tail 20 -ErrorAction SilentlyContinue
