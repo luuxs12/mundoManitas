@@ -16,7 +16,7 @@
     border-left: 4px solid var(--accent);
     border-radius: var(--radius-lg);
     background:
-        linear-gradient(115deg, rgba(15, 92, 80, .05), transparent 46%),
+        linear-gradient(115deg, rgba(232, 68, 31, .06), transparent 46%),
         var(--surface);
     box-shadow: var(--shadow-card);
 }
@@ -121,6 +121,10 @@
 
 .kpi-grid.five {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.kpi-grid.six {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .stat-card {
@@ -497,7 +501,8 @@
 @media (max-width: 1180px) {
     .stats-grid,
     .kpi-grid,
-    .kpi-grid.five {
+    .kpi-grid.five,
+    .kpi-grid.six {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -528,7 +533,8 @@
 
     .stats-grid,
     .kpi-grid,
-    .kpi-grid.five {
+    .kpi-grid.five,
+    .kpi-grid.six {
         grid-template-columns: 1fr;
     }
 

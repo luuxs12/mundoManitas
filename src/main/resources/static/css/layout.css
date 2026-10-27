@@ -1,7 +1,9 @@
 .app-body {
     background:
-        radial-gradient(circle at 92% 2%, rgba(189, 119, 40, .06), transparent 26%),
+        linear-gradient(rgba(23, 21, 18, .028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 21, 18, .028) 1px, transparent 1px),
         var(--paper);
+    background-size: 34px 34px, 34px 34px, auto;
 }
 
 .app-layout {
@@ -22,9 +24,9 @@
     padding: 26px 16px 20px;
     display: flex;
     flex-direction: column;
-    background: #12332c;
+    background: #141210;
     color: #f4f1e8;
-    border-right: 1px solid #0b2721;
+    border-right: 1px solid #000000;
 }
 
 .sidebar-brand {
@@ -43,13 +45,14 @@
 
 .sidebar-brand strong {
     font-family: var(--font-display);
-    font-size: 17px;
-    letter-spacing: .01em;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0;
 }
 
 .sidebar-brand span {
-    margin-top: 3px;
-    color: #8fa79f;
+    margin-top: 4px;
+    color: #9a948a;
     font-size: 10px;
     letter-spacing: .12em;
     text-transform: uppercase;
@@ -63,7 +66,7 @@
     display: block;
     padding: 0 10px;
     margin-bottom: 9px;
-    color: #7f978e;
+    color: #7d776d;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .14em;
@@ -81,9 +84,9 @@
     display: flex;
     align-items: center;
     gap: 11px;
-    border-radius: var(--radius-sm);
-    color: #c3d2cb;
-    font-size: 13.5px;
+    border-radius: var(--radius-xs);
+    color: #b9b2a6;
+    font-size: 13px;
     font-weight: 600;
     transition: background .16s, color .16s;
 }
@@ -94,8 +97,8 @@
 }
 
 .menu-item.active {
-    color: #ffffff;
-    background: rgba(255, 255, 255, .1);
+    color: var(--ink);
+    background: var(--highlight);
 }
 
 .menu-item.active::before {
@@ -123,10 +126,10 @@
     align-items: center;
     gap: 11px;
     border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     background: transparent;
-    color: #b9c9c2;
-    font-size: 13px;
+    color: #a8a196;
+    font-size: 12.5px;
     font-weight: 600;
     transition: .16s;
 }

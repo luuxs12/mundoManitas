@@ -1,4 +1,4 @@
-<div xmlns:th="http://www.thymeleaf.org" th:fragment="grid(kpis)" class="kpi-grid five">
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="grid(kpis)" class="kpi-grid six">
     <article class="kpi-card" th:each="kpi : ${kpis}" th:classappend="|tone-${kpi.tono}|">
         <span class="kpi-label" th:text="${kpi.etiqueta}">Indicador</span>
         <strong class="kpi-value" th:text="${kpi.valor}">0</strong>

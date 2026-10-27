@@ -170,7 +170,8 @@ class AplicacionWebTests {
     void elRegistroEsPublicoYCreaCuentasDeEstudiante() throws Exception {
         mockMvc.perform(get("/registro"))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Crear cuenta de estudiante")));
+            .andExpect(content().string(containsString("Crear cuenta de estudiante")))
+            .andExpect(content().string(containsString("Postular como docente")));
 
         mockMvc.perform(post("/registro")
                 .param("nombre", "Nuevo Estudiante")
@@ -183,6 +184,70 @@ class AplicacionWebTests {
                 .with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/login?registrado=true"));
+    }
+
+    @Test
+    void elFormularioDePostulacionDocenteEsPublico() throws Exception {
+        mockMvc.perform(get("/registro/docente"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("POSTULACIÓN DOCENTE")))
+            .andExpect(content().string(containsString("Lengua de Señas Peruana")))
+            .andExpect(content().string(containsString("experiencia en")))
+            .andExpect(content().string(containsString("TI")));
+    }
+
+    @Test
+    void laPostulacionDocenteRechazaSolicitudesSinRequisitos() throws Exception {
+        mockMvc.perform(post("/registro/docente")
+                .param("nombre", "Ana")
+                .param("email", "postulante.invalido@ejemplo.com")
+                .param("telefono", "123")
+                .param("nivelLsp", "A1")
+                .param("certificacionLsp", "corta")
+                .param("aniosExperiencia", "0")
+                .param("areaTi", "TI")
+                .param("portafolio", "no-es-url")
+                .param("motivacion", "muy corta")
+                .with(csrf()))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Revisa tu postulación")))
+            .andExpect(content().string(containsString("al menos 1 año de experiencia en TI")));
+    }
+
+    @Test
+    void laPostulacionDocenteValidaSeRegistraParaRevision() throws Exception {
+        mockMvc.perform(post("/registro/docente")
+                .param("nombre", "Rosa Elena Paredes")
+                .param("email", "rosa.paredes@ejemplo.com")
+                .param("telefono", "987654321")
+                .param("nivelLsp", "B2")
+                .param("certificacionLsp", "Certificación de LSP nivel B2 - INSOR Perú")
+                .param("aniosExperiencia", "3")
+                .param("areaTi", "Desarrollo backend")
+                .param("portafolio", "https://portafolio.ejemplo.com/rosa")
+                .param("motivacion", "Quiero enseñar programación a estudiantes sordos con material "
+                    + "visual, claro y accesible, usando la Lengua de Señas Peruana en cada clase.")
+                .param("aceptaTerminos", "true")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/registro/docente?enviada=true"));
+    }
+
+    @Test
+    @WithUserDetails("docente@mundomanitas.com")
+    void elDocenteNoPuedeRevisarPostulaciones() throws Exception {
+        mockMvc.perform(get("/admin/postulaciones"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithUserDetails("admin@mundomanitas.com")
+    void elAdministradorRevisaLasPostulacionesDocentes() throws Exception {
+        mockMvc.perform(get("/admin/postulaciones"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Postulaciones docentes")))
+            .andExpect(content().string(containsString("Ana Lucía Quispe Ramos")))
+            .andExpect(content().string(containsString("Ver portafolio")));
     }
 
     @Test

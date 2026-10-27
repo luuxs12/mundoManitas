@@ -1,10 +1,12 @@
 package com.mundomanitas.config;
 
 import com.mundomanitas.entity.Ejercicio;
+import com.mundomanitas.entity.EstadoPostulacion;
 import com.mundomanitas.entity.Estudiante;
 import com.mundomanitas.entity.Inscripcion;
 import com.mundomanitas.entity.Modulo;
 import com.mundomanitas.entity.ModuloSistema;
+import com.mundomanitas.entity.PostulacionDocente;
 import com.mundomanitas.entity.Progreso;
 import com.mundomanitas.entity.Rol;
 import com.mundomanitas.entity.Usuario;
@@ -14,6 +16,7 @@ import com.mundomanitas.repository.EstudianteRepository;
 import com.mundomanitas.repository.InscripcionRepository;
 import com.mundomanitas.repository.ModuloRepository;
 import com.mundomanitas.repository.ModuloSistemaRepository;
+import com.mundomanitas.repository.PostulacionDocenteRepository;
 import com.mundomanitas.repository.ProgresoRepository;
 import com.mundomanitas.repository.RolRepository;
 import com.mundomanitas.repository.UsuarioRepository;
@@ -41,6 +44,7 @@ public class DatosInicialesConfig {
         ProgresoRepository progresoRepository,
         EstudianteRepository estudianteRepository,
         InscripcionRepository inscripcionRepository,
+        PostulacionDocenteRepository postulacionRepository,
         PasswordEncoder passwordEncoder
     ) {
         return args -> {
@@ -55,14 +59,15 @@ public class DatosInicialesConfig {
             ModuloSistema docenteCursos = crearModuloSistema(moduloSistemaRepository, "DOCENTE_CURSOS", "Mis cursos", "/docente/cursos", 2);
             ModuloSistema adminPanel = crearModuloSistema(moduloSistemaRepository, "ADMIN_PANEL", "Panel general", "/admin", 2);
             ModuloSistema adminUsuarios = crearModuloSistema(moduloSistemaRepository, "ADMIN_USUARIOS", "Usuarios", "/admin/usuarios", 3);
+            ModuloSistema adminPostulaciones = crearModuloSistema(moduloSistemaRepository, "ADMIN_POSTULACIONES", "Postulaciones", "/admin/postulaciones", 3);
             ModuloSistema adminContenido = crearModuloSistema(moduloSistemaRepository, "ADMIN_CONTENIDO", "Contenido", "/admin/contenido", 4);
             ModuloSistema perfil = crearModuloSistema(moduloSistemaRepository, "PERFIL", "Mi perfil", "/perfil", 5);
 
             asignarModulos(rolRepository, estudiante, List.of(dashboard, cursos, perfil));
             asignarModulos(rolRepository, padre, List.of(dashboard, perfil));
             asignarModulos(rolRepository, docente, List.of(dashboard, docenteCursos, adminContenido, perfil));
-            asignarModulos(rolRepository, administrador, List.of(dashboard, adminPanel, adminUsuarios, adminContenido, perfil));
-            asignarModulos(rolRepository, sistemas, List.of(dashboard, adminPanel, adminUsuarios, adminContenido, perfil));
+            asignarModulos(rolRepository, administrador, List.of(dashboard, adminPanel, adminUsuarios, adminPostulaciones, adminContenido, perfil));
+            asignarModulos(rolRepository, sistemas, List.of(dashboard, adminPanel, adminUsuarios, adminPostulaciones, adminContenido, perfil));
 
             Usuario alumno = crearUsuario(usuarioRepository, passwordEncoder, estudiante, "Alumno Mundo Manitas", "alumno@mundomanitas.com", "123456");
             Usuario maria = crearUsuario(usuarioRepository, passwordEncoder, estudiante, "María Fernanda Ríos", "maria@mundomanitas.com", "123456");
@@ -72,6 +77,8 @@ public class DatosInicialesConfig {
             Usuario docenteDemo = crearUsuario(usuarioRepository, passwordEncoder, docente, "Docente Mundo Manitas", "docente@mundomanitas.com", "123456");
             crearUsuario(usuarioRepository, passwordEncoder, administrador, "Administrador Mundo Manitas", "admin@mundomanitas.com", "123456");
             crearUsuario(usuarioRepository, passwordEncoder, sistemas, "Sistemas Mundo Manitas", "sistemas@mundomanitas.com", "123456");
+
+            crearPostulacionDemo(postulacionRepository);
 
             if (moduloRepository.count() == 0) {
                 crearContenidoDemo(
@@ -285,6 +292,37 @@ public class DatosInicialesConfig {
         ejercicio.setContenido(contenido);
         ejercicio.setRespuestaCorrecta(respuestaCorrecta);
         repository.save(ejercicio);
+    }
+
+    /**
+     * Postulación de ejemplo para que el administrador vea el flujo de
+     * revisión desde el primer arranque. No crea ninguna cuenta.
+     */
+    private void crearPostulacionDemo(PostulacionDocenteRepository repository) {
+        String email = "ana.quispe@ejemplo.com";
+
+        if (repository.findFirstByEmailIgnoreCaseOrderByFechaPostulacionDesc(email).isPresent()) {
+            return;
+        }
+
+        PostulacionDocente postulacion = new PostulacionDocente();
+        postulacion.setNombre("Ana Lucía Quispe Ramos");
+        postulacion.setEmail(email);
+        postulacion.setTelefono("987654321");
+        postulacion.setNivelLsp("C1");
+        postulacion.setCertificacionLsp("Certificación de LSP nivel C1 - INSOR Perú");
+        postulacion.setAniosExperiencia(4);
+        postulacion.setAreaTi("Desarrollo web y accesibilidad");
+        postulacion.setPortafolio("https://portafolio.ejemplo.com/ana-quispe");
+        postulacion.setMotivacion(
+            "Soy intérprete de Lengua de Señas Peruana y desarrolladora web. "
+                + "Quiero crear material visual accesible para que más estudiantes "
+                + "sordos aprendan programación sin depender del audio."
+        );
+        postulacion.setEstado(EstadoPostulacion.PENDIENTE);
+        postulacion.setFechaPostulacion(LocalDateTime.now().minusDays(2));
+
+        repository.save(postulacion);
     }
 
     private void crearPerfilEstudiante(

@@ -53,7 +53,7 @@ com.mundomanitas
 
 - **SRP**: controladores delgados, servicios con la lógica, DAO con el acceso a datos.
 - **OCP / DIP**: los servicios dependen de interfaces (`UsuarioDao`, `CursoDao`, `ProgresoDao`,
-  `InscripcionDao`, `CatalogoDao`), no de las implementaciones.
+  `InscripcionDao`, `CatalogoDao`, `PostulacionDao`), no de las implementaciones.
 - **LSP / ISP**: `GenericDao<T, ID>` define el contrato común; `AbstractDao` lo implementa y cada DAO
   concreto añade solo lo que necesita.
 - **DTO**: las entidades no se exponen directamente en la API ni en las vistas.
@@ -71,6 +71,7 @@ Entidades principales:
 - `Inscripcion` (matrícula del estudiante en un módulo).
 - `VideoProgreso` (video visto por estudiante).
 - `IntentoEjercicio` (respuestas y resultado de cada intento).
+- `PostulacionDocente` (solicitud de alta docente con `EstadoPostulacion`: pendiente, aprobada o rechazada).
 
 El esquema se crea y evoluciona con Flyway:
 
@@ -79,6 +80,7 @@ El esquema se crea y evoluciona con Flyway:
 | `V1__baseline_schema.sql` | Tablas base, claves foráneas e índices |
 | `V2__security_progress_and_indexes.sql` | Bloqueo/recuperación de cuentas, inscripción, progreso de videos, intentos, índices y restricciones |
 | `V3__course_owner.sql` | Docente responsable de cada módulo (`Modulo.idDocente`) para el panel docente |
+| `V4__teacher_applications.sql` | Postulaciones docentes (`postulacion_docente`): validación de LSP y experiencia en TI antes de crear la cuenta |
 
 En desarrollo y producción `spring.jpa.hibernate.ddl-auto=validate`: Hibernate solo valida, Flyway
 es la única fuente de verdad del esquema.
@@ -105,19 +107,25 @@ Roles y accesos:
 
 | Ruta | Roles |
 | --- | --- |
-| `/login`, `/registro`, `/recuperar`, `/restablecer` | Público |
+| `/login`, `/registro`, `/registro/**`, `/recuperar`, `/restablecer` | Público |
 | `/dashboard`, `/perfil` | Cualquier usuario autenticado |
 | `/cursos/**` | Quien tenga `MODULO_CURSOS` (estudiante, docente, administrador, sistemas) |
 | `/docente/cursos`, `/docente/cursos/{id}` | DOCENTE, solo los módulos que tiene asignados |
 | `/admin/contenido`, `/admin/modulos`, `/admin/videos`, `/admin/ejercicios` | DOCENTE (solo sus cursos), ADMINISTRADOR, SISTEMAS |
 | `/admin` (panel general) | ADMINISTRADOR, SISTEMAS |
 | `/admin/usuarios` | ADMINISTRADOR, SISTEMAS |
+| `/admin/postulaciones` | ADMINISTRADOR, SISTEMAS |
 | `/reportes/**` | DOCENTE, ADMINISTRADOR, SISTEMAS |
 | `/actuator/health`, `/actuator/info` | Público |
 
 ### Registro, perfil y paneles por rol
 
-- **Registro público** en `/registro`: crea cuentas de estudiante y valida la política de contraseñas.
+- **Registro público** en `/registro`: primera pantalla que permite elegir entre estudiante y docente.
+- **Estudiante** en `/registro/estudiante`: crea la cuenta al instante y valida la política de contraseñas.
+- **Docente** en `/registro/docente`: no crea cuenta. Envía una postulación con portafolio, nivel de
+  Lengua de Señas Peruana (B1 o superior), certificación, experiencia en TI (mínimo 1 año) y motivación.
+  El administrador la revisa en `/admin/postulaciones`; al aprobarla se crea la cuenta DOCENTE con la
+  contraseña temporal indicada y se le asigna un módulo específico.
 - **Perfil editable** en `/perfil`: nombre, grado, edad y nivel de estudio. El correo identifica la
   cuenta y no se puede cambiar desde la vista.
 - **Cambio de contraseña** en `POST /perfil/contrasena`: exige la contraseña actual, aplica la
@@ -176,6 +184,11 @@ curl -X POST http://localhost:8080/api/auth/login \
 | `GET` | `/api/admin/modulos/{id}/videos`, `/api/admin/modulos/{id}/ejercicios` |
 | `POST` | `/api/admin/videos`, `/api/admin/ejercicios` |
 | `PUT/DELETE` | `/api/admin/videos/{id}`, `/api/admin/ejercicios/{id}` |
+| `POST` | `/api/auth/postulaciones` (público, registra una postulación docente) |
+| `GET` | `/api/admin/postulaciones?estado=` |
+| `GET` | `/api/admin/postulaciones/{id}` |
+| `POST` | `/api/admin/postulaciones/{id}/aprobar` (crea la cuenta DOCENTE y asigna módulo) |
+| `POST` | `/api/admin/postulaciones/{id}/rechazar` (exige motivo) |
 
 ### Documentos
 
@@ -254,7 +267,9 @@ La aplicación queda disponible en <http://localhost:8080>.
 
 > Las cuentas demo conservan la contraseña `123456` para facilitar la evaluación. La política de
 > contraseñas se exige al crear o cambiar una cuenta. También puedes registrar una cuenta nueva de
-> estudiante desde `/registro`.
+> estudiante desde `/registro/estudiante` o enviar una postulación docente en `/registro/docente`.
+> La semilla incluye una postulación pendiente de ejemplo (`ana.quispe@ejemplo.com`) para probar la
+> aprobación desde `/admin/postulaciones`.
 
 ---
 
@@ -272,6 +287,8 @@ Las pruebas usan el perfil `test` con **H2 en memoria** y Flyway deshabilitado. 
 - Páginas 403 y 404 personalizadas.
 - API: login JWT, 401 sin token, 403 por rol, ejercicio y progreso.
 - Política de contraseñas.
+- Postulación docente: validación estricta, alta pendiente, aprobación con creación de cuenta y
+  asignación de módulo, rechazo con motivo y permisos de acceso.
 - Generación de Excel y Word con Apache POI.
 - Semillas idempotentes con base de datos vacía.
 

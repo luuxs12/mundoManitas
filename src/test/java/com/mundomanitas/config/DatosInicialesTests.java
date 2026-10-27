@@ -4,6 +4,7 @@ import com.mundomanitas.repository.EjercicioRepository;
 import com.mundomanitas.repository.InscripcionRepository;
 import com.mundomanitas.repository.ModuloRepository;
 import com.mundomanitas.repository.ModuloSistemaRepository;
+import com.mundomanitas.repository.PostulacionDocenteRepository;
 import com.mundomanitas.repository.ProgresoRepository;
 import com.mundomanitas.repository.RolRepository;
 import com.mundomanitas.repository.UsuarioRepository;
@@ -56,11 +57,14 @@ class DatosInicialesTests {
     @Autowired
     private InscripcionRepository inscripcionRepository;
 
+    @Autowired
+    private PostulacionDocenteRepository postulacionRepository;
+
     @Test
     void laBaseVaciaQuedaSembradaConUsuariosRolesYContenido() {
         assertEquals(8, usuarioRepository.count(), "Deben existir los ocho usuarios demo");
         assertEquals(5, rolRepository.count(), "Deben existir los cinco roles del sistema");
-        assertEquals(7, moduloSistemaRepository.count(), "Deben existir los siete módulos de navegación");
+        assertEquals(8, moduloSistemaRepository.count(), "Deben existir los ocho módulos de navegación");
 
         assertTrue(moduloRepository.count() >= 4);
         assertTrue(videoRepository.count() >= 3);
@@ -97,6 +101,7 @@ class DatosInicialesTests {
         long ejercicios = ejercicioRepository.count();
         long progresos = progresoRepository.count();
         long inscripciones = inscripcionRepository.count();
+        long postulaciones = postulacionRepository.count();
 
         semillas.run();
 
@@ -108,6 +113,7 @@ class DatosInicialesTests {
         assertEquals(ejercicios, ejercicioRepository.count());
         assertEquals(progresos, progresoRepository.count());
         assertEquals(inscripciones, inscripcionRepository.count());
+        assertEquals(postulaciones, postulacionRepository.count());
     }
 
     @Test
@@ -122,5 +128,13 @@ class DatosInicialesTests {
         assertTrue(docente.getModulos().stream().anyMatch(m -> "DOCENTE_CURSOS".equals(m.getCodigo())));
         assertTrue(administrador.getModulos().stream().anyMatch(m -> "ADMIN_USUARIOS".equals(m.getCodigo())));
         assertTrue(administrador.getModulos().stream().anyMatch(m -> "ADMIN_PANEL".equals(m.getCodigo())));
+        assertTrue(administrador.getModulos().stream().anyMatch(m -> "ADMIN_POSTULACIONES".equals(m.getCodigo())));
+    }
+
+    @Test
+    void laPostulacionDocenteDemoQuedaPendienteDeRevision() {
+        assertEquals(1, postulacionRepository.count());
+        assertTrue(postulacionRepository.findAll().stream()
+            .allMatch(postulacion -> postulacion.getEstado().estaPendiente()));
     }
 }

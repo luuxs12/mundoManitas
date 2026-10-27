@@ -29,79 +29,46 @@
 
         <span class="mini-title">NUEVA CUENTA</span>
 
-        <h1>Crear cuenta de estudiante</h1>
+        <h1>¿Cómo quieres registrarte?</h1>
 
         <p>
-            Regístrate para acceder a los cursos, seguir tu avance y guardar tu progreso.
-            Las cuentas de docente y administración las crea el equipo de la plataforma.
+            Elige el tipo de acceso. Los estudiantes crean su cuenta al instante;
+            los docentes pasan por una validación profesional antes de recibir acceso.
         </p>
 
-        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+        <div class="auth-choice-grid">
 
-        <form th:action="@{/registro}" th:object="${registroForm}" method="post">
+            <a class="auth-choice" th:href="@{/registro/estudiante}">
 
-            <div class="auth-form-grid">
+                <span class="auth-choice-tag">ESTUDIANTE</span>
 
-                <div class="form-field full">
-                    <label for="nombre">Nombre completo</label>
-                    <input class="form-control" type="text" id="nombre" th:field="*{nombre}"
-                        placeholder="Ej. Ana María López" maxlength="100" required>
-                </div>
+                <strong>Crear cuenta de estudiante</strong>
 
-                <div class="form-field full">
-                    <label for="email">Correo electrónico</label>
-                    <input class="form-control" type="email" id="email" th:field="*{email}"
-                        placeholder="correo@ejemplo.com" maxlength="100" autocomplete="email" required>
-                </div>
+                <span class="auth-choice-copy">
+                    Accede a los cursos, sigue tu avance y guarda tu progreso.
+                    Solo necesitas tus datos básicos.
+                </span>
 
-                <div class="form-field">
-                    <label for="grado">Grado</label>
-                    <input class="form-control" type="text" id="grado" th:field="*{grado}"
-                        placeholder="Ej. Secundaria" maxlength="20">
-                </div>
+                <span class="auth-choice-action">Empezar ahora →</span>
 
-                <div class="form-field">
-                    <label for="edad">Edad</label>
-                    <input class="form-control" type="number" id="edad" th:field="*{edad}"
-                        min="3" max="120" placeholder="15">
-                </div>
+            </a>
 
-                <div class="form-field full">
-                    <label for="nivelEstudio">Nivel de estudio</label>
-                    <select class="form-control" id="nivelEstudio" th:field="*{nivelEstudio}">
-                        <option value="">Selecciona un nivel</option>
-                        <option value="Principiante">Principiante</option>
-                        <option value="Intermedio">Intermedio</option>
-                        <option value="Avanzado">Avanzado</option>
-                    </select>
-                </div>
+            <a class="auth-choice auth-choice-dark" th:href="@{/registro/docente}">
 
-                <div class="form-field">
-                    <label for="contrasena">Contraseña</label>
-                    <input class="form-control" type="password" id="contrasena" th:field="*{contrasena}"
-                        autocomplete="new-password" required>
-                </div>
+                <span class="auth-choice-tag">DOCENTE</span>
 
-                <div class="form-field">
-                    <label for="confirmarContrasena">Confirmar contraseña</label>
-                    <input class="form-control" type="password" id="confirmarContrasena"
-                        th:field="*{confirmarContrasena}" autocomplete="new-password" required>
-                </div>
+                <strong>Postular como docente</strong>
 
-                <div class="full">
-                    <p class="auth-password-hint">
-                        La contraseña debe tener al menos 8 caracteres, una mayúscula,
-                        una minúscula, un número y un carácter especial.
-                    </p>
-                </div>
+                <span class="auth-choice-copy">
+                    Envía tu portafolio y acredita tu dominio de Lengua de Señas Peruana
+                    y tu experiencia en TI. El administrador revisa cada solicitud.
+                </span>
 
-            </div>
+                <span class="auth-choice-action">Enviar postulación →</span>
 
-            <button class="auth-submit" type="submit" style="margin-top: 18px;">
-                Crear mi cuenta
-            </button>
+            </a>
 
-        </form>
+        </div>
 
         <div class="auth-links">
             <span>

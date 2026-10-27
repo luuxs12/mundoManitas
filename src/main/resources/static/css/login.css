@@ -21,8 +21,8 @@
     flex-direction: column;
     overflow: hidden;
     background:
-        radial-gradient(circle at 85% 12%, rgba(189, 119, 40, .22), transparent 26%),
-        #12332c;
+        radial-gradient(circle at 85% 12%, rgba(232, 68, 31, .24), transparent 30%),
+        #141210;
     color: #f4f1e8;
 }
 
@@ -48,7 +48,7 @@
     height: 300px;
     top: -170px;
     right: -80px;
-    border: 1px solid rgba(189, 119, 40, .28);
+    border: 1px solid rgba(232, 68, 31, .35);
 }
 
 .shape-two {
@@ -66,7 +66,7 @@
     left: 48%;
     background: var(--accent);
     box-shadow:
-        150px 60px 0 2px rgba(189, 119, 40, .4),
+        150px 60px 0 2px rgba(232, 68, 31, .45),
         -80px 260px 0 1px rgba(255, 255, 255, .2);
 }
 
@@ -99,7 +99,7 @@
 }
 
 .login-brand span {
-    color: #93aaa2;
+    color: #a8a196;
 }
 
 .login-left-content {
@@ -119,7 +119,7 @@
 }
 
 .login-eyebrow {
-    color: #d9a462;
+    color: var(--highlight);
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: .16em;
@@ -129,14 +129,14 @@
     max-width: 540px;
     margin-top: 16px;
     font-size: clamp(38px, 3.1vw, 52px);
-    line-height: 1.07;
+    line-height: 1.03;
     color: #f8f4e9;
 }
 
 .login-copy > p {
     max-width: 470px;
     margin-top: 18px;
-    color: #b9c9c2;
+    color: #b9b2a6;
     font-size: 14px;
     line-height: 1.7;
 }
@@ -165,9 +165,9 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border-radius: var(--radius-sm);
-    background: rgba(189, 119, 40, .16);
-    color: #e0b276;
+    border-radius: var(--radius-xs);
+    background: rgba(214, 242, 79, .14);
+    color: var(--highlight);
 }
 
 .benefit-icon svg {
@@ -186,7 +186,7 @@
 
 .login-benefit span {
     margin-top: 3px;
-    color: #9db2aa;
+    color: #a8a196;
     font-size: 11.5px;
     line-height: 1.45;
 }
@@ -214,7 +214,7 @@
     width: 340px;
     height: 340px;
     border-radius: 50%;
-    background: rgba(189, 119, 40, .16);
+    background: rgba(232, 68, 31, .2);
     filter: blur(70px);
 }
 
@@ -224,7 +224,7 @@
     display: flex;
     align-items: center;
     gap: 11px;
-    color: #7f978e;
+    color: #8a8479;
     font-size: 9.5px;
     font-weight: 600;
     letter-spacing: .1em;
@@ -340,15 +340,17 @@
     width: 100%;
     height: 46px;
     border: 0;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     background: var(--primary);
     color: #fffdf8;
-    font-size: 13.5px;
-    font-weight: 600;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
     transition: background .16s;
 }
 

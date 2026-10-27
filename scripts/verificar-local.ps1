@@ -254,7 +254,50 @@ Probar "registro publico responde 200" {
 
     $html = Contenido $respuesta
     if ($html -notmatch "Crear cuenta de estudiante") { throw "formulario no visible" }
+    if ($html -notmatch "Postular como docente") { throw "sin opcion de postulacion docente" }
     "200"
+}
+
+Probar "formulario de estudiante responde 200" {
+    $cliente = Nuevo-Cliente $true
+    $respuesta = $cliente.GetAsync("registro/estudiante").Result
+    if ([int]$respuesta.StatusCode -ne 200) { throw "status $([int]$respuesta.StatusCode)" }
+
+    $html = Contenido $respuesta
+    if ($html -notmatch 'name="confirmarContrasena"') { throw "sin confirmacion de contrasena" }
+    "200"
+}
+
+Probar "postulacion docente publica responde 200" {
+    $cliente = Nuevo-Cliente $true
+    $respuesta = $cliente.GetAsync("registro/docente").Result
+    if ([int]$respuesta.StatusCode -ne 200) { throw "status $([int]$respuesta.StatusCode)" }
+
+    $html = Contenido $respuesta
+    if ($html -notmatch 'name="nivelLsp"') { throw "sin campo nivel de LSP" }
+    if ($html -notmatch 'name="portafolio"') { throw "sin campo portafolio" }
+    if ($html -notmatch 'name="aniosExperiencia"') { throw "sin campo de experiencia en TI" }
+    "200"
+}
+
+Probar "administrador revisa las postulaciones docentes" {
+    $cliente = Iniciar-Sesion "admin@mundomanitas.com" "123456"
+    $respuesta = $cliente.GetAsync("admin/postulaciones").Result
+    if ([int]$respuesta.StatusCode -ne 200) { throw "status $([int]$respuesta.StatusCode)" }
+
+    $html = Contenido $respuesta
+    if ($html -notmatch "Postulaciones docentes") { throw "pagina no visible" }
+    if ($html -notmatch "Ver portafolio") { throw "sin postulacion demo pendiente" }
+    "200"
+}
+
+Probar "docente no revisa postulaciones docentes" {
+    $cliente = Iniciar-Sesion "docente@mundomanitas.com" "123456"
+    $respuesta = $cliente.GetAsync("admin/postulaciones").Result
+    $codigo = [int]$respuesta.StatusCode
+
+    if ($codigo -ne 403) { throw "status $codigo" }
+    "403"
 }
 
 Probar "login enlaza al registro publico" {

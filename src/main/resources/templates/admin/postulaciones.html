@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Postulaciones docentes | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/cursos.css}">
+</head>
+
+<body class="app-body">
+
+    <div class="app-layout">
+
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="page-location">Administración</p>
+                    <h2>Postulaciones</h2>
+                </div>
+
+                <div class="topbar-user">
+                    <div class="user-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">A</div>
+
+                    <div class="user-info">
+                        <strong th:text="${#authentication.name}">admin@mundomanitas.com</strong>
+                        <span>Administración</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+            <section class="page-intro">
+                <div>
+                    <span class="section-label">VALIDACIÓN DOCENTE</span>
+                    <h1>Postulaciones docentes</h1>
+                    <p>
+                        Revisa el portafolio, el nivel de Lengua de Señas Peruana y la experiencia
+                        en TI. Al aprobar, se crea la cuenta DOCENTE y se le asigna un módulo.
+                    </p>
+                </div>
+
+                <div class="page-intro-actions">
+                    <span class="badge badge-warn" th:text="|${pendientes} pendientes|">0 pendientes</span>
+                </div>
+            </section>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(postulaciones)}">
+                <strong>No hay postulaciones registradas.</strong>
+                <span>Cuando alguien envíe su portafolio desde el registro público aparecerá aquí.</span>
+            </div>
+
+            <div class="table-wrapper" th:unless="${#lists.isEmpty(postulaciones)}">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Aspirante</th>
+                            <th>LSP</th>
+                            <th>Experiencia TI</th>
+                            <th>Portafolio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="postulacion : ${postulaciones}">
+                            <td>
+                                <strong th:text="${postulacion.nombre}">Nombre</strong>
+                                <span class="cell-sub" th:text="${postulacion.email}">correo@ejemplo.com</span>
+                                <span class="cell-sub" th:text="${postulacion.telefono}">987654321</span>
+                            </td>
+
+                            <td>
+                                <span class="badge badge-info" th:text="${postulacion.nivelLsp}">C1</span>
+                                <span class="cell-sub" th:text="${postulacion.certificacionLsp}">Certificación</span>
+                            </td>
+
+                            <td>
+                                <strong th:text="|${postulacion.aniosExperiencia} años|">3 años</strong>
+                                <span class="cell-sub" th:text="${postulacion.areaTi}">Área TI</span>
+                            </td>
+
+                            <td>
+                                <a th:href="${postulacion.portafolio}" target="_blank" rel="noopener noreferrer">
+                                    Ver portafolio
+                                </a>
+                                <span class="cell-sub" th:text="${postulacion.fechaPostulacion}">01/01/2026</span>
+                            </td>
+
+                            <td>
+                                <span class="badge badge-warn" th:if="${postulacion.pendiente}"
+                                    th:text="${postulacion.estadoEtiqueta}">Pendiente</span>
+                                <span class="badge badge-active" th:if="${postulacion.aprobada}"
+                                    th:text="${postulacion.estadoEtiqueta}">Aprobada</span>
+                                <span class="badge badge-inactive" th:if="${postulacion.rechazada}"
+                                    th:text="${postulacion.estadoEtiqueta}">Rechazada</span>
+
+                                <span class="cell-sub" th:if="${postulacion.moduloAsignado}"
+                                    th:text="|Módulo: ${postulacion.moduloAsignado}|">Módulo</span>
+                                <span class="cell-sub" th:if="${postulacion.observacion}"
+                                    th:text="${postulacion.observacion}">Observación</span>
+                            </td>
+
+                            <td>
+                                <details th:if="${postulacion.pendiente}">
+                                    <summary>Resolver</summary>
+
+                                    <form class="stack-form"
+                                        th:action="@{/admin/postulaciones/{id}/aprobar(id=${postulacion.id})}"
+                                        method="post">
+                                        <span class="form-note">APROBAR Y CREAR CUENTA</span>
+
+                                        <div class="form-field">
+                                            <label>Módulo asignado</label>
+                                            <select class="form-control" name="idModulo" required>
+                                                <option value="">Selecciona un módulo</option>
+                                                <option th:each="modulo : ${modulos}" th:value="${modulo.idModulo}"
+                                                    th:text="|${modulo.titulo} (${modulo.nivel})|">
+                                                    Módulo
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Contraseña inicial</label>
+                                            <input class="form-control" type="password" name="contrasena"
+                                                minlength="8" required>
+                                            <small>Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo.</small>
+                                        </div>
+
+                                        <div class="form-field">
+                                            <label>Observación (opcional)</label>
+                                            <input class="form-control" type="text" name="observacion"
+                                                maxlength="600">
+                                        </div>
+
+                                        <button class="btn btn-primary btn-full" type="submit">
+                                            Aprobar postulación
+                                        </button>
+                                    </form>
+
+                                    <form class="stack-form"
+                                        th:action="@{/admin/postulaciones/{id}/rechazar(id=${postulacion.id})}"
+                                        method="post">
+                                        <span class="form-note">RECHAZAR</span>
+
+                                        <div class="form-field">
+                                            <label>Motivo del rechazo</label>
+                                            <textarea class="form-control" name="observacion" rows="3"
+                                                minlength="10" maxlength="600" required
+                                                placeholder="Explica qué faltó o qué debe corregir el aspirante."></textarea>
+                                        </div>
+
+                                        <button class="btn btn-secondary btn-full" type="submit">
+                                            Rechazar postulación
+                                        </button>
+                                    </form>
+                                </details>
+
+                                <span class="cell-sub" th:unless="${postulacion.pendiente}"
+                                    th:text="|Resuelta: ${postulacion.fechaResolucion}|">
+                                    Resuelta
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

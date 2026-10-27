@@ -30,6 +30,8 @@
                 or
                 (modulo.ruta == '/admin/usuarios' and #strings.startsWith(rutaActual, '/admin/usuarios'))
                 or
+                (modulo.ruta == '/admin/postulaciones' and #strings.startsWith(rutaActual, '/admin/postulaciones'))
+                or
                 (modulo.ruta == '/admin/contenido' and #strings.startsWith(rutaActual, '/admin/contenido'))
             } ? ' active' : ''">
 
@@ -77,6 +79,13 @@
                     <path d="M3 20a6 6 0 0 1 12 0"></path>
                     <path d="M17 8h4"></path>
                     <path d="M19 6v4"></path>
+                </svg>
+
+                <svg th:case="'ADMIN_POSTULACIONES'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M9 4h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path>
+                    <path d="M9 4V3h6v1"></path>
+                    <path d="m9 13 2 2 4-4"></path>
                 </svg>
 
                 <svg th:case="'ADMIN_CONTENIDO'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"

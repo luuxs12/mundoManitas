@@ -9,7 +9,7 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     background:
-        linear-gradient(120deg, rgba(15, 92, 80, .06), transparent 42%),
+        linear-gradient(120deg, rgba(232, 68, 31, .07), transparent 42%),
         var(--surface);
 }
 
@@ -309,8 +309,8 @@
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-sm);
-    background: #12332c;
-    color: var(--white);
+    background: var(--ink);
+    color: #fffdf8;
 }
 
 .lesson-preview svg {

@@ -2,6 +2,7 @@ package com.mundomanitas.service;
 
 import com.mundomanitas.dao.CursoDao;
 import com.mundomanitas.dao.InscripcionDao;
+import com.mundomanitas.dao.PostulacionDao;
 import com.mundomanitas.dao.ProgresoDao;
 import com.mundomanitas.dao.UsuarioDao;
 import com.mundomanitas.dto.view.AlumnoProgresoView;
@@ -9,6 +10,7 @@ import com.mundomanitas.dto.view.CursoDocenteView;
 import com.mundomanitas.dto.view.CursoGlobalView;
 import com.mundomanitas.dto.view.KpiView;
 import com.mundomanitas.entity.Inscripcion;
+import com.mundomanitas.entity.EstadoPostulacion;
 import com.mundomanitas.entity.Modulo;
 import com.mundomanitas.entity.Progreso;
 import com.mundomanitas.entity.Usuario;
@@ -40,17 +42,20 @@ public class PanelService {
     private final UsuarioDao usuarioDao;
     private final InscripcionDao inscripcionDao;
     private final ProgresoDao progresoDao;
+    private final PostulacionDao postulacionDao;
 
     public PanelService(
         CursoDao cursoDao,
         UsuarioDao usuarioDao,
         InscripcionDao inscripcionDao,
-        ProgresoDao progresoDao
+        ProgresoDao progresoDao,
+        PostulacionDao postulacionDao
     ) {
         this.cursoDao = cursoDao;
         this.usuarioDao = usuarioDao;
         this.inscripcionDao = inscripcionDao;
         this.progresoDao = progresoDao;
+        this.postulacionDao = postulacionDao;
     }
 
     // ------------------------------------------------------------------
@@ -198,6 +203,7 @@ public class PanelService {
         long docentes = usuarioDao.contarPorRol("DOCENTE");
         long cursos = cursoDao.contarModulos();
         long inscripciones = inscripcionDao.contar();
+        long pendientes = postulacionDao.contarPorEstado(EstadoPostulacion.PENDIENTE);
 
         Double promedio = progresoDao.promedioGlobal();
         int promedioGlobal = promedio == null ? 0 : (int) Math.round(promedio);
@@ -242,6 +248,15 @@ public class PanelService {
             "Responsables de contenido",
             "neutral",
             "docente"
+        ));
+        kpis.add(new KpiView(
+            "Postulaciones",
+            String.valueOf(pendientes),
+            pendientes == 0
+                ? "Sin solicitudes por revisar"
+                : "Docentes pendientes de validación",
+            pendientes == 0 ? "ok" : "warn",
+            "postulacion"
         ));
 
         return kpis;

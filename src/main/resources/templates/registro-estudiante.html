@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cuenta de estudiante | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+
+<body class="auth-body">
+
+    <section class="auth-card wide">
+
+        <div class="auth-brand">
+
+            <div class="brand-icon">M</div>
+
+            <div>
+                <strong>Mundo Manitas</strong>
+                <span>Plataforma educativa</span>
+            </div>
+
+        </div>
+
+        <a class="auth-back" th:href="@{/registro}">← Cambiar tipo de cuenta</a>
+
+        <span class="mini-title">ESTUDIANTE</span>
+
+        <h1>Crear cuenta de estudiante</h1>
+
+        <p>
+            Regístrate para acceder a los cursos, seguir tu avance y guardar tu progreso.
+            Las cuentas de docente las habilita el administrador tras validar una postulación.
+        </p>
+
+        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/registro/estudiante}" th:object="${registroForm}" method="post">
+
+            <div class="auth-form-grid">
+
+                <div class="form-field full">
+                    <label for="nombre">Nombre completo</label>
+                    <input class="form-control" type="text" id="nombre" th:field="*{nombre}"
+                        placeholder="Ej. Ana María López" maxlength="100" required>
+                </div>
+
+                <div class="form-field full">
+                    <label for="email">Correo electrónico</label>
+                    <input class="form-control" type="email" id="email" th:field="*{email}"
+                        placeholder="correo@ejemplo.com" maxlength="100" autocomplete="email" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="grado">Grado</label>
+                    <input class="form-control" type="text" id="grado" th:field="*{grado}"
+                        placeholder="Ej. Secundaria" maxlength="20">
+                </div>
+
+                <div class="form-field">
+                    <label for="edad">Edad</label>
+                    <input class="form-control" type="number" id="edad" th:field="*{edad}"
+                        min="3" max="120" placeholder="15">
+                </div>
+
+                <div class="form-field full">
+                    <label for="nivelEstudio">Nivel de estudio</label>
+                    <select class="form-control" id="nivelEstudio" th:field="*{nivelEstudio}">
+                        <option value="">Selecciona un nivel</option>
+                        <option value="Principiante">Principiante</option>
+                        <option value="Intermedio">Intermedio</option>
+                        <option value="Avanzado">Avanzado</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="contrasena">Contraseña</label>
+                    <input class="form-control" type="password" id="contrasena" th:field="*{contrasena}"
+                        autocomplete="new-password" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="confirmarContrasena">Confirmar contraseña</label>
+                    <input class="form-control" type="password" id="confirmarContrasena"
+                        th:field="*{confirmarContrasena}" autocomplete="new-password" required>
+                </div>
+
+                <div class="full">
+                    <p class="auth-password-hint">
+                        La contraseña debe tener al menos 8 caracteres, una mayúscula,
+                        una minúscula, un número y un carácter especial.
+                    </p>
+                </div>
+
+            </div>
+
+            <button class="auth-submit" type="submit">
+                Crear mi cuenta
+            </button>
+
+        </form>
+
+        <div class="auth-links">
+            <span>
+                ¿Ya tienes una cuenta?
+                <a th:href="@{/login}">Inicia sesión</a>
+            </span>
+        </div>
+
+    </section>
+
+</body>
+
+</html>

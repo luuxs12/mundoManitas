@@ -5,12 +5,12 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-xs);
     background: var(--accent);
     color: #fffdf8;
     font-family: var(--font-display);
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 19px;
+    font-weight: 400;
 }
 
 .menu-icon {
@@ -33,11 +33,23 @@
 .mini-title,
 .section-label,
 .welcome-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     color: var(--accent);
     font-size: var(--font-xs);
     font-weight: 700;
     letter-spacing: .14em;
     text-transform: uppercase;
+}
+
+.mini-title::before,
+.section-label::before,
+.welcome-label::before {
+    content: "";
+    width: 14px;
+    height: 2px;
+    background: currentColor;
 }
 
 .card {
@@ -59,10 +71,11 @@
     justify-content: center;
     gap: 8px;
     border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .01em;
+    border-radius: var(--radius-xs);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
     transition: background .16s, border-color .16s, color .16s;
 }
 
@@ -102,7 +115,7 @@
 }
 
 .btn-accent:hover {
-    background: #a5651f;
+    background: #c53714;
 }
 
 .btn-ghost {
@@ -289,8 +302,8 @@ textarea.form-control {
 }
 
 .form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(15, 92, 80, .1);
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(23, 21, 18, .1);
 }
 
 .form-control::placeholder {
@@ -397,8 +410,8 @@ select.form-control {
 }
 
 .data-table th {
-    background: var(--surface-alt);
-    color: var(--muted-dark);
+    background: var(--ink);
+    color: var(--paper);
     font-size: 10.5px;
     font-weight: 700;
     letter-spacing: .1em;
@@ -407,7 +420,7 @@ select.form-control {
 }
 
 .data-table tbody tr:hover {
-    background: #fbf8f1;
+    background: var(--surface-alt);
 }
 
 .data-table tr:last-child td {
@@ -505,4 +518,45 @@ select.form-control {
 .empty-state .btn,
 .courses-empty .btn {
     margin-top: 16px;
+}
+
+/* ------------------------------------------------------------------
+   Celdas con detalle y formularios apilados
+   ------------------------------------------------------------------ */
+
+.cell-sub {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 11.5px;
+    line-height: 1.45;
+}
+
+.stack-form {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-alt);
+}
+
+.stack-form + .stack-form {
+    margin-top: 10px;
+}
+
+.form-note {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--accent);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .12em;
+}
+
+details summary {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer;
 }

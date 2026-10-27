@@ -53,6 +53,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/login",
                     "/registro",
+                    "/registro/**",
                     "/recuperar",
                     "/restablecer",
                     "/error",

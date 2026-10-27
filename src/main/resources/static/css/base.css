@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap");
+
 * {
     margin: 0;
     padding: 0;
@@ -5,53 +7,54 @@
 }
 
 :root {
-    /* Paleta editorial: papel cálido + verde profundo + ámbar */
-    --primary: #0f5c50;
-    --primary-dark: #0a443c;
-    --primary-soft: #e4efeb;
+    /* Identidad editorial: tinta, papel y acentos de alto contraste */
+    --primary: #171512;
+    --primary-dark: #000000;
+    --primary-soft: #ece7dc;
 
-    --accent: #bd7728;
-    --accent-soft: #f8eddb;
+    --accent: #e8441f;
+    --accent-soft: #fde7df;
+    --highlight: #d6f24f;
 
-    --ink: #1c211e;
-    --ink-soft: #4f574f;
-    --muted: #7b827a;
-    --muted-dark: #636a62;
+    --ink: #171512;
+    --ink-soft: #47423a;
+    --muted: #6d675d;
+    --muted-dark: #514c43;
 
-    --paper: #f6f2e9;
-    --paper-deep: #ece6d9;
+    --paper: #f4f1e9;
+    --paper-deep: #e7e2d6;
     --surface: #fffdf8;
     --surface-alt: #faf7f0;
 
-    --border: #e2dbcd;
-    --border-strong: #cfc6b3;
-    --border-light: #eee8dc;
+    --border: #dcd5c6;
+    --border-strong: #c3b9a5;
+    --border-light: #eae5d9;
 
-    --success: #2f7d54;
-    --success-soft: #e8f2ea;
+    --success: #1f6b46;
+    --success-soft: #e2f1e7;
 
-    --info: #2f6b8a;
-    --info-soft: #e7f0f5;
+    --info: #1e4f8f;
+    --info-soft: #e3edf9;
 
-    --warning: #b5762a;
-    --warning-soft: #f9edda;
+    --warning: #a35a12;
+    --warning-soft: #fbeedb;
 
-    --danger: #a8402f;
-    --danger-soft: #f9e9e5;
+    --danger: #a52d1c;
+    --danger-soft: #fbe6e1;
 
-    --radius-xs: 3px;
-    --radius-sm: 5px;
-    --radius-md: 7px;
-    --radius-lg: 10px;
-    --radius-xl: 14px;
+    --radius-xs: 2px;
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius-lg: 5px;
+    --radius-xl: 6px;
 
-    --shadow-card: 0 1px 2px rgba(28, 33, 30, .05), 0 18px 32px -28px rgba(28, 33, 30, .4);
-    --shadow-raised: 0 10px 28px -18px rgba(28, 33, 30, .45);
+    --shadow-card: 0 1px 0 rgba(23, 21, 18, .04), 0 16px 30px -28px rgba(23, 21, 18, .55);
+    --shadow-raised: 0 12px 26px -20px rgba(23, 21, 18, .5);
 
     --sidebar-width: 252px;
 
-    --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+    --font-sans: "Archivo", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Archivo Black", "Arial Black", "Segoe UI", system-ui, sans-serif;
 
     --font-xs: 11px;
     --font-sm: 13px;
@@ -80,9 +83,11 @@ h2,
 h3,
 h4 {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 400;
     color: var(--ink);
-    letter-spacing: -.015em;
+    letter-spacing: -.025em;
+    line-height: 1.08;
+    text-wrap: balance;
 }
 
 a {
@@ -111,6 +116,6 @@ textarea {
 }
 
 ::selection {
-    background: var(--accent-soft);
+    background: var(--highlight);
     color: var(--ink);
 }

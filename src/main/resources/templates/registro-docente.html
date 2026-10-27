@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Postulación docente | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+
+<body class="auth-body">
+
+    <section class="auth-card wide auth-card-teacher">
+
+        <div class="auth-brand">
+
+            <div class="brand-icon">M</div>
+
+            <div>
+                <strong>Mundo Manitas</strong>
+                <span>Plataforma educativa</span>
+            </div>
+
+        </div>
+
+        <a class="auth-back" th:href="@{/registro}">← Cambiar tipo de cuenta</a>
+
+        <span class="mini-title">POSTULACIÓN DOCENTE</span>
+
+        <h1>Enseña con nosotros</h1>
+
+        <p>
+            La cuenta docente no se crea automáticamente. Primero validamos tu dominio de
+            <strong>Lengua de Señas Peruana (LSP)</strong> y tu experiencia en
+            <strong>TI</strong>. Si la postulación es aprobada, el administrador crea tu
+            cuenta y te asigna un módulo.
+        </p>
+
+        <ol class="auth-steps">
+            <li><strong>Envía tu portafolio</strong> y acredita tu nivel de LSP.</li>
+            <li><strong>Revisión técnica y pedagógica</strong> por el equipo académico.</li>
+            <li><strong>Cuenta DOCENTE + módulo asignado</strong> si la postulación es aprobada.</li>
+        </ol>
+
+        <div class="alert alert-success" th:if="${param.enviada}">
+            Postulación recibida. El administrador revisará tu portafolio y se pondrá en
+            contacto contigo al correo indicado.
+        </div>
+
+        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/registro/docente}" th:object="${postulacionForm}" method="post">
+
+            <div class="auth-form-grid">
+
+                <div class="form-field full">
+                    <label for="nombre">Nombre completo</label>
+                    <input class="form-control" type="text" id="nombre" th:field="*{nombre}"
+                        placeholder="Nombres y apellidos" maxlength="100" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="email">Correo electrónico</label>
+                    <input class="form-control" type="email" id="email" th:field="*{email}"
+                        placeholder="correo@ejemplo.com" maxlength="100" autocomplete="email" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="telefono">Teléfono / WhatsApp</label>
+                    <input class="form-control" type="tel" id="telefono" th:field="*{telefono}"
+                        placeholder="987654321" maxlength="20" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="nivelLsp">Nivel de LSP</label>
+                    <select class="form-control" id="nivelLsp" th:field="*{nivelLsp}" required>
+                        <option value="">Selecciona tu nivel</option>
+                        <option value="B1">B1 — Intermedio</option>
+                        <option value="B2">B2 — Intermedio alto</option>
+                        <option value="C1">C1 — Avanzado</option>
+                        <option value="C2">C2 — Dominio pleno</option>
+                    </select>
+                    <small>Solo se aceptan niveles B1 o superiores.</small>
+                </div>
+
+                <div class="form-field">
+                    <label for="aniosExperiencia">Años de experiencia en TI</label>
+                    <input class="form-control" type="number" id="aniosExperiencia"
+                        th:field="*{aniosExperiencia}" min="1" max="50" placeholder="3" required>
+                    <small>Mínimo 1 año comprobable.</small>
+                </div>
+
+                <div class="form-field full">
+                    <label for="certificacionLsp">Certificación de LSP</label>
+                    <input class="form-control" type="text" id="certificacionLsp"
+                        th:field="*{certificacionLsp}" maxlength="200"
+                        placeholder="Institución, curso o certificado que acredita tu nivel" required>
+                </div>
+
+                <div class="form-field full">
+                    <label for="areaTi">Área de especialidad en TI</label>
+                    <input class="form-control" type="text" id="areaTi" th:field="*{areaTi}"
+                        maxlength="120" placeholder="Ej. Desarrollo web, bases de datos, accesibilidad"
+                        required>
+                </div>
+
+                <div class="form-field full">
+                    <label for="portafolio">Enlace a tu portafolio</label>
+                    <input class="form-control" type="url" id="portafolio" th:field="*{portafolio}"
+                        maxlength="300" placeholder="https://tu-portafolio.com" required>
+                    <small>Debe ser un enlace público http o https con tus proyectos o experiencia.</small>
+                </div>
+
+                <div class="form-field full">
+                    <label for="motivacion">¿Por qué quieres enseñar en Mundo Manitas?</label>
+                    <textarea class="form-control" id="motivacion" th:field="*{motivacion}"
+                        rows="4" minlength="80" maxlength="1500" required
+                        placeholder="Cuéntanos tu experiencia con la comunidad sorda y cómo adaptarías tus clases."></textarea>
+                    <small>Mínimo 80 caracteres.</small>
+                </div>
+
+                <div class="form-field full auth-check">
+                    <label for="aceptaTerminos">
+                        <input type="checkbox" id="aceptaTerminos" th:field="*{aceptaTerminos}" required>
+                        <span>
+                            Declaro que la información y los enlaces proporcionados son veraces y
+                            autorizo su verificación durante el proceso de selección.
+                        </span>
+                    </label>
+                </div>
+
+            </div>
+
+            <button class="auth-submit" type="submit">
+                Enviar postulación
+            </button>
+
+        </form>
+
+        <div class="auth-links">
+            <span>
+                ¿Ya tienes una cuenta aprobada?
+                <a th:href="@{/login}">Inicia sesión</a>
+            </span>
+        </div>
+
+    </section>
+
+</body>
+
+</html>
