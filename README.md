@@ -350,3 +350,5 @@ Para producción real:
 
 Proyecto Integrador I — Ingeniería de Software.
 Plataforma educativa inclusiva **Mundo Manitas** para la comunidad sorda.
+
+Repositorio base del equipo: <https://github.com/DevJharold/mundoManitas>
