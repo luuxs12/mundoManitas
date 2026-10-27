@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         String email = username.trim();
 
@@ -43,6 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             .password(usuario.getContrasena())
             .authorities(authorities)
             .disabled(!usuario.isActivo() || !usuario.getRol().isActivo())
+            .accountLocked(usuario.isBloqueado())
             .build();
     }
 }

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recuperar contraseña | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+
+<body class="auth-body">
+
+    <main class="auth-card">
+
+        <div class="auth-brand">
+            <div class="brand-icon">M</div>
+
+            <div>
+                <strong>Mundo Manitas</strong>
+                <span>Plataforma educativa</span>
+            </div>
+        </div>
+
+        <span class="mini-title">RECUPERACIÓN</span>
+        <h1>Recupera tu acceso</h1>
+
+        <p>
+            Escribe el correo con el que te registraste y te enviaremos un enlace
+            para restablecer tu contraseña.
+        </p>
+
+        <div class="alert alert-success" th:if="${enviado}">
+            Si el correo está registrado, generamos un enlace de recuperación
+            válido por 30 minutos.
+        </div>
+
+        <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+        <div class="auth-enlace" th:if="${enlace}">
+            <span>Enlace de demostración (normalmente se envía por correo):</span>
+            <a th:href="${enlace}">Restablecer mi contraseña</a>
+        </div>
+
+        <form th:action="@{/recuperar}" method="post">
+
+            <div class="form-field">
+                <label for="email">Correo electrónico</label>
+                <input class="form-control"
+                       type="email"
+                       id="email"
+                       name="email"
+                       th:value="${email}"
+                       placeholder="correo@ejemplo.com"
+                       autocomplete="email"
+                       required>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                Enviar enlace de recuperación
+            </button>
+
+        </form>
+
+        <div class="auth-links">
+            <a th:href="@{/login}">Volver al inicio de sesión</a>
+        </div>
+
+    </main>
+
+</body>
+
+</html>

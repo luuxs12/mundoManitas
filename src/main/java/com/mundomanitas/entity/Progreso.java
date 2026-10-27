@@ -31,6 +31,13 @@ public class Progreso {
     @Column(name = "porcentaje", precision = 5, scale = 2)
     private BigDecimal porcentaje;
 
+    @PrePersist
+    public void prePersist() {
+        if (fechaInicio == null) {
+            fechaInicio = LocalDateTime.now();
+        }
+    }
+
     public Integer getIdProgreso() {
         return idProgreso;
     }

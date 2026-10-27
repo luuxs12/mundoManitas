@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Mundo Manitas ###
+logs/
+.env
+*.log
+
+# Configuración local con credenciales reales.
+# Usa application-dev.example.properties como plantilla.
+src/main/resources/application-dev.properties

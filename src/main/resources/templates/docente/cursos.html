@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mis cursos | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body class="app-body">
+
+    <div class="app-layout">
+
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <p class="page-location">Docencia</p>
+                    <h2>Mis cursos</h2>
+                </div>
+
+                <div class="topbar-user">
+
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">D</div>
+
+                    <div class="user-info">
+                        <strong th:text="${nombre}">Docente Mundo Manitas</strong>
+                        <span th:text="${tipo}">docente</span>
+                    </div>
+
+                </div>
+
+            </header>
+
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+            <section class="page-intro">
+
+                <div>
+                    <span class="section-label">PANEL DOCENTE</span>
+                    <h1>Cursos a tu cargo</h1>
+                    <p>
+                        Solo ves los cursos que tienes asignados. Revisa el avance de tus alumnos
+                        y actualiza el contenido de cada módulo.
+                    </p>
+                </div>
+
+                <div class="page-intro-actions">
+                    <a class="btn btn-secondary" th:href="@{/cursos}">Ver catálogo</a>
+                    <a class="btn btn-primary" th:href="@{/admin/contenido}">
+                        Gestionar contenido
+                    </a>
+                </div>
+
+            </section>
+
+            <div th:replace="~{fragments/panel/kpi :: grid(${kpis})}"></div>
+
+            <section class="panel-grid" style="margin-top: 18px;">
+
+                <section class="panel-card card">
+
+                    <div class="card-heading">
+                        <div>
+                            <span>CURSOS ASIGNADOS</span>
+                            <h3>Avance por curso</h3>
+                        </div>
+                        <span class="badge badge-muted" th:text="|${#lists.size(cursos)} cursos|">0 cursos</span>
+                    </div>
+
+                    <div class="course-rows" th:if="${!#lists.isEmpty(cursos)}">
+
+                        <article class="course-row" th:each="curso : ${cursos}">
+
+                            <div class="course-row-main">
+
+                                <div class="course-row-icon"
+                                    th:text="${#strings.substring(curso.titulo, 0, 1)}">C</div>
+
+                                <div class="course-row-copy">
+                                    <strong th:text="${curso.titulo}">Curso</strong>
+                                    <span>
+                                        <span th:text="${curso.nivel}">básico</span>
+                                        · <span th:text="|${curso.videos} videos|">0 videos</span>
+                                        · <span th:text="|${curso.ejercicios} ejercicios|">0 ejercicios</span>
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="course-row-stats">
+
+                                <div class="row-stat">
+                                    <strong th:text="${curso.inscritos}">0</strong>
+                                    <span>Alumnos</span>
+                                </div>
+
+                                <div class="row-stat">
+                                    <strong th:text="|${curso.promedio}%|">0%</strong>
+                                    <span>Promedio</span>
+                                </div>
+
+                                <div class="row-stat">
+                                    <strong th:text="${curso.completados}">0</strong>
+                                    <span>Completaron</span>
+                                </div>
+
+                                <a class="btn btn-secondary btn-sm"
+                                    th:href="@{/docente/cursos/{id}(id=${curso.idModulo})}">
+                                    Ver alumnos
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(cursos)}">
+                        <strong>Aún no tienes cursos asignados.</strong>
+                        <span>
+                            Cuando la administración te asigne un curso aparecerá aquí con sus
+                            alumnos y métricas de avance.
+                        </span>
+                    </div>
+
+                </section>
+
+                <aside class="panel-stack">
+
+                    <section class="panel-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>ACCIONES RÁPIDAS</span>
+                                <h3>Gestión</h3>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions">
+
+                            <a class="quick-action" th:href="@{/admin/contenido}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
+                                    <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
+                                </svg>
+                                <div>
+                                    <strong>Editar contenido</strong>
+                                    <span>Videos y ejercicios de tus cursos</span>
+                                </div>
+                            </a>
+
+                            <a class="quick-action" th:href="@{/perfil}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="8" r="4"></circle>
+                                    <path d="M4 21a8 8 0 0 1 16 0"></path>
+                                </svg>
+                                <div>
+                                    <strong>Mi perfil</strong>
+                                    <span>Datos de tu cuenta</span>
+                                </div>
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                    <section class="panel-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>ALCANCE</span>
+                                <h3>Qué puedes hacer</h3>
+                            </div>
+                        </div>
+
+                        <div class="fact-list">
+                            <div>
+                                <span>Contenido</span>
+                                <strong>Crear y eliminar</strong>
+                            </div>
+                            <div>
+                                <span>Alumnos</span>
+                                <strong>Solo lectura</strong>
+                            </div>
+                            <div>
+                                <span>Cursos</span>
+                                <strong>Solo los asignados</strong>
+                            </div>
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

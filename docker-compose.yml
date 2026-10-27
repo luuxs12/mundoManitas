@@ -1,0 +1,47 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: mundo-manitas-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mundo_manitas}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-mundo_manitas}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: mundo-manitas-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-mundo_manitas}
+      DB_USERNAME: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      REMEMBER_ME_KEY: ${REMEMBER_ME_KEY:-mundo-manitas-remember-key}
+      JWT_SECRET: ${JWT_SECRET:-mundo-manitas-jwt-secret-key-super-segura-2026-cambiame}
+      JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-120}
+      SECURITY_MAX_INTENTOS: ${SECURITY_MAX_INTENTOS:-5}
+      SECURITY_BLOQUEO_MINUTOS: ${SECURITY_BLOQUEO_MINUTOS:-15}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      SSL_ENABLED: ${SSL_ENABLED:-false}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    volumes:
+      - app-logs:/app/logs
+
+volumes:
+  postgres-data:
+  app-logs:

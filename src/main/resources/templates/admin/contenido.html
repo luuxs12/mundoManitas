@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contenido | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+</head>
+
+<body class="app-body">
+
+    <div class="app-layout">
+
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="page-location">Gestión académica</p>
+                    <h2>Contenido</h2>
+                </div>
+
+                <div class="topbar-user">
+                    <div class="user-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">A</div>
+
+                    <div class="user-info">
+                        <strong th:text="${#authentication.name}">docente@mundomanitas.com</strong>
+                        <span th:text="${soloMisCursos ? 'Docente' : 'Administración'}">Gestión académica</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+            <div class="alert alert-info" th:if="${soloMisCursos}">
+                Ves únicamente los cursos asignados a tu cuenta. Puedes crear y eliminar
+                videos y ejercicios de esos módulos.
+            </div>
+
+            <section class="page-intro">
+                <div>
+                    <span class="section-label">GESTIÓN ACADÉMICA</span>
+                    <h1>Módulos, videos y ejercicios</h1>
+                    <p>
+                        <span th:if="${soloMisCursos}">Organiza el contenido de tus cursos asignados.</span>
+                        <span th:unless="${soloMisCursos}">Crea y organiza el contenido que verán los estudiantes.</span>
+                    </p>
+                </div>
+            </section>
+
+            <section class="card panel-card" style="margin-bottom: 18px;">
+                <div class="card-heading">
+                    <div>
+                        <span>NUEVO MÓDULO</span>
+                        <h3>Crear módulo</h3>
+                    </div>
+                </div>
+
+                <form th:action="@{/admin/modulos}" method="post">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="titulo">Título</label>
+                            <input class="form-control" id="titulo" name="titulo" required maxlength="100">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="nivel">Nivel</label>
+                            <select class="form-control" id="nivel" name="nivel">
+                                <option value="basico">Básico</option>
+                                <option value="intermedio">Intermedio</option>
+                                <option value="avanzado">Avanzado</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="orden">Orden (opcional)</label>
+                            <input class="form-control" type="number" id="orden" name="orden" min="1">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="descripcion">Descripción</label>
+                            <input class="form-control" id="descripcion" name="descripcion" maxlength="255">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;">
+                        Crear módulo
+                    </button>
+                </form>
+            </section>
+
+            <section class="panel-grid">
+
+                <section class="panel-card card">
+                    <div class="card-heading">
+                        <div>
+                            <span>MÓDULOS</span>
+                            <h3 th:text="${soloMisCursos ? 'Mis cursos' : 'Catálogo'}">Catálogo</h3>
+                        </div>
+                        <span class="badge badge-muted" th:text="|${#lists.size(modulos)} módulos|">0 módulos</span>
+                    </div>
+
+                    <div class="table-wrapper" th:if="${!#lists.isEmpty(modulos)}">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Título</th>
+                                    <th>Nivel</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr th:each="modulo : ${modulos}">
+                                    <td th:text="${modulo.orden}">1</td>
+                                    <td>
+                                        <a th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}"
+                                            th:text="${modulo.titulo}">Módulo</a>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-muted"
+                                            th:text="${#strings.capitalize(modulo.nivel)}">Básico</span>
+                                    </td>
+                                    <td>
+                                        <form class="inline-form"
+                                            th:action="@{/admin/modulos/{id}/eliminar(id=${modulo.idModulo})}"
+                                            method="post">
+                                            <button class="btn btn-secondary btn-sm" type="submit">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(modulos)}">
+                        <strong>No hay módulos disponibles.</strong>
+                        <span th:if="${soloMisCursos}">La administración aún no te ha asignado cursos.</span>
+                        <span th:unless="${soloMisCursos}">Crea el primer módulo con el formulario de arriba.</span>
+                    </div>
+                </section>
+
+                <aside class="panel-stack">
+
+                    <section class="panel-card card" th:if="${idModulo != null}">
+                        <div class="card-heading">
+                            <div>
+                                <span>CONTENIDO DEL MÓDULO</span>
+                                <h3>Videos</h3>
+                            </div>
+                        </div>
+
+                        <div class="user-rows" th:if="${videos != null and !#lists.isEmpty(videos)}">
+                            <div class="user-row" th:each="video : ${videos}">
+                                <div class="user-row-copy">
+                                    <strong th:text="${video.titulo}">Video</strong>
+                                    <span th:text="${video.url}">https://...</span>
+                                </div>
+                                <form class="inline-form"
+                                    th:action="@{/admin/videos/{id}/eliminar(id=${video.idVideo})}"
+                                    method="post">
+                                    <input type="hidden" name="idModulo" th:value="${idModulo}">
+                                    <button class="btn btn-secondary btn-sm" type="submit">Quitar</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-empty" th:if="${videos == null or #lists.isEmpty(videos)}">
+                            Sin videos registrados.
+                        </div>
+                    </section>
+
+                    <section class="panel-card card" th:if="${idModulo != null}">
+                        <div class="card-heading">
+                            <div>
+                                <span>CONTENIDO DEL MÓDULO</span>
+                                <h3>Ejercicios</h3>
+                            </div>
+                        </div>
+
+                        <div class="user-rows" th:if="${ejercicios != null and !#lists.isEmpty(ejercicios)}">
+                            <div class="user-row" th:each="ejercicio : ${ejercicios}">
+                                <div class="user-row-copy">
+                                    <strong th:text="${ejercicio.titulo}">Ejercicio</strong>
+                                    <span th:text="${ejercicio.tipo}">cuestionario</span>
+                                </div>
+                                <form class="inline-form"
+                                    th:action="@{/admin/ejercicios/{id}/eliminar(id=${ejercicio.idEjercicio})}"
+                                    method="post">
+                                    <input type="hidden" name="idModulo" th:value="${idModulo}">
+                                    <button class="btn btn-secondary btn-sm" type="submit">Quitar</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-empty" th:if="${ejercicios == null or #lists.isEmpty(ejercicios)}">
+                            Sin ejercicios registrados.
+                        </div>
+                    </section>
+
+                </aside>
+
+            </section>
+
+            <section class="card panel-card" th:if="${idModulo != null}" style="margin-top: 18px;">
+                <div class="card-heading">
+                    <div>
+                        <span>AGREGAR CONTENIDO</span>
+                        <h3>Nuevo video o ejercicio</h3>
+                    </div>
+                </div>
+
+                <form th:action="@{/admin/videos}" method="post" style="margin-bottom: 26px;">
+                    <input type="hidden" name="idModulo" th:value="${idModulo}">
+
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Título del video</label>
+                            <input class="form-control" name="titulo" required maxlength="100">
+                        </div>
+
+                        <div class="form-field">
+                            <label>URL</label>
+                            <input class="form-control" name="url" required maxlength="255">
+                        </div>
+
+                        <div class="form-field">
+                            <label>Duración (segundos)</label>
+                            <input class="form-control" type="number" name="duracion" min="0">
+                        </div>
+
+                        <div class="form-field">
+                            <label>Orden (opcional)</label>
+                            <input class="form-control" type="number" name="orden" min="1">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;">
+                        Agregar video
+                    </button>
+                </form>
+
+                <form th:action="@{/admin/ejercicios}" method="post">
+                    <input type="hidden" name="idModulo" th:value="${idModulo}">
+
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label>Título del ejercicio</label>
+                            <input class="form-control" name="titulo" required maxlength="100">
+                        </div>
+
+                        <div class="form-field">
+                            <label>Tipo</label>
+                            <select class="form-control" name="tipo">
+                                <option value="cuestionario">Cuestionario</option>
+                                <option value="completar">Completar</option>
+                                <option value="abierta">Respuesta abierta</option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label>Contenido (JSON)</label>
+                            <textarea class="form-control" name="contenido" rows="3"
+                                placeholder='{"pregunta":"...","opciones":["a","b"]}'></textarea>
+                        </div>
+
+                        <div class="form-field">
+                            <label>Respuesta correcta (JSON)</label>
+                            <textarea class="form-control" name="respuestaCorrecta" rows="3"
+                                placeholder='{"respuesta":"..."}'></textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;">
+                        Agregar ejercicio
+                    </button>
+                </form>
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

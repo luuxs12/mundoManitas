@@ -25,7 +25,7 @@ public class Rol {
     @Column(name = "activo", nullable = false)
     private boolean activo = true;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rol_modulo",
         joinColumns = @JoinColumn(name = "idRol"),

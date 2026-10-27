@@ -41,26 +41,22 @@
 
             </header>
 
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
             <section class="profile-layout">
 
                 <aside class="profile-card card">
 
                     <div class="profile-avatar-large" th:text="${#strings.substring(nombre, 0, 1)}">A</div>
 
-                    <h2 th:text="${nombre}">
-                        Alumno Mundo Manitas
-                    </h2>
+                    <h2 th:text="${nombre}">Alumno Mundo Manitas</h2>
 
-                    <p th:text="${correo}">
-                        alumno@mundomanitas.com
-                    </p>
+                    <p th:text="${correo}">alumno@mundomanitas.com</p>
 
-                    <span class="profile-role" th:text="${tipo}">
-                        estudiante
-                    </span>
+                    <span class="profile-role" th:text="${tipo}">estudiante</span>
 
                     <div class="profile-stats" th:if="${esEstudiante}">
-
                         <div>
                             <strong th:text="${totalModulos}">0</strong>
                             <span>Módulos</span>
@@ -75,57 +71,140 @@
                             <strong th:text="|${progresoGeneral}%|">0%</strong>
                             <span>Progreso</span>
                         </div>
+                    </div>
 
+                    <div class="profile-summary">
+                        <div>
+                            <span>Correo</span>
+                            <strong th:text="${correo}">correo@ejemplo.com</strong>
+                        </div>
+                        <div>
+                            <span>Rol</span>
+                            <strong th:text="${tipo}">estudiante</strong>
+                        </div>
                     </div>
 
                 </aside>
 
-                <section class="profile-form-card card">
+                <section class="profile-forms">
 
-                    <div class="card-heading">
+                    <section class="profile-form-card card">
 
-                        <div>
-                            <span>INFORMACIÓN PERSONAL</span>
-                            <h3>Datos de mi perfil</h3>
+                        <div class="card-heading">
+                            <div>
+                                <span>INFORMACIÓN PERSONAL</span>
+                                <h3>Editar mis datos</h3>
+                            </div>
                         </div>
 
-                    </div>
+                        <form th:action="@{/perfil}" th:object="${perfilForm}" method="post">
 
-                    <div class="profile-form-grid">
+                            <div class="profile-form-grid">
 
-                        <div class="form-field profile-field full">
-                            <label for="nombre">Nombre completo</label>
-                            <input class="form-control" type="text" id="nombre" th:value="${nombre}" readonly>
+                                <div class="form-field profile-field full">
+                                    <label for="nombre">Nombre completo</label>
+                                    <input class="form-control" type="text" id="nombre" th:field="*{nombre}"
+                                        maxlength="100" required>
+                                </div>
+
+                                <div class="form-field profile-field full">
+                                    <label for="correo">Correo electrónico</label>
+                                    <input class="form-control" type="email" id="correo" th:value="${correo}"
+                                        readonly>
+                                    <small>El correo identifica tu cuenta y no se puede cambiar desde aquí.</small>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="tipo">Tipo de usuario</label>
+                                    <input class="form-control profile-capitalize" type="text" id="tipo"
+                                        th:value="${tipo}" readonly>
+                                </div>
+
+                                <div class="form-field" th:if="${esEstudiante}">
+                                    <label for="grado">Grado</label>
+                                    <input class="form-control" type="text" id="grado" th:field="*{grado}"
+                                        maxlength="20" placeholder="Ej. Secundaria">
+                                </div>
+
+                                <div class="form-field" th:if="${esEstudiante}">
+                                    <label for="edad">Edad</label>
+                                    <input class="form-control" type="number" id="edad" th:field="*{edad}" min="3"
+                                        max="120" placeholder="15">
+                                </div>
+
+                                <div class="form-field" th:if="${esEstudiante}">
+                                    <label for="nivelEstudio">Nivel de estudio</label>
+                                    <select class="form-control" id="nivelEstudio" th:field="*{nivelEstudio}">
+                                        <option value="">Selecciona un nivel</option>
+                                        <option value="Principiante">Principiante</option>
+                                        <option value="Intermedio">Intermedio</option>
+                                        <option value="Avanzado">Avanzado</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="profile-actions">
+                                <span class="profile-note">
+                                    Los cambios se aplican de inmediato a tu cuenta.
+                                </span>
+                                <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                            </div>
+
+                        </form>
+
+                    </section>
+
+                    <section class="profile-form-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>SEGURIDAD</span>
+                                <h3>Cambiar contraseña</h3>
+                            </div>
                         </div>
 
-                        <div class="form-field profile-field full">
-                            <label for="correo">Correo electrónico</label>
-                            <input class="form-control" type="email" id="correo" th:value="${correo}" readonly>
-                        </div>
+                        <form th:action="@{/perfil/contrasena}" th:object="${contrasenaForm}" method="post">
 
-                        <div class="form-field">
-                            <label for="tipo">Tipo de usuario</label>
-                            <input class="form-control profile-capitalize" type="text" id="tipo" th:value="${tipo}"
-                                readonly>
-                        </div>
+                            <div class="profile-form-grid">
 
-                        <div class="form-field" th:if="${esEstudiante and estudiante != null}">
-                            <label for="grado">Grado</label>
-                            <input class="form-control" type="text" id="grado" th:value="${estudiante.grado}" readonly>
-                        </div>
+                                <div class="form-field profile-field full">
+                                    <label for="actual">Contraseña actual</label>
+                                    <input class="form-control" type="password" id="actual" th:field="*{actual}"
+                                        autocomplete="current-password" required>
+                                </div>
 
-                        <div class="form-field" th:if="${esEstudiante and estudiante != null}">
-                            <label for="edad">Edad</label>
-                            <input class="form-control" type="text" id="edad" th:value="${estudiante.edad}" readonly>
-                        </div>
+                                <div class="form-field">
+                                    <label for="nueva">Nueva contraseña</label>
+                                    <input class="form-control" type="password" id="nueva" th:field="*{nueva}"
+                                        autocomplete="new-password" required>
+                                </div>
 
-                        <div class="form-field" th:if="${esEstudiante and estudiante != null}">
-                            <label for="nivel">Nivel de estudio</label>
-                            <input class="form-control" type="text" id="nivel" th:value="${estudiante.nivelEstudio}"
-                                readonly>
-                        </div>
+                                <div class="form-field">
+                                    <label for="confirmar">Confirmar nueva contraseña</label>
+                                    <input class="form-control" type="password" id="confirmar"
+                                        th:field="*{confirmar}" autocomplete="new-password" required>
+                                </div>
 
-                    </div>
+                                <div class="profile-field full">
+                                    <small class="profile-note">
+                                        Debe tener al menos 8 caracteres, una mayúscula, una minúscula,
+                                        un número y un carácter especial.
+                                    </small>
+                                </div>
+
+                            </div>
+
+                            <div class="profile-actions">
+                                <span class="profile-note">
+                                    Al cambiarla se reinician los intentos fallidos de acceso.
+                                </span>
+                                <button class="btn btn-secondary" type="submit">Actualizar contraseña</button>
+                            </div>
+
+                        </form>
+
+                    </section>
 
                 </section>
 

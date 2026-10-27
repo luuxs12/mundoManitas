@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Usuarios | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/cursos.css}">
+</head>
+
+<body class="app-body">
+
+    <div class="app-layout">
+
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <p class="page-location">Administración</p>
+                    <h2>Usuarios</h2>
+                </div>
+
+                <div class="topbar-user">
+                    <div class="user-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">A</div>
+
+                    <div class="user-info">
+                        <strong th:text="${#authentication.name}">admin@mundomanitas.com</strong>
+                        <span>Administración</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+            <section class="page-intro">
+                <div>
+                    <span class="section-label">GESTIÓN</span>
+                    <h1>Cuentas de la plataforma</h1>
+                    <p>Crea usuarios, asigna roles y controla el acceso a Mundo Manitas.</p>
+                </div>
+            </section>
+
+            <section class="card" style="padding: 24px; margin-bottom: 26px;">
+                <div class="card-heading">
+                    <div>
+                        <span>NUEVO USUARIO</span>
+                        <h3>Registrar una cuenta</h3>
+                    </div>
+                </div>
+
+                <form th:action="@{/admin/usuarios}" method="post">
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="nombre">Nombre completo</label>
+                            <input class="form-control" id="nombre" name="nombre" required maxlength="100">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email">Correo electrónico</label>
+                            <input class="form-control" type="email" id="email" name="email" required maxlength="100">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="contrasena">Contraseña inicial</label>
+                            <input class="form-control" type="password" id="contrasena" name="contrasena"
+                                   minlength="8" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="rol">Rol</label>
+                            <select class="form-control" id="rol" name="rol" required>
+                                <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="activo">Estado</label>
+                            <select class="form-control" id="activo" name="activo">
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit" style="margin-top: 18px;">
+                        Crear usuario
+                    </button>
+                </form>
+
+                <p class="auth-hint">
+                    La contraseña debe tener al menos 8 caracteres, con mayúscula,
+                    minúscula, número y carácter especial.
+                </p>
+            </section>
+
+            <form class="toolbar" method="get" th:action="@{/admin/usuarios}">
+                <input class="form-control" type="search" name="q" th:value="${q}"
+                       placeholder="Buscar por nombre o correo">
+                <button class="btn btn-primary" type="submit">Buscar</button>
+                <a class="btn btn-secondary" th:href="@{/admin/usuarios}"
+                   th:if="${q != null and !q.isEmpty()}">Limpiar</a>
+            </form>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="usuario : ${usuarios}">
+                            <td th:text="${usuario.nombre}">Nombre</td>
+                            <td th:text="${usuario.email}">correo@ejemplo.com</td>
+                            <td th:text="${usuario.rol}">ESTUDIANTE</td>
+                            <td>
+                                <span class="badge badge-active" th:if="${usuario.activo}">Activo</span>
+                                <span class="badge badge-inactive" th:unless="${usuario.activo}">Inactivo</span>
+                            </td>
+                            <td>
+                                <div class="inline-form">
+                                    <form th:action="@{/admin/usuarios/{id}/estado(id=${usuario.id})}" method="post">
+                                        <input type="hidden" name="activo" th:value="${!usuario.activo}">
+                                        <button class="btn btn-secondary" type="submit"
+                                                th:text="${usuario.activo ? 'Desactivar' : 'Activar'}">
+                                            Desactivar
+                                        </button>
+                                    </form>
+
+                                    <form th:action="@{/admin/usuarios/{id}/eliminar(id=${usuario.id})}" method="post">
+                                        <button class="btn btn-secondary" type="submit">Eliminar</button>
+                                    </form>
+                                </div>
+
+                                <details style="margin-top: 10px;">
+                                    <summary>Editar</summary>
+
+                                    <form th:action="@{/admin/usuarios/{id}(id=${usuario.id})}" method="post"
+                                          style="margin-top: 12px;">
+                                        <div class="form-grid">
+                                            <div class="form-field">
+                                                <label>Nombre</label>
+                                                <input class="form-control" name="nombre"
+                                                       th:value="${usuario.nombre}" required>
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label>Correo</label>
+                                                <input class="form-control" type="email" name="email"
+                                                       th:value="${usuario.email}" required>
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label>Nueva contraseña (opcional)</label>
+                                                <input class="form-control" type="password" name="contrasena">
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label>Rol</label>
+                                                <select class="form-control" name="rol">
+                                                    <option th:each="rol : ${roles}"
+                                                            th:value="${rol}"
+                                                            th:text="${rol}"
+                                                            th:selected="${rol == usuario.rol}"></option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-field">
+                                                <label>Estado</label>
+                                                <select class="form-control" name="activo">
+                                                    <option value="true" th:selected="${usuario.activo}">Activo</option>
+                                                    <option value="false" th:selected="${!usuario.activo}">Inactivo</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <button class="btn btn-primary" type="submit"
+                                                style="margin-top: 14px;">
+                                            Guardar cambios
+                                        </button>
+                                    </form>
+                                </details>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav class="pagination" th:if="${totalPaginas > 1}">
+                <a th:if="${pagina > 0}" th:href="@{/admin/usuarios(q=${q}, page=${pagina - 1})}">Anterior</a>
+
+                <th:block th:each="numero : ${#numbers.sequence(0, totalPaginas - 1)}">
+                    <span th:if="${numero == pagina}" class="active" th:text="${numero + 1}">1</span>
+                    <a th:unless="${numero == pagina}"
+                       th:href="@{/admin/usuarios(q=${q}, page=${numero})}"
+                       th:text="${numero + 1}">2</a>
+                </th:block>
+
+                <a th:if="${pagina < totalPaginas - 1}"
+                   th:href="@{/admin/usuarios(q=${q}, page=${pagina + 1})}">Siguiente</a>
+            </nav>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

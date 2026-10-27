@@ -20,10 +20,10 @@ public class Ejercicio {
     @Column(name = "tipo", nullable = false)
     private String tipo;
 
-    @Column(name = "contenido", columnDefinition = "JSON")
+    @Column(name = "contenido", columnDefinition = "TEXT")
     private String contenido;
 
-    @Column(name = "respuestaCorrecta", columnDefinition = "JSON")
+    @Column(name = "respuestaCorrecta", columnDefinition = "TEXT")
     private String respuestaCorrecta;
 
     public Integer getIdEjercicio() {

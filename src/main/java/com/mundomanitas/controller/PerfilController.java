@@ -1,87 +1,95 @@
 package com.mundomanitas.controller;
 
-import com.mundomanitas.entity.Estudiante;
-import com.mundomanitas.entity.Progreso;
-import com.mundomanitas.entity.Usuario;
-import com.mundomanitas.repository.EstudianteRepository;
-import com.mundomanitas.repository.ProgresoRepository;
-import com.mundomanitas.repository.UsuarioRepository;
+import com.mundomanitas.dto.form.ContrasenaForm;
+import com.mundomanitas.dto.form.PerfilForm;
+import com.mundomanitas.dto.view.PerfilView;
+import com.mundomanitas.exception.ReglaNegocioException;
+import com.mundomanitas.service.PerfilService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import java.math.BigDecimal;
-import java.util.List;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class PerfilController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final EstudianteRepository estudianteRepository;
-    private final ProgresoRepository progresoRepository;
+    private final PerfilService perfilService;
 
-    public PerfilController(
-        UsuarioRepository usuarioRepository,
-        EstudianteRepository estudianteRepository,
-        ProgresoRepository progresoRepository
-    ) {
-        this.usuarioRepository = usuarioRepository;
-        this.estudianteRepository = estudianteRepository;
-        this.progresoRepository = progresoRepository;
+    public PerfilController(PerfilService perfilService) {
+        this.perfilService = perfilService;
     }
 
     @GetMapping("/perfil")
     public String perfil(Authentication authentication, Model model) {
+        PerfilView perfil = perfilService.cargar(authentication.getName());
 
-        Usuario usuario = usuarioRepository
-            .findByEmailIgnoreCase(authentication.getName())
-            .orElseThrow();
+        model.addAttribute("nombre", perfil.getNombre());
+        model.addAttribute("correo", perfil.getCorreo());
+        model.addAttribute("tipo", perfil.getTipo());
+        model.addAttribute("esEstudiante", perfil.isEsEstudiante());
+        model.addAttribute("estudiante", perfil.getEstudiante());
+        model.addAttribute("totalModulos", perfil.getTotalModulos());
+        model.addAttribute("completados", perfil.getCompletados());
+        model.addAttribute("progresoGeneral", perfil.getProgresoGeneral());
 
-        boolean esEstudiante =
-            "estudiante".equalsIgnoreCase(usuario.getTipo());
+        PerfilForm form = new PerfilForm();
+        form.setNombre(perfil.getNombre());
 
-        model.addAttribute("nombre", usuario.getNombre());
-        model.addAttribute("correo", usuario.getEmail());
-        model.addAttribute("tipo", usuario.getTipo());
-        model.addAttribute("esEstudiante", esEstudiante);
-
-        if (esEstudiante) {
-
-            Estudiante estudiante = estudianteRepository
-                .findById(usuario.getIdUsuario())
-                .orElse(null);
-
-            List<Progreso> progresos =
-                progresoRepository.findByIdEstudiante(
-                    usuario.getIdUsuario()
-                );
-
-            long completados = progresos.stream()
-                .filter(p -> porcentaje(p).compareTo(new BigDecimal("100")) >= 0)
-                .count();
-
-            int progresoGeneral = (int) Math.round(
-                progresos.stream()
-                    .map(Progreso::getPorcentaje)
-                    .filter(p -> p != null)
-                    .mapToDouble(BigDecimal::doubleValue)
-                    .average()
-                    .orElse(0)
-            );
-
-            model.addAttribute("estudiante", estudiante);
-            model.addAttribute("totalModulos", progresos.size());
-            model.addAttribute("completados", completados);
-            model.addAttribute("progresoGeneral", progresoGeneral);
+        if (perfil.getEstudiante() != null) {
+            form.setGrado(perfil.getEstudiante().getGrado());
+            form.setEdad(perfil.getEstudiante().getEdad());
+            form.setNivelEstudio(perfil.getEstudiante().getNivelEstudio());
         }
+
+        model.addAttribute("perfilForm", form);
+        model.addAttribute("contrasenaForm", new ContrasenaForm());
 
         return "perfil";
     }
 
-    private BigDecimal porcentaje(Progreso progreso) {
-        return progreso.getPorcentaje() == null
-            ? BigDecimal.ZERO
-            : progreso.getPorcentaje();
+    @PostMapping("/perfil")
+    public String actualizar(
+        Authentication authentication,
+        @ModelAttribute PerfilForm form,
+        RedirectAttributes flash
+    ) {
+        try {
+            perfilService.actualizar(
+                authentication.getName(),
+                form.getNombre(),
+                form.getGrado(),
+                form.getEdad(),
+                form.getNivelEstudio()
+            );
+            flash.addFlashAttribute("exito", "Tus datos se actualizaron correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/perfil";
+    }
+
+    @PostMapping("/perfil/contrasena")
+    public String cambiarContrasena(
+        Authentication authentication,
+        @ModelAttribute ContrasenaForm form,
+        RedirectAttributes flash
+    ) {
+        try {
+            perfilService.cambiarContrasena(
+                authentication.getName(),
+                form.getActual(),
+                form.getNueva(),
+                form.getConfirmar()
+            );
+            flash.addFlashAttribute("exito", "Tu contraseña se actualizó correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/perfil";
     }
 }

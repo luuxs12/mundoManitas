@@ -8,4 +8,8 @@ import java.util.List;
 public interface EjercicioRepository extends JpaRepository<Ejercicio, Integer> {
 
     List<Ejercicio> findByIdModuloOrderByIdEjercicioAsc(Integer idModulo);
+
+    long countByIdModulo(Integer idModulo);
+
+    void deleteByIdModulo(Integer idModulo);
 }

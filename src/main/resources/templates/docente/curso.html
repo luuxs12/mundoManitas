@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${modulo.titulo + ' · Docente | Mundo Manitas'}">Curso | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body class="app-body">
+
+    <div class="app-layout">
+
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <p class="page-location">Docencia / Mis cursos</p>
+                    <h2 th:text="${modulo.titulo}">Curso</h2>
+                </div>
+
+                <div class="topbar-user">
+
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">D</div>
+
+                    <div class="user-info">
+                        <strong th:text="${nombre}">Docente Mundo Manitas</strong>
+                        <span th:text="${tipo}">docente</span>
+                    </div>
+
+                </div>
+
+            </header>
+
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
+            <section class="page-intro">
+
+                <div>
+                    <span class="section-label">CURSO ASIGNADO</span>
+                    <h1 th:text="${modulo.titulo}">Curso</h1>
+                    <p th:text="${modulo.descripcion}">Descripción del curso.</p>
+                </div>
+
+                <div class="page-intro-actions">
+                    <a class="btn btn-secondary" th:href="@{/docente/cursos}">Volver</a>
+                    <a class="btn btn-primary"
+                        th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}">
+                        Editar contenido
+                    </a>
+                </div>
+
+            </section>
+
+            <section class="stats-grid">
+
+                <article class="stat-card card">
+                    <div class="stat-icon purple">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="9" cy="8" r="3.5"></circle>
+                            <path d="M3 20a6 6 0 0 1 12 0"></path>
+                            <path d="M17 8h4"></path>
+                            <path d="M19 6v4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span>Alumnos inscritos</span>
+                        <strong th:text="${resumen.inscritos}">0</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card card">
+                    <div class="stat-icon green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 19V9"></path>
+                            <path d="M10 19V5"></path>
+                            <path d="M16 19v-7"></path>
+                            <path d="M22 19V3"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span>Progreso promedio</span>
+                        <strong th:text="|${resumen.promedio}%|">0%</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card card">
+                    <div class="stat-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="m8 12 2.5 2.5L16 9"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span>Completaron</span>
+                        <strong th:text="${completaron}">0</strong>
+                    </div>
+                </article>
+
+                <article class="stat-card card">
+                    <div class="stat-icon orange">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <span>Sin iniciar</span>
+                        <strong th:text="${sinIniciar}">0</strong>
+                    </div>
+                </article>
+
+            </section>
+
+            <section class="panel-grid" style="margin-top: 18px;">
+
+                <section class="panel-card card">
+
+                    <div class="card-heading">
+                        <div>
+                            <span>ALUMNOS</span>
+                            <h3>Avance por estudiante</h3>
+                        </div>
+                        <span class="badge badge-muted" th:text="|${#lists.size(alumnos)} inscritos|">0 inscritos</span>
+                    </div>
+
+                    <div class="student-table-wrap" th:if="${!#lists.isEmpty(alumnos)}">
+                        <table class="student-table">
+                            <thead>
+                                <tr>
+                                    <th>Alumno</th>
+                                    <th>Progreso</th>
+                                    <th>Ejercicios</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="alumno : ${alumnos}">
+                                    <td>
+                                        <div class="student-cell">
+                                            <span class="avatar-initial" th:text="${alumno.inicial}">A</span>
+                                            <div>
+                                                <strong th:text="${alumno.nombre}">Alumno</strong>
+                                                <span th:text="${alumno.email}">correo@ejemplo.com</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="progress-cell">
+                                        <div class="progress-cell-row">
+                                            <div class="progress-bar">
+                                                <span th:style="|width: ${alumno.porcentaje}%;|"></span>
+                                            </div>
+                                            <small th:text="|${alumno.porcentaje}%|">0%</small>
+                                        </div>
+                                    </td>
+                                    <td th:text="${alumno.ejerciciosCorrectos}">0</td>
+                                    <td>
+                                        <span class="badge"
+                                            th:classappend="|badge-${alumno.estadoClase}|"
+                                            th:text="${alumno.estado}">Estado</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(alumnos)}">
+                        <strong>Todavía no hay alumnos inscritos.</strong>
+                        <span>Cuando un estudiante se inscriba al curso aparecerá en esta lista con su avance.</span>
+                    </div>
+
+                </section>
+
+                <aside class="panel-stack">
+
+                    <section class="panel-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>RESUMEN</span>
+                                <h3>Datos del curso</h3>
+                            </div>
+                        </div>
+
+                        <div class="fact-list">
+                            <div>
+                                <span>Nivel</span>
+                                <strong th:text="${#strings.capitalize(modulo.nivel)}">básico</strong>
+                            </div>
+                            <div>
+                                <span>Orden</span>
+                                <strong th:text="${modulo.orden}">1</strong>
+                            </div>
+                            <div>
+                                <span>Videos</span>
+                                <strong th:text="${resumen.videos}">0</strong>
+                            </div>
+                            <div>
+                                <span>Ejercicios</span>
+                                <strong th:text="${resumen.ejercicios}">0</strong>
+                            </div>
+                            <div>
+                                <span>Completados</span>
+                                <strong th:text="${resumen.completados}">0</strong>
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <section class="panel-card card">
+                        <div class="card-heading">
+                            <div>
+                                <span>CONTENIDO</span>
+                                <h3>Mantén el curso al día</h3>
+                            </div>
+                        </div>
+                        <p style="color: var(--muted-dark); font-size: 12.5px; line-height: 1.6;">
+                            Puedes agregar videos y ejercicios, o retirar los que ya no correspondan.
+                            Los cambios se reflejan de inmediato para los estudiantes inscritos.
+                        </p>
+                        <a class="btn btn-primary btn-full" style="margin-top: 14px;"
+                            th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}">
+                            Abrir editor
+                        </a>
+                    </section>
+
+                </aside>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

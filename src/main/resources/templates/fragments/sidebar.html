@@ -23,6 +23,14 @@
                 rutaActual == modulo.ruta
                 or
                 (modulo.ruta == '/cursos' and #strings.startsWith(rutaActual, '/cursos/'))
+                or
+                (modulo.ruta == '/docente/cursos' and #strings.startsWith(rutaActual, '/docente/'))
+                or
+                (modulo.ruta == '/admin' and rutaActual == '/admin')
+                or
+                (modulo.ruta == '/admin/usuarios' and #strings.startsWith(rutaActual, '/admin/usuarios'))
+                or
+                (modulo.ruta == '/admin/contenido' and #strings.startsWith(rutaActual, '/admin/contenido'))
             } ? ' active' : ''">
 
             <th:block th:switch="${modulo.codigo}">
@@ -40,10 +48,43 @@
                     <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
                 </svg>
 
+                <svg th:case="'DOCENTE_CURSOS'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="4" width="18" height="14" rx="2"></rect>
+                    <path d="M8 21h8"></path>
+                    <path d="M12 18v3"></path>
+                    <path d="M7 9h6"></path>
+                    <path d="M7 13h4"></path>
+                </svg>
+
+                <svg th:case="'ADMIN_PANEL'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 19V9"></path>
+                    <path d="M10 19V5"></path>
+                    <path d="M16 19v-7"></path>
+                    <path d="M22 19V3"></path>
+                </svg>
+
                 <svg th:case="'PERFIL'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="8" r="4"></circle>
                     <path d="M4 21a8 8 0 0 1 16 0"></path>
+                </svg>
+
+                <svg th:case="'ADMIN_USUARIOS'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="9" cy="8" r="3.5"></circle>
+                    <path d="M3 20a6 6 0 0 1 12 0"></path>
+                    <path d="M17 8h4"></path>
+                    <path d="M19 6v4"></path>
+                </svg>
+
+                <svg th:case="'ADMIN_CONTENIDO'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
+                    <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
+                    <path d="M7 8h1"></path>
+                    <path d="M16 12h1"></path>
                 </svg>
 
                 <svg th:case="*" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"

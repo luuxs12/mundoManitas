@@ -132,6 +132,17 @@
                     Has cerrado sesión correctamente.
                 </div>
 
+                <div class="alert alert-success" th:if="${param.restablecido}">
+                    Tu contraseña se actualizó. Ya puedes iniciar sesión.
+                </div>
+
+                <div class="alert alert-success" th:if="${param.registrado}">
+                    Tu cuenta se creó correctamente. Inicia sesión para comenzar.
+                </div>
+
+                <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+                <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
                 <form th:action="@{/login}" method="post">
 
                     <div class="form-field">
@@ -171,7 +182,7 @@
                             <span>Recordarme</span>
                         </label>
 
-                        <a href="#">¿Olvidaste tu contraseña?</a>
+                        <a th:href="@{/recuperar}">¿Olvidaste tu contraseña?</a>
 
                     </div>
 
@@ -185,6 +196,11 @@
                     </button>
 
                 </form>
+
+                <div class="login-register">
+                    ¿Aún no tienes cuenta?
+                    <a th:href="@{/registro}">Crear cuenta de estudiante</a>
+                </div>
 
                 <!-- <div class="demo-user">
 

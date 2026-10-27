@@ -1,0 +1,121 @@
+package com.mundomanitas.controller;
+
+import com.mundomanitas.dto.api.UsuarioDto;
+import com.mundomanitas.dto.api.UsuarioRequest;
+import com.mundomanitas.exception.ReglaNegocioException;
+import com.mundomanitas.service.UsuarioService;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+public class AdminUsuarioController {
+
+    private final UsuarioService usuarioService;
+
+    public AdminUsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    @GetMapping("/admin/usuarios")
+    public String usuarios(
+        @RequestParam(defaultValue = "") String q,
+        @RequestParam(defaultValue = "0") int page,
+        Model model
+    ) {
+        Page<UsuarioDto> usuarios = usuarioService.listar(q, page, 10);
+
+        model.addAttribute("usuarios", usuarios.getContent());
+        model.addAttribute("pagina", usuarios.getNumber());
+        model.addAttribute("totalPaginas", usuarios.getTotalPages());
+        model.addAttribute("totalUsuarios", usuarios.getTotalElements());
+        model.addAttribute("q", q);
+        model.addAttribute("roles", usuarioService.listarRoles());
+
+        return "admin/usuarios";
+    }
+
+    @PostMapping("/admin/usuarios")
+    public String crear(
+        @RequestParam String nombre,
+        @RequestParam String email,
+        @RequestParam(required = false) String contrasena,
+        @RequestParam String rol,
+        @RequestParam(defaultValue = "false") boolean activo,
+        RedirectAttributes flash
+    ) {
+        try {
+            usuarioService.crear(new UsuarioRequest(
+                nombre,
+                email,
+                contrasena,
+                rol,
+                activo
+            ));
+            flash.addFlashAttribute("exito", "Usuario creado correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/admin/usuarios";
+    }
+
+    @PostMapping("/admin/usuarios/{id}")
+    public String actualizar(
+        @PathVariable Integer id,
+        @RequestParam String nombre,
+        @RequestParam String email,
+        @RequestParam(required = false) String contrasena,
+        @RequestParam String rol,
+        @RequestParam(defaultValue = "false") boolean activo,
+        RedirectAttributes flash
+    ) {
+        try {
+            usuarioService.actualizar(id, new UsuarioRequest(
+                nombre,
+                email,
+                contrasena,
+                rol,
+                activo
+            ));
+            flash.addFlashAttribute("exito", "Usuario actualizado correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/admin/usuarios";
+    }
+
+    @PostMapping("/admin/usuarios/{id}/estado")
+    public String cambiarEstado(
+        @PathVariable Integer id,
+        @RequestParam boolean activo,
+        RedirectAttributes flash
+    ) {
+        usuarioService.cambiarEstado(id, activo);
+
+        flash.addFlashAttribute(
+            "exito",
+            activo ? "Usuario activado." : "Usuario desactivado."
+        );
+
+        return "redirect:/admin/usuarios";
+    }
+
+    @PostMapping("/admin/usuarios/{id}/eliminar")
+    public String eliminar(@PathVariable Integer id, RedirectAttributes flash) {
+        try {
+            usuarioService.eliminar(id);
+            flash.addFlashAttribute("exito", "Usuario eliminado.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/admin/usuarios";
+    }
+}

@@ -1,0 +1,11 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="distribucion(usuariosPorRol, totalUsuarios)" class="role-bars">
+    <div th:each="entry : ${usuariosPorRol}">
+        <div class="role-bar-head">
+            <span th:text="${#strings.capitalize(#strings.toLowerCase(entry.key))}">Rol</span>
+            <strong th:text="${entry.value}">0</strong>
+        </div>
+        <div class="role-bar-track">
+            <span th:style="|width: ${entry.value * 100 / (totalUsuarios == 0 ? 1 : totalUsuarios)}%;|"></span>
+        </div>
+    </div>
+</div>

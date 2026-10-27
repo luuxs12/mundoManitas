@@ -11,6 +11,7 @@
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/cursos.css}">
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
 </head>
 
 <body class="app-body">
@@ -41,22 +42,62 @@
 
             </header>
 
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
             <section class="page-intro">
 
                 <div>
                     <span class="section-label">FORMACIÓN</span>
                     <h1>Módulos de aprendizaje</h1>
 
-                    <p th:if="${tipo == 'estudiante'}">
-                        Revisa tus módulos y continúa avanzando desde tu progreso registrado.
+                    <p th:if="${esEstudiante and vista == 'mis'}">
+                        Estos son los cursos en los que ya estás inscrito. Continúa donde lo dejaste.
                     </p>
 
-                    <p th:if="${tipo != 'estudiante'}">
+                    <p th:if="${esEstudiante and vista == 'explorar'}">
+                        Explora el catálogo completo y inscríbete en los cursos que quieras sumar.
+                    </p>
+
+                    <p th:if="${!esEstudiante}">
                         Revisa los módulos de aprendizaje disponibles en Mundo Manitas.
                     </p>
                 </div>
 
             </section>
+
+            <nav class="section-tabs" th:if="${esEstudiante}" aria-label="Vistas de cursos">
+                <a class="section-tab" th:classappend="${vista == 'mis'} ? ' active' : ''"
+                    th:href="@{/cursos(vista='mis')}">
+                    Mis cursos
+                    <span class="count" th:text="${totalInscritos}">0</span>
+                </a>
+
+                <a class="section-tab" th:classappend="${vista == 'explorar'} ? ' active' : ''"
+                    th:href="@{/cursos(vista='explorar')}">
+                    Explorar catálogo
+                    <span class="count" th:text="${totalDisponibles}">0</span>
+                </a>
+            </nav>
+
+            <form class="toolbar" method="get" th:action="@{/cursos}">
+                <input type="hidden" name="vista" th:value="${vista}" th:if="${esEstudiante}">
+
+                <input class="form-control" type="search" name="q" th:value="${q}"
+                    placeholder="Buscar módulos por título o descripción" aria-label="Buscar módulos">
+
+                <button class="btn btn-primary" type="submit">Buscar</button>
+
+                <a class="btn btn-secondary" th:href="@{/cursos(vista=${vista})}"
+                    th:if="${q != null and !q.isEmpty()}">
+                    Limpiar
+                </a>
+
+                <a class="btn btn-secondary" th:href="@{/reportes/progreso.xlsx}"
+                    th:if="${tipo == 'docente' or tipo == 'administrador' or tipo == 'sistemas'}">
+                    Descargar reporte Excel
+                </a>
+            </form>
 
             <section class="courses-grid">
 
@@ -64,9 +105,13 @@
 
                     <div class="learning-cover" th:classappend="${curso.coverClase}">
 
-                        <span class="course-badge" th:classappend="${curso.estadoClase}" th:text="${curso.estado}"
-                            th:if="${tipo == 'estudiante'}">
+                        <span class="course-badge" th:classappend="${curso.estadoClase}"
+                            th:text="${curso.estado}" th:if="${esEstudiante and vista == 'mis'}">
                             EN PROGRESO
+                        </span>
+
+                        <span class="course-badge new" th:if="${esEstudiante and vista == 'explorar'}">
+                            DISPONIBLE
                         </span>
 
                         <strong th:text="${curso.inicial}">M</strong>
@@ -79,13 +124,13 @@
                             BÁSICO
                         </span>
 
-                        <h3 th:text="${curso.titulo}">
-                            Módulo
-                        </h3>
+                        <span class="badge badge-info" th:if="${curso.inscrito}">
+                            Inscrito
+                        </span>
 
-                        <p th:text="${curso.descripcion}">
-                            Descripción del módulo.
-                        </p>
+                        <h3 th:text="${curso.titulo}">Módulo</h3>
+
+                        <p th:text="${curso.descripcion}">Descripción del módulo.</p>
 
                         <div class="learning-data">
 
@@ -93,20 +138,15 @@
                                 Módulo <strong th:text="${curso.orden}">1</strong>
                             </span>
 
-                            <span th:text="${curso.nivel}">
-                                básico
-                            </span>
+                            <span th:text="${curso.nivel}">básico</span>
 
                         </div>
 
-                        <div class="learning-progress" th:if="${tipo == 'estudiante'}">
+                        <div class="learning-progress" th:if="${esEstudiante and vista == 'mis'}">
 
                             <div>
                                 <span>Tu progreso</span>
-
-                                <strong th:text="|${curso.porcentaje}%|">
-                                    0%
-                                </strong>
+                                <strong th:text="|${curso.porcentaje}%|">0%</strong>
                             </div>
 
                             <div class="progress-bar">
@@ -116,9 +156,7 @@
                         </div>
 
                         <a th:href="@{/cursos/{id}(id=${curso.idModulo})}" class="btn btn-primary course-button">
-                            <span th:text="${tipo == 'estudiante' ? curso.accion : 'Ver módulo'}">
-                                Ver módulo
-                            </span>
+                            <span th:text="${esEstudiante ? curso.accion : 'Ver módulo'}">Ver módulo</span>
 
                             <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -133,9 +171,48 @@
 
             </section>
 
+            <nav class="pagination" th:if="${totalPaginas > 1}" aria-label="Paginación de cursos">
+
+                <a th:if="${pagina > 0}" th:href="@{/cursos(q=${q}, page=${pagina - 1}, vista=${vista})}">
+                    Anterior
+                </a>
+
+                <th:block th:each="numero : ${#numbers.sequence(0, totalPaginas - 1)}">
+                    <span th:if="${numero == pagina}" class="active" th:text="${numero + 1}">1</span>
+                    <a th:unless="${numero == pagina}" th:href="@{/cursos(q=${q}, page=${numero}, vista=${vista})}"
+                        th:text="${numero + 1}">2</a>
+                </th:block>
+
+                <a th:if="${pagina < totalPaginas - 1}"
+                    th:href="@{/cursos(q=${q}, page=${pagina + 1}, vista=${vista})}">
+                    Siguiente
+                </a>
+
+            </nav>
+
             <div class="courses-empty card" th:if="${#lists.isEmpty(cursos)}">
-                <strong>No hay módulos registrados.</strong>
-                <span>Actualmente no existen módulos de aprendizaje disponibles.</span>
+
+                <th:block th:if="${esEstudiante and vista == 'mis'}">
+                    <strong>Todavía no tienes cursos inscritos.</strong>
+                    <span>Explora el catálogo y elige el módulo con el que quieras empezar.</span>
+                    <a class="btn btn-primary" th:href="@{/cursos(vista='explorar')}">Explorar catálogo</a>
+                </th:block>
+
+                <th:block th:if="${esEstudiante and vista == 'explorar'}">
+                    <strong>No hay cursos nuevos para ti.</strong>
+                    <span>Ya estás inscrito en todos los módulos disponibles o la búsqueda no tiene coincidencias.</span>
+                </th:block>
+
+                <th:block th:if="${!esEstudiante}">
+                    <strong>No hay módulos registrados.</strong>
+                    <span th:if="${q != null and !q.isEmpty()}">
+                        No encontramos módulos que coincidan con tu búsqueda.
+                    </span>
+                    <span th:if="${q == null or q.isEmpty()}">
+                        Actualmente no existen módulos de aprendizaje disponibles.
+                    </span>
+                </th:block>
+
             </div>
 
         </main>

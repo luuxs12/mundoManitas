@@ -32,6 +32,18 @@ public class Usuario {
     @Column(name = "fechaRegistro", nullable = false)
     private LocalDateTime fechaRegistro;
 
+    @Column(name = "intentosFallidos", nullable = false)
+    private int intentosFallidos = 0;
+
+    @Column(name = "bloqueadoHasta")
+    private LocalDateTime bloqueadoHasta;
+
+    @Column(name = "tokenRecuperacion", length = 120)
+    private String tokenRecuperacion;
+
+    @Column(name = "tokenRecuperacionExpira")
+    private LocalDateTime tokenRecuperacionExpira;
+
     @PrePersist
     public void prePersist() {
         if (fechaRegistro == null) {
@@ -100,5 +112,49 @@ public class Usuario {
 
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public int getIntentosFallidos() {
+        return intentosFallidos;
+    }
+
+    public void setIntentosFallidos(int intentosFallidos) {
+        this.intentosFallidos = intentosFallidos;
+    }
+
+    public LocalDateTime getBloqueadoHasta() {
+        return bloqueadoHasta;
+    }
+
+    public void setBloqueadoHasta(LocalDateTime bloqueadoHasta) {
+        this.bloqueadoHasta = bloqueadoHasta;
+    }
+
+    public String getTokenRecuperacion() {
+        return tokenRecuperacion;
+    }
+
+    public void setTokenRecuperacion(String tokenRecuperacion) {
+        this.tokenRecuperacion = tokenRecuperacion;
+    }
+
+    public LocalDateTime getTokenRecuperacionExpira() {
+        return tokenRecuperacionExpira;
+    }
+
+    public void setTokenRecuperacionExpira(LocalDateTime tokenRecuperacionExpira) {
+        this.tokenRecuperacionExpira = tokenRecuperacionExpira;
+    }
+
+    @Transient
+    public boolean isBloqueado() {
+        return bloqueadoHasta != null && bloqueadoHasta.isAfter(LocalDateTime.now());
+    }
+
+    @Transient
+    public boolean isTokenRecuperacionVigente() {
+        return tokenRecuperacion != null
+            && tokenRecuperacionExpira != null
+            && tokenRecuperacionExpira.isAfter(LocalDateTime.now());
     }
 }

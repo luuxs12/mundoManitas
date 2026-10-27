@@ -6,16 +6,79 @@
         <div class="welcome-content">
             <span class="welcome-label">PANEL DE SISTEMAS</span>
             <h1>Hola, <span th:text="${nombre}">Sistemas Mundo Manitas</span></h1>
-            <p>Supervisa la estructura de acceso, usuarios y configuración base de la plataforma.</p>
+            <p>
+                Supervisa la estructura de acceso, los usuarios y la configuración base
+                de la plataforma desde una vista global.
+            </p>
+            <a th:href="@{/admin}" class="btn btn-primary">
+                <span>Abrir panel general</span>
+                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </a>
         </div>
-        <div class="welcome-decoration"><div class="code-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 9h8M8 13h5M8 17h3"></path></svg><strong>Sistemas</strong><small>Control de plataforma</small></div></div>
+        <div class="welcome-decoration">
+            <div class="code-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 9h8M8 13h5M8 17h3"></path></svg>
+                <strong>Sistemas</strong>
+                <small>Control de plataforma</small>
+            </div>
+        </div>
     </section>
 
-    <section class="stats-grid">
-        <article class="stat-card card"><div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div><div><span>Usuarios</span><strong th:text="${totalUsuarios}">0</strong></div></article>
-        <article class="stat-card card"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m8 12 2.5 2.5L16 9"></path></svg></div><div><span>Usuarios activos</span><strong th:text="${usuariosActivos}">0</strong></div></article>
-        <article class="stat-card card"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.5 8 8 9 4.5-1 8-4 8-9V7l-8-4Z"></path><path d="m9 12 2 2 4-4"></path></svg></div><div><span>Roles</span><strong th:text="${totalRoles}">0</strong></div></article>
-        <article class="stat-card card"><div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"></rect><path d="M8 8h3v3H8zM13 8h3v3h-3zM8 13h3v3H8zM13 13h3v3h-3z"></path></svg></div><div><span>Opciones del sistema</span><strong th:text="${totalModulosSistema}">0</strong></div></article>
+    <div th:replace="~{fragments/panel/kpi :: grid(${kpis})}"></div>
+
+    <section class="dashboard-grid">
+        <section class="card dashboard-card">
+            <div class="card-heading">
+                <div><span>CURSOS</span><h3>Estado de los módulos</h3></div>
+                <a th:href="@{/admin}">Ver panel</a>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Docente</th>
+                            <th>Inscritos</th>
+                            <th>Promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="curso : ${cursosGlobales}" th:if="${cursoStat.index < 5}">
+                            <td th:text="${curso.titulo}">Curso</td>
+                            <td th:text="${curso.docente}">Docente</td>
+                            <td th:text="${curso.inscritos}">0</td>
+                            <td th:text="|${curso.promedio}%|">0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard-empty" th:if="${#lists.isEmpty(cursosGlobales)}">
+                <span>No hay cursos registrados.</span>
+            </div>
+        </section>
+
+        <section class="card dashboard-card">
+            <div class="card-heading"><div><span>ACCESOS</span><h3>Usuarios por rol</h3></div></div>
+
+            <div th:replace="~{fragments/panel/distribucion :: distribucion(${usuariosPorRol}, ${totalUsuarios})}"></div>
+
+            <div class="card-heading" style="margin-top: 22px; margin-bottom: 12px;">
+                <div><span>GESTIÓN</span><h3>Acciones rápidas</h3></div>
+            </div>
+
+            <div class="quick-actions">
+                <a class="quick-action" th:href="@{/admin/usuarios}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M3 20a6 6 0 0 1 12 0"></path><path d="M17 8h4"></path><path d="M19 6v4"></path></svg>
+                    <div><strong>Administrar usuarios</strong><span>Cuentas y roles</span></div>
+                </a>
+                <a class="quick-action" th:href="@{/admin/contenido}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path></svg>
+                    <div><strong>Revisar contenido</strong><span>Módulos y materiales</span></div>
+                </a>
+            </div>
+        </section>
     </section>
 </th:block>
 </body>

@@ -1,5 +1,6 @@
 package com.mundomanitas.web;
 
+import com.mundomanitas.entity.ModuloSistema;
 import com.mundomanitas.service.NavegacionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -19,7 +20,7 @@ public class NavegacionControllerAdvice {
     }
 
     @ModelAttribute("modulosSidebar")
-    public Object modulosSidebar(Authentication authentication) {
+    public List<ModuloSistema> modulosSidebar(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
             return List.of();
         }
@@ -29,6 +30,11 @@ public class NavegacionControllerAdvice {
 
     @ModelAttribute("rutaActual")
     public String rutaActual(HttpServletRequest request) {
-        return request.getRequestURI();
+        String uri = request.getRequestURI();
+        String contextPath = request.getContextPath();
+
+        return contextPath.isEmpty()
+            ? uri
+            : uri.substring(contextPath.length());
     }
 }

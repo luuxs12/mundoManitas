@@ -23,6 +23,13 @@ public class Modulo {
     @Column(name = "orden", nullable = false)
     private Integer orden;
 
+    /**
+     * Docente responsable del módulo. Es nulo en el contenido creado por
+     * administración antes de asignar un responsable.
+     */
+    @Column(name = "idDocente")
+    private Integer idDocente;
+
     public Integer getIdModulo() {
         return idModulo;
     }
@@ -61,5 +68,13 @@ public class Modulo {
 
     public void setOrden(Integer orden) {
         this.orden = orden;
+    }
+
+    public Integer getIdDocente() {
+        return idDocente;
+    }
+
+    public void setIdDocente(Integer idDocente) {
+        this.idDocente = idDocente;
     }
 }

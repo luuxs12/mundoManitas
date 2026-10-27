@@ -1,31 +1,38 @@
 .app-body {
-    background: var(--background);
+    background:
+        radial-gradient(circle at 92% 2%, rgba(189, 119, 40, .06), transparent 26%),
+        var(--paper);
 }
 
 .app-layout {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
 }
+
+/* ------------------------------------------------------------------
+   Barra lateral
+   ------------------------------------------------------------------ */
 
 .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
     width: var(--sidebar-width);
     height: 100vh;
-    padding: 28px 18px;
+    padding: 26px 16px 20px;
     display: flex;
     flex-direction: column;
-    background: var(--navy);
-    color: var(--white);
+    background: #12332c;
+    color: #f4f1e8;
+    border-right: 1px solid #0b2721;
 }
 
 .sidebar-brand {
-    padding: 0 10px 25px;
+    padding: 0 8px 22px;
     display: flex;
     align-items: center;
     gap: 11px;
-    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
 }
 
 .sidebar-brand > div:last-child {
@@ -35,129 +42,113 @@
 }
 
 .sidebar-brand strong {
+    font-family: var(--font-display);
     font-size: 17px;
+    letter-spacing: .01em;
 }
 
 .sidebar-brand span {
-    margin-top: 4px;
-    color: #8187a1;
+    margin-top: 3px;
+    color: #8fa79f;
     font-size: 10px;
-    letter-spacing: .7px;
+    letter-spacing: .12em;
     text-transform: uppercase;
 }
 
 .sidebar-menu {
-    margin-top: 28px;
+    margin-top: 24px;
 }
 
 .menu-title {
     display: block;
-    padding: 0 12px;
-    margin-bottom: 10px;
-    color: #707690;
-    font-size: 11px;
+    padding: 0 10px;
+    margin-bottom: 9px;
+    color: #7f978e;
+    font-size: 10px;
     font-weight: 700;
-    letter-spacing: 1.1px;
+    letter-spacing: .14em;
 }
 
 .menu-title-second {
-    margin-top: 30px;
+    margin-top: 26px;
 }
 
 .menu-item {
-    min-height: 48px;
-    padding: 0 14px;
-    margin-bottom: 5px;
+    position: relative;
+    min-height: 42px;
+    padding: 0 12px;
+    margin-bottom: 3px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-radius: 9px;
-    color: #9ca2bb;
-    font-size: 14px;
+    gap: 11px;
+    border-radius: var(--radius-sm);
+    color: #c3d2cb;
+    font-size: 13.5px;
     font-weight: 600;
-    transition: .2s;
+    transition: background .16s, color .16s;
 }
 
 .menu-item:hover {
-    color: var(--white);
-    background: rgba(255, 255, 255, .05);
+    color: #ffffff;
+    background: rgba(255, 255, 255, .06);
 }
 
 .menu-item.active {
-    color: var(--white);
-    background: var(--primary);
+    color: #ffffff;
+    background: rgba(255, 255, 255, .1);
+}
+
+.menu-item.active::before {
+    content: "";
+    position: absolute;
+    left: -16px;
+    top: 9px;
+    bottom: 9px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--accent);
 }
 
 .sidebar-bottom {
     margin-top: auto;
-}
-
-.sidebar-help {
-    padding: 14px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, .04);
-}
-
-.sidebar-help > span {
-    width: 34px;
-    height: 34px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: var(--radius-sm);
-    background: var(--navy-light);
-    color: #9a8cf2;
-}
-
-.sidebar-help div {
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar-help strong {
-    font-size: 13px;
-}
-
-.sidebar-help small {
-    margin-top: 3px;
-    color: #858ba3;
-    font-size: 11px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, .08);
 }
 
 .logout-button {
     width: 100%;
-    min-height: 44px;
-    padding: 0 14px;
+    min-height: 40px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border: 1px solid rgba(255, 255, 255, .08);
+    gap: 11px;
+    border: 1px solid rgba(255, 255, 255, .1);
     border-radius: var(--radius-sm);
     background: transparent;
-    color: #9ca2b9;
-    font-size: 14px;
-    transition: .2s;
+    color: #b9c9c2;
+    font-size: 13px;
+    font-weight: 600;
+    transition: .16s;
 }
 
 .logout-button:hover {
-    color: var(--white);
-    background: rgba(255, 255, 255, .05);
+    color: #ffffff;
+    background: rgba(255, 255, 255, .06);
 }
+
+/* ------------------------------------------------------------------
+   Contenido principal
+   ------------------------------------------------------------------ */
 
 .main-content {
     grid-column: 2;
     width: 100%;
     min-width: 0;
-    padding: 0 35px 60px;
+    padding: 0 clamp(22px, 3.2vw, 46px) 64px;
 }
 
 .topbar {
-    min-height: 88px;
+    min-height: 78px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -166,33 +157,35 @@
 }
 
 .page-location {
-    margin-bottom: 5px;
-    color: var(--muted-dark);
-    font-size: 13px;
+    margin-bottom: 3px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
 }
 
 .topbar h2 {
-    font-size: 22px;
-    letter-spacing: -.5px;
+    font-size: 21px;
 }
 
 .topbar-user {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 10px;
 }
 
 .notification {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
+    width: 36px;
+    height: 36px;
+    margin-right: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--border);
-    border-radius: 9px;
-    background: var(--white);
-    color: #888c9f;
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--muted);
 }
 
 .user-info {
@@ -204,19 +197,20 @@
 .user-info strong {
     max-width: 220px;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 13px;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .user-info span {
-    margin-top: 3px;
-    color: var(--muted-dark);
-    font-size: 12px;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: .06em;
     text-transform: capitalize;
 }
 
-@media (max-width: 750px) {
+@media (max-width: 900px) {
     .app-layout {
         display: block;
     }
@@ -227,11 +221,11 @@
 
     .main-content {
         width: 100%;
-        padding: 0 18px 40px;
+        padding: 0 18px 44px;
     }
 
     .topbar {
-        min-height: 78px;
+        min-height: 70px;
     }
 
     .user-info {

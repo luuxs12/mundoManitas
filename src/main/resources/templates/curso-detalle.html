@@ -47,6 +47,9 @@
 
             </header>
 
+            <div class="alert alert-success" th:if="${exito}" th:text="${exito}"></div>
+            <div class="alert alert-error" th:if="${error}" th:text="${error}"></div>
+
             <section class="course-detail-hero">
 
                 <div class="course-detail-copy">
@@ -92,6 +95,32 @@
                             </svg>
                             <span th:text="${modulo.nivel}">básico</span>
                         </span>
+
+                    </div>
+
+                    <div class="inline-form" th:if="${esEstudiante}" style="margin-top: 18px;">
+
+                        <form th:if="${!inscrito}"
+                              th:action="@{/cursos/{id}/inscribirse(id=${modulo.idModulo})}"
+                              method="post">
+                            <button class="btn btn-primary" type="submit">
+                                Inscribirme al módulo
+                            </button>
+                        </form>
+
+                        <form th:if="${inscrito}"
+                              th:action="@{/cursos/{id}/inscripcion/cancelar(id=${modulo.idModulo})}"
+                              method="post">
+                            <button class="btn btn-secondary" type="submit">
+                                Cancelar inscripción
+                            </button>
+                        </form>
+
+                        <a class="btn btn-secondary"
+                           th:if="${porcentaje >= 100}"
+                           th:href="@{/reportes/certificado/{id}.docx(id=${modulo.idModulo})}">
+                            Descargar certificado
+                        </a>
 
                     </div>
 
@@ -172,12 +201,28 @@
                                         th:if="${video.duracionMinutos > 0}">
                                         10 min
                                     </small>
+
+                                    <span class="badge badge-active" th:if="${video.completado}">
+                                        Completado
+                                    </span>
                                 </div>
 
-                                <a class="content-action" th:href="${video.url}" target="_blank" rel="noopener"
-                                    th:if="${video.url != null and video.url != ''}">
-                                    Ver video
-                                </a>
+                                <div class="inline-form">
+
+                                    <a class="content-action" th:href="${video.url}" target="_blank" rel="noopener"
+                                        th:if="${video.url != null and video.url != ''}">
+                                        Ver video
+                                    </a>
+
+                                    <form th:if="${esEstudiante and !video.completado}"
+                                          th:action="@{/cursos/{id}/videos/{idVideo}/completar(id=${modulo.idModulo}, idVideo=${video.idVideo})}"
+                                          method="post">
+                                        <button class="btn btn-secondary" type="submit">
+                                            Marcar completado
+                                        </button>
+                                    </form>
+
+                                </div>
 
                             </div>
 
@@ -190,7 +235,7 @@
                                 <strong th:text="${totalEjercicios}">0</strong>
                             </div>
 
-                            <div class="lesson" th:each="ejercicio : ${ejercicios}">
+                            <div class="lesson exercise-item" th:each="ejercicio : ${ejercicios}">
 
                                 <span class="lesson-status exercise-status">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -201,7 +246,8 @@
                                     </svg>
                                 </span>
 
-                                <div>
+                                <div class="exercise-body">
+
                                     <strong th:text="${ejercicio.titulo}">
                                         Ejercicio
                                     </strong>
@@ -209,6 +255,37 @@
                                     <small class="exercise-type" th:text="${ejercicio.tipo}">
                                         cuestionario
                                     </small>
+
+                                    <p th:if="${ejercicio.pregunta != null and !ejercicio.pregunta.isEmpty()}"
+                                       th:text="${ejercicio.pregunta}"></p>
+
+                                    <p th:if="${ejercicio.texto != null and !ejercicio.texto.isEmpty()}"
+                                       th:text="${ejercicio.texto}"></p>
+
+                                    <span class="badge badge-active" th:if="${ejercicio.resuelto}">
+                                        Resuelto
+                                    </span>
+
+                                    <form th:if="${esEstudiante}"
+                                          class="inline-form"
+                                          style="margin-top: 10px;"
+                                          th:action="@{/cursos/{id}/ejercicios/{idEjercicio}/responder(id=${modulo.idModulo}, idEjercicio=${ejercicio.idEjercicio})}"
+                                          method="post">
+
+                                        <input class="form-control"
+                                               style="max-width: 320px;"
+                                               type="text"
+                                               name="respuesta"
+                                               required
+                                               th:value="${ejercicio.ultimaRespuesta}"
+                                               placeholder="Escribe tu respuesta">
+
+                                        <button class="btn btn-primary" type="submit">
+                                            Responder
+                                        </button>
+
+                                    </form>
+
                                 </div>
 
                             </div>

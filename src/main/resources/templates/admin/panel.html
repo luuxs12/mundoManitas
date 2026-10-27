@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Panel general | Mundo Manitas</title>
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+
+<body class="app-body">
+
+    <div class="app-layout">
+
+        <aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+                    <p class="page-location">Administración</p>
+                    <h2>Panel general</h2>
+                </div>
+
+                <div class="topbar-user">
+
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">A</div>
+
+                    <div class="user-info">
+                        <strong th:text="${nombre}">Administrador Mundo Manitas</strong>
+                        <span th:text="${tipo}">administrador</span>
+                    </div>
+
+                </div>
+
+            </header>
+
+            <section class="page-intro">
+
+                <div>
+                    <span class="section-label">MONITOREO GLOBAL</span>
+                    <h1>Estado de la plataforma</h1>
+                    <p>
+                        Usuarios, cursos, docentes y avance general en una sola vista.
+                        Desde aquí puedes entrar a la gestión de cuentas y de contenido.
+                    </p>
+                </div>
+
+                <div class="page-intro-actions">
+                    <a class="btn btn-secondary" th:href="@{/admin/usuarios}">Usuarios</a>
+                    <a class="btn btn-primary" th:href="@{/admin/contenido}">Contenido</a>
+                </div>
+
+            </section>
+
+            <div th:replace="~{fragments/panel/kpi :: grid(${kpis})}"></div>
+
+            <section class="panel-grid" style="margin-top: 18px;">
+
+                <section class="panel-card card">
+
+                    <div class="card-heading">
+                        <div>
+                            <span>CURSOS</span>
+                            <h3>Rendimiento por curso</h3>
+                        </div>
+                        <span class="badge badge-muted" th:text="|${#lists.size(cursos)} cursos|">0 cursos</span>
+                    </div>
+
+                    <div class="table-wrapper" th:if="${!#lists.isEmpty(cursos)}">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Curso</th>
+                                    <th>Docente</th>
+                                    <th>Inscritos</th>
+                                    <th>Promedio</th>
+                                    <th>Finalización</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="curso : ${cursos}">
+                                    <td>
+                                        <a th:href="@{/admin/contenido(idModulo=${curso.idModulo})}"
+                                            th:text="${curso.titulo}">Curso</a>
+                                        <span class="badge badge-muted" style="margin-left: 6px;"
+                                            th:text="${curso.nivel}">nivel</span>
+                                    </td>
+                                    <td th:text="${curso.docente}">Docente</td>
+                                    <td th:text="${curso.inscritos}">0</td>
+                                    <td th:text="|${curso.promedio}%|">0%</td>
+                                    <td th:text="|${curso.tasaFinalizacion}%|">0%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(cursos)}">
+                        <strong>No hay cursos registrados.</strong>
+                        <span>Crea el primer módulo desde la sección de contenido.</span>
+                    </div>
+
+                </section>
+
+                <aside class="panel-stack">
+
+                    <section class="panel-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>COMUNIDAD</span>
+                                <h3>Usuarios por rol</h3>
+                            </div>
+                            <span class="badge badge-info" th:text="|${totalUsuarios} total|">0 total</span>
+                        </div>
+
+                        <div th:replace="~{fragments/panel/distribucion :: distribucion(${usuariosPorRol}, ${totalUsuarios})}"></div>
+
+                    </section>
+
+                    <section class="panel-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>RECIENTES</span>
+                                <h3>Últimos registros</h3>
+                            </div>
+                            <a th:href="@{/admin/usuarios}">Ver todos</a>
+                        </div>
+
+                        <div class="user-rows" th:if="${!#lists.isEmpty(ultimosUsuarios)}">
+                            <div class="user-row" th:each="usuario : ${ultimosUsuarios}">
+                                <span class="avatar-initial"
+                                    th:text="${#strings.substring(usuario.nombre, 0, 1)}">A</span>
+                                <div class="user-row-copy">
+                                    <strong th:text="${usuario.nombre}">Usuario</strong>
+                                    <span th:text="${usuario.email}">correo@ejemplo.com</span>
+                                </div>
+                                <span class="badge badge-muted" th:text="${usuario.tipo}">rol</span>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-empty" th:if="${#lists.isEmpty(ultimosUsuarios)}">
+                            Sin registros recientes.
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
