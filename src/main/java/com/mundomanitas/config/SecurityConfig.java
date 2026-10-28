@@ -51,6 +51,7 @@ public class SecurityConfig {
             .authenticationManager(authenticationManager)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    "/",
                     "/login",
                     "/registro",
                     "/registro/**",
@@ -80,7 +81,7 @@ public class SecurityConfig {
                 .requestMatchers("/reportes/progreso.xlsx").hasAnyRole("DOCENTE", "ADMINISTRADOR", "SISTEMAS")
                 .requestMatchers("/reportes/certificado/**").authenticated()
                 .requestMatchers("/reportes/**").hasAnyRole("DOCENTE", "ADMINISTRADOR", "SISTEMAS")
-                .requestMatchers("/dashboard", "/").hasAuthority("MODULO_DASHBOARD")
+                .requestMatchers("/dashboard").hasAuthority("MODULO_DASHBOARD")
                 .requestMatchers("/cursos/**").hasAuthority("MODULO_CURSOS")
                 .requestMatchers("/perfil").hasAuthority("MODULO_PERFIL")
                 .anyRequest().authenticated()

@@ -154,7 +154,6 @@
 
 .profile-summary strong {
     color: var(--ink-soft);
-    text-transform: capitalize;
 }
 
 @media (max-width: 950px) {

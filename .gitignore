@@ -37,6 +37,9 @@ logs/
 .env
 *.log
 
+# Herramientas locales del asistente (skills de diseño, no forman parte del producto)
+.opencode/
+
 # Configuración local con credenciales reales.
 # Usa application-dev.example.properties como plantilla.
 src/main/resources/application-dev.properties

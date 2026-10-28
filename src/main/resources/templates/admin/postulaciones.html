@@ -11,6 +11,7 @@
     <link rel="stylesheet" th:href="@{/css/components.css}">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/cursos.css}">
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
 </head>
 
 <body class="app-body">
@@ -51,7 +52,8 @@
                 </div>
 
                 <div class="page-intro-actions">
-                    <span class="badge badge-warn" th:text="|${pendientes} pendientes|">0 pendientes</span>
+                    <span class="badge badge-warn"
+                          th:text="${pendientes == 1 ? '1 pendiente' : pendientes + ' pendientes'}">0 pendientes</span>
                 </div>
             </section>
 

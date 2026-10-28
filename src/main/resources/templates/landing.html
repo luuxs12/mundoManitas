@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+          content="Mundo Manitas es una plataforma educativa inclusiva para aprender programación a tu ritmo, con cursos, ejercicios y seguimiento de progreso.">
+
+    <title>Mundo Manitas | Aprende programación a tu ritmo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" th:href="@{/css/landing.css}">
+</head>
+
+<body class="lp">
+
+<a class="lp-skip" href="#contenido">Saltar al contenido principal</a>
+
+<header class="lp-header">
+    <div class="lp-shell lp-header-inner">
+
+        <a class="lp-brand" th:href="@{/}" aria-label="Mundo Manitas, inicio">
+            <span class="lp-brand-mark" aria-hidden="true">M</span>
+            <span class="lp-brand-copy">
+                <strong>Mundo Manitas</strong>
+                <small>Plataforma educativa</small>
+            </span>
+        </a>
+
+        <button class="lp-nav-toggle" type="button" aria-expanded="false" aria-controls="lp-nav"
+                aria-label="Abrir menú de navegación">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </button>
+
+        <nav class="lp-nav" id="lp-nav" aria-label="Navegación principal">
+            <a href="#cursos">Cursos</a>
+            <a href="#progreso">Progreso</a>
+            <a href="#testimonios">Testimonios</a>
+            <a class="lp-btn lp-btn-ghost" th:href="@{/login}">Iniciar sesión</a>
+            <a class="lp-btn lp-btn-primary" th:href="@{/registro}">Crear cuenta</a>
+        </nav>
+
+    </div>
+</header>
+
+<main id="contenido">
+
+    <!-- Portada -->
+    <section class="lp-hero">
+        <div class="lp-shell lp-hero-grid">
+
+            <div class="lp-hero-copy" data-reveal>
+                <span class="lp-eyebrow">Aprender haciendo</span>
+                <h1>La programación se aprende <span class="lp-mark">paso a paso</span>, no de memoria.</h1>
+                <p class="lp-lead">
+                    Cursos cortos, ejercicios con retroalimentación y un progreso que siempre
+                    sabes dónde está. Pensado para la comunidad sorda y para quien necesita
+                    aprender a su propio ritmo.
+                </p>
+
+                <div class="lp-hero-actions">
+                    <a class="lp-btn lp-btn-primary lp-btn-lg" th:href="@{/registro}">
+                        Empezar gratis
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14"></path>
+                            <path d="m13 6 6 6-6 6"></path>
+                        </svg>
+                    </a>
+                    <a class="lp-btn lp-btn-ghost lp-btn-lg" href="#cursos">Ver cursos</a>
+                </div>
+
+                <ul class="lp-hero-points">
+                    <li>Contenido visual y texto claro</li>
+                    <li>Progreso por módulo</li>
+                    <li>Certificado al completar</li>
+                </ul>
+            </div>
+
+            <div class="lp-hero-visual" data-reveal aria-hidden="true">
+                <div class="lp-clay lp-demo">
+                    <div class="lp-demo-head">
+                        <span class="lp-demo-dots"><i></i><i></i><i></i></span>
+                        <span>Mi progreso</span>
+                    </div>
+
+                    <div class="lp-ring" style="--progress: 72">
+                        <div>
+                            <strong>72%</strong>
+                            <span>Curso en curso</span>
+                        </div>
+                    </div>
+
+                    <ul class="lp-demo-list">
+                        <li class="is-done">
+                            <span class="lp-demo-check"></span>
+                            Variables y tipos de datos
+                        </li>
+                        <li class="is-active">
+                            <span class="lp-demo-check"></span>
+                            Estructuras condicionales
+                        </li>
+                        <li>
+                            <span class="lp-demo-check"></span>
+                            Bucles y arreglos
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="lp-float lp-float-xp">+12 XP</div>
+                <div class="lp-float lp-float-streak">Racha de 5 días</div>
+                <div class="lp-float lp-float-module">Nuevo módulo</div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Cifras del catálogo -->
+    <section class="lp-shell lp-stats" aria-label="Contenido disponible">
+        <div class="lp-stat">
+            <strong th:text="${vitrina.modulos}">4</strong>
+            <span>módulos publicados</span>
+        </div>
+        <div class="lp-stat">
+            <strong th:text="${vitrina.videos}">3</strong>
+            <span>videos paso a paso</span>
+        </div>
+        <div class="lp-stat">
+            <strong th:text="${vitrina.ejercicios}">2</strong>
+            <span>ejercicios corregidos</span>
+        </div>
+        <div class="lp-stat">
+            <strong>100%</strong>
+            <span>en línea y a tu ritmo</span>
+        </div>
+    </section>
+
+    <!-- Catálogo -->
+    <section class="lp-section lp-shell" id="cursos">
+        <header class="lp-section-head" data-reveal>
+            <span class="lp-eyebrow">Catálogo</span>
+            <h2>Elige por dónde empezar</h2>
+            <p>
+                Cada módulo combina videos breves con ejercicios que puedes repetir
+                las veces que necesites. Sin fechas límite y sin saltarte pasos.
+            </p>
+        </header>
+
+        <div class="lp-course-grid">
+            <article class="lp-clay lp-course" th:each="curso : ${vitrina.cursos}" data-reveal>
+                <div class="lp-course-cover" th:classappend="|is-${curso.nivelClave}|">
+                    <span class="lp-course-letter" th:text="${curso.inicial}">J</span>
+                    <span class="lp-course-level" th:text="${curso.nivel}">Básico</span>
+                </div>
+
+                <div class="lp-course-body">
+                    <h3 th:text="${curso.titulo}">Fundamentos de Java</h3>
+                    <p th:text="${curso.descripcion}">Descripción del módulo.</p>
+
+                    <div class="lp-course-meta">
+                        <span th:if="${curso.videos > 0}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                                <path d="m10 9 5 3-5 3V9Z"></path>
+                            </svg>
+                            <span th:text="|${curso.videos} videos|">3 videos</span>
+                        </span>
+                        <span th:if="${curso.ejercicios > 0}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M5 4h14v16H5z"></path>
+                                <path d="M8 8h8"></path>
+                                <path d="M8 12h5"></path>
+                            </svg>
+                            <span th:text="|${curso.ejercicios} ejercicios|">2 ejercicios</span>
+                        </span>
+                        <span th:if="${curso.videos == 0 and curso.ejercicios == 0}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="m8.5 12.5 2.5 2.5 4.5-5"></path>
+                            </svg>
+                            <span>A tu ritmo</span>
+                        </span>
+                        <span th:if="${curso.videos == 0 and curso.ejercicios == 0}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"></path>
+                            </svg>
+                            <span>Acceso inmediato</span>
+                        </span>
+                    </div>
+
+                    <a class="lp-btn lp-btn-soft lp-btn-block" th:href="@{/registro/estudiante}">
+                        Quiero este curso
+                    </a>
+                </div>
+            </article>
+        </div>
+
+        <p class="lp-catalog-note">
+            ¿Ya tienes una cuenta?
+            <a th:href="@{/login}">Inicia sesión</a> y continúa donde lo dejaste.
+        </p>
+    </section>
+
+    <!-- Seguimiento de progreso -->
+    <section class="lp-progress" id="progreso">
+        <div class="lp-shell lp-progress-grid">
+
+            <div class="lp-progress-copy" data-reveal>
+                <span class="lp-eyebrow">Seguimiento</span>
+                <h2>Siempre sabes qué sigue</h2>
+                <p>
+                    El panel muestra el avance de cada módulo, las lecciones completadas
+                    y los ejercicios pendientes. Nada de adivinar en qué punto te quedaste.
+                </p>
+
+                <ul class="lp-checks">
+                    <li>Progreso calculado con videos y ejercicios reales.</li>
+                    <li>Puedes repetir un ejercicio sin perder lo avanzado.</li>
+                    <li>Al completar el módulo se genera tu certificado.</li>
+                </ul>
+
+                <a class="lp-btn lp-btn-primary" th:href="@{/registro/estudiante}">Crear mi cuenta</a>
+            </div>
+
+            <div class="lp-clay lp-progress-card" data-reveal aria-hidden="true">
+                <div class="lp-progress-top">
+                    <div>
+                        <span>Curso en curso</span>
+                        <strong>Fundamentos de Java</strong>
+                    </div>
+                    <span class="lp-pill">42%</span>
+                </div>
+
+                <div class="lp-bar"><span style="--w: 42%"></span></div>
+
+                <ul class="lp-lessons">
+                    <li class="is-done">
+                        <span class="lp-lesson-mark"></span>
+                        <div><strong>Introducción a Java</strong><small>Video · 8 min</small></div>
+                    </li>
+                    <li class="is-done">
+                        <span class="lp-lesson-mark"></span>
+                        <div><strong>Variables y tipos de datos</strong><small>Video · 12 min</small></div>
+                    </li>
+                    <li class="is-active">
+                        <span class="lp-lesson-mark"></span>
+                        <div><strong>Estructuras condicionales</strong><small>En curso</small></div>
+                    </li>
+                    <li>
+                        <span class="lp-lesson-mark"></span>
+                        <div><strong>Identifica los tipos de datos</strong><small>Ejercicio</small></div>
+                    </li>
+                </ul>
+
+                <div class="lp-progress-foot">
+                    <span>2 de 4 lecciones</span>
+                    <span class="lp-pill lp-pill-soft">En progreso</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Testimonios -->
+    <section class="lp-section lp-shell" id="testimonios">
+        <header class="lp-section-head" data-reveal>
+            <span class="lp-eyebrow">Voces del aula</span>
+            <h2>Lo que cambia cuando el ritmo es tuyo</h2>
+            <p>Comentarios de estudiantes y docentes que usan la plataforma en los talleres.</p>
+        </header>
+
+        <div class="lp-quote-grid">
+            <figure class="lp-clay lp-quote" data-reveal>
+                <blockquote>
+                    Llegué sin saber qué era una variable. En dos semanas ya armaba mi
+                    primera página y entendía cada línea que escribía.
+                </blockquote>
+                <figcaption>
+                    <span class="lp-avatar" aria-hidden="true">L</span>
+                    <span><strong>Lucía Torres</strong><small>Estudiante de Desarrollo Web</small></span>
+                </figcaption>
+            </figure>
+
+            <figure class="lp-clay lp-quote" data-reveal>
+                <blockquote>
+                    Lo que más me sirve es ver el progreso. Cuando un ejercicio sale mal,
+                    la plataforma me dice por dónde revisar en vez de dejarme a ciegas.
+                </blockquote>
+                <figcaption>
+                    <span class="lp-avatar lp-avatar-blue" aria-hidden="true">D</span>
+                    <span><strong>Diego Salazar</strong><small>Estudiante de Fundamentos de Java</small></span>
+                </figcaption>
+            </figure>
+
+            <figure class="lp-clay lp-quote" data-reveal>
+                <blockquote>
+                    Como docente, tener el avance del curso a la vista me permite acompañar
+                    a quien se está quedando atrás antes de que abandone.
+                </blockquote>
+                <figcaption>
+                    <span class="lp-avatar lp-avatar-orange" aria-hidden="true">M</span>
+                    <span><strong>Docente de programación</strong><small>Taller de lógica y Java</small></span>
+                </figcaption>
+            </figure>
+        </div>
+    </section>
+
+    <!-- Llamado a la inscripción -->
+    <section class="lp-shell lp-cta">
+        <div class="lp-clay lp-cta-card" data-reveal>
+            <div class="lp-cta-copy">
+                <span class="lp-eyebrow">Inscripciones abiertas</span>
+                <h2>Tu primer módulo te está esperando</h2>
+                <p>
+                    Crea tu cuenta gratis, elige un curso y avanza a tu ritmo.
+                    Si eres docente, también puedes postular y compartir lo que sabes.
+                </p>
+            </div>
+            <div class="lp-cta-actions">
+                <a class="lp-btn lp-btn-primary lp-btn-lg" th:href="@{/registro/estudiante}">Crear mi cuenta</a>
+                <a class="lp-btn lp-btn-ghost lp-btn-lg" th:href="@{/registro/docente}">Postular como docente</a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer class="lp-footer">
+    <div class="lp-shell lp-footer-grid">
+        <div>
+            <a class="lp-brand lp-brand-footer" th:href="@{/}">
+                <span class="lp-brand-mark" aria-hidden="true">M</span>
+                <span class="lp-brand-copy">
+                    <strong>Mundo Manitas</strong>
+                    <small>Plataforma educativa</small>
+                </span>
+            </a>
+            <p class="lp-footer-note">
+                Aprendizaje de programación accesible para la comunidad sorda.
+            </p>
+        </div>
+
+        <nav class="lp-footer-links" aria-label="Enlaces del sitio">
+            <a href="#cursos">Cursos</a>
+            <a href="#progreso">Progreso</a>
+            <a href="#testimonios">Testimonios</a>
+            <a th:href="@{/login}">Iniciar sesión</a>
+        </nav>
+
+        <div class="lp-footer-links">
+            <a th:href="@{/registro}">Crear cuenta</a>
+            <a th:href="@{/registro/docente}">Postular como docente</a>
+            <a th:href="@{/recuperar}">Recuperar contraseña</a>
+        </div>
+    </div>
+
+    <div class="lp-shell lp-footer-bottom">
+        <span>© 2026 Mundo Manitas. Proyecto Integrador I.</span>
+        <span>Hecho para aprender sin barreras.</span>
+    </div>
+</footer>
+
+<script th:src="@{/js/landing.js}" defer></script>
+
+</body>
+
+</html>

@@ -4,6 +4,10 @@ Plataforma educativa inclusiva para la **comunidad sorda**, desarrollada como pr
 Combina una interfaz web MVC con Thymeleaf y una API REST protegida con JWT, sobre una arquitectura
 **MVC + DAO** con Java 21 y Spring Boot.
 
+> **Documentación:** este README es la guía rápida para entender y ejecutar el proyecto.
+> El manual técnico de trabajo —arquitectura, convenciones, base de datos, pruebas y
+> resolución de problemas— está en [`docs/MANUAL-DESARROLLADOR.md`](docs/MANUAL-DESARROLLADOR.md).
+
 ---
 
 ## 1. Tecnologías
@@ -107,6 +111,7 @@ Roles y accesos:
 
 | Ruta | Roles |
 | --- | --- |
+| `/` | Público (si hay sesión, redirige a `/dashboard`) |
 | `/login`, `/registro`, `/registro/**`, `/recuperar`, `/restablecer` | Público |
 | `/dashboard`, `/perfil` | Cualquier usuario autenticado |
 | `/cursos/**` | Quien tenga `MODULO_CURSOS` (estudiante, docente, administrador, sistemas) |
@@ -121,6 +126,8 @@ Roles y accesos:
 ### Registro, perfil y paneles por rol
 
 - **Registro público** en `/registro`: primera pantalla que permite elegir entre estudiante y docente.
+- **Página de inicio** en `/`: landing pública con vitrina del catálogo, demostración de progreso,
+  testimonios y llamados a la inscripción. Las cuentas autenticadas pasan directo a `/dashboard`.
 - **Estudiante** en `/registro/estudiante`: crea la cuenta al instante y valida la política de contraseñas.
 - **Docente** en `/registro/docente`: no crea cuenta. Envía una postulación con portafolio, nivel de
   Lengua de Señas Peruana (B1 o superior), certificación, experiencia en TI (mínimo 1 año) y motivación.
@@ -370,6 +377,8 @@ El detalle de cómo se cumplen los criterios de **Desarrollo de la Solución Inf
 (Git/GitHub, entregas versionadas y documentación) está en:
 
 - [`docs/CRITERIOS-EVALUACION.md`](docs/CRITERIOS-EVALUACION.md)
+- [`docs/MANUAL-DESARROLLADOR.md`](docs/MANUAL-DESARROLLADOR.md) — manual técnico completo:
+  arquitectura, base de datos, seguridad, convenciones, pruebas, despliegue y problemas frecuentes.
 
 ---
 

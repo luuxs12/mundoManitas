@@ -207,10 +207,19 @@
 
 .lesson {
     min-height: 72px;
+    padding: 12px 0;
     display: flex;
     align-items: center;
     gap: 14px;
     border-top: 1px solid var(--border-light);
+}
+
+.exercise-item {
+    align-items: flex-start;
+}
+
+.exercise-item .lesson-status {
+    margin-top: 2px;
 }
 
 .lesson-status {
@@ -238,7 +247,8 @@
     height: 16px;
 }
 
-.lesson>div {
+.lesson-copy,
+.exercise-body {
     min-width: 0;
     flex: 1;
     display: flex;

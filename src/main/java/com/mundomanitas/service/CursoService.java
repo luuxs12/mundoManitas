@@ -12,9 +12,11 @@ import com.mundomanitas.dto.api.VideoDto;
 import com.mundomanitas.dto.api.VideoRequest;
 import com.mundomanitas.dto.view.CursoDetalleView;
 import com.mundomanitas.dto.view.CursoView;
+import com.mundomanitas.dto.view.CursoVitrinaView;
 import com.mundomanitas.dto.view.EjercicioView;
 import com.mundomanitas.dto.view.ModuloView;
 import com.mundomanitas.dto.view.VideoView;
+import com.mundomanitas.dto.view.VitrinaView;
 import com.mundomanitas.entity.Ejercicio;
 import com.mundomanitas.entity.Inscripcion;
 import com.mundomanitas.entity.Modulo;
@@ -204,7 +206,50 @@ public class CursoService {
         );
     }
 
-    private boolean coincide(Modulo modulo, String filtro) {        if (filtro.isEmpty()) {
+    /**
+     * Catálogo reducido para la página pública de inicio. Incluye los
+     * conteos reales de videos y ejercicios de cada módulo.
+     */
+    @Transactional(readOnly = true)
+    public VitrinaView listarVitrina(int limite) {
+        List<CursoVitrinaView> cursos = cursoDao.listarModulos().stream()
+            .limit(Math.max(limite, 1))
+            .map(this::toVitrina)
+            .toList();
+
+        return new VitrinaView(
+            cursos,
+            cursoDao.contarModulos(),
+            cursoDao.contarVideos(),
+            cursoDao.contarEjercicios()
+        );
+    }
+
+    private CursoVitrinaView toVitrina(Modulo modulo) {
+        String nivel = normalizarNivel(modulo.getNivel());
+
+        return new CursoVitrinaView(
+            modulo.getIdModulo(),
+            modulo.getTitulo(),
+            modulo.getDescripcion(),
+            nivelLegible(nivel),
+            nivel,
+            inicial(modulo.getTitulo()),
+            cursoDao.listarVideos(modulo.getIdModulo()).size(),
+            cursoDao.listarEjercicios(modulo.getIdModulo()).size()
+        );
+    }
+
+    private String nivelLegible(String nivel) {
+        return switch (nivel) {
+            case "intermedio" -> "Intermedio";
+            case "avanzado" -> "Avanzado";
+            default -> "Básico";
+        };
+    }
+
+    private boolean coincide(Modulo modulo, String filtro) {
+        if (filtro.isEmpty()) {
             return true;
         }
 

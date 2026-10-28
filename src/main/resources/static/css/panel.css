@@ -187,12 +187,11 @@
     line-height: 1.35;
 }
 
-.course-row-copy span {
+.course-row-copy > span {
     display: block;
     margin-top: 4px;
     color: var(--muted);
     font-size: 12px;
-    text-transform: capitalize;
 }
 
 .course-row-stats {

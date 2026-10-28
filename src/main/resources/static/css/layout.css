@@ -210,7 +210,6 @@
     color: var(--muted);
     font-size: 11px;
     letter-spacing: .06em;
-    text-transform: capitalize;
 }
 
 @media (max-width: 900px) {
