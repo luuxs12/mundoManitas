@@ -48,7 +48,14 @@
                             <td th:text="${curso.titulo}">Curso</td>
                             <td th:text="${curso.docente}">Docente</td>
                             <td th:text="${curso.inscritos}">0</td>
-                            <td th:text="|${curso.promedio}%|">0%</td>
+                            <td class="progress-cell">
+                                <div class="progress-cell-row">
+                                    <div class="progress-bar">
+                                        <span th:style="|width: ${curso.promedio}%;|"></span>
+                                    </div>
+                                    <small th:text="|${curso.promedio}%|">0%</small>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

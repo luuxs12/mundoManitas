@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 * {
     margin: 0;
@@ -7,62 +7,63 @@
 }
 
 :root {
-    /* Identidad editorial: tinta, papel y acentos de alto contraste */
-    --primary: #171512;
-    --primary-dark: #000000;
-    --primary-soft: #ece7dc;
+    /* Identidad: azul petróleo profundo, verde azulado y neutros fríos */
+    --primary: #1c3f5e;
+    --primary-dark: #142d44;
+    --primary-soft: #e7eef5;
 
-    --accent: #e8441f;
-    --accent-soft: #fde7df;
-    --highlight: #d6f24f;
+    --accent: #0f766e;
+    --accent-dark: #0b5c56;
+    --accent-soft: #e2f1ee;
+    --highlight: #f0c96a;
 
-    --ink: #171512;
-    --ink-soft: #47423a;
-    --muted: #6d675d;
-    --muted-dark: #514c43;
+    --ink: #17212f;
+    --ink-soft: #3d4a5a;
+    --muted: #697686;
+    --muted-dark: #4d5968;
 
-    --paper: #f4f1e9;
-    --paper-deep: #e7e2d6;
-    --surface: #fffdf8;
-    --surface-alt: #faf7f0;
+    --paper: #f4f6f8;
+    --paper-deep: #e9edf2;
+    --surface: #ffffff;
+    --surface-alt: #f8fafb;
 
-    --border: #dcd5c6;
-    --border-strong: #c3b9a5;
-    --border-light: #eae5d9;
+    --border: #e0e6ed;
+    --border-strong: #c8d3df;
+    --border-light: #edf1f5;
 
-    --success: #1f6b46;
-    --success-soft: #e2f1e7;
+    --success: #1f7a4d;
+    --success-soft: #e6f5ec;
 
-    --info: #1e4f8f;
-    --info-soft: #e3edf9;
+    --info: #1d5fa8;
+    --info-soft: #e8f0fa;
 
-    --warning: #a35a12;
-    --warning-soft: #fbeedb;
+    --warning: #a4620a;
+    --warning-soft: #fdf2e2;
 
-    --danger: #a52d1c;
-    --danger-soft: #fbe6e1;
+    --danger: #ad3524;
+    --danger-soft: #fdecea;
 
     --radius-xs: 8px;
     --radius-sm: 10px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
 
-    --shadow-card: 0 1px 0 rgba(23, 21, 18, .04), 0 16px 30px -28px rgba(23, 21, 18, .55);
-    --shadow-raised: 0 12px 26px -20px rgba(23, 21, 18, .5);
+    --shadow-card: 0 1px 2px rgba(23, 33, 47, .04), 0 12px 32px -24px rgba(23, 33, 47, .35);
+    --shadow-raised: 0 18px 40px -24px rgba(23, 33, 47, .35);
 
-    --sidebar-width: 252px;
+    --sidebar-width: 258px;
 
-    --font-sans: "Archivo", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --font-display: "Archivo Black", "Arial Black", "Segoe UI", system-ui, sans-serif;
+    --font-sans: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 
-    --font-xs: 11px;
+    --font-xs: 11.5px;
     --font-sm: 13px;
     --font-md: 15px;
     --font-lg: 16px;
     --font-xl: 20px;
-    --font-2xl: 30px;
-    --font-3xl: 40px;
+    --font-2xl: 28px;
+    --font-3xl: 38px;
 }
 
 html {
@@ -76,15 +77,16 @@ body {
     color: var(--ink);
     background: var(--paper);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 h1,
 h2 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 700;
     color: var(--ink);
-    letter-spacing: -.025em;
-    line-height: 1.1;
+    letter-spacing: -.03em;
+    line-height: 1.15;
     text-wrap: balance;
 }
 
@@ -93,8 +95,8 @@ h4 {
     font-family: var(--font-sans);
     font-weight: 700;
     color: var(--ink);
-    letter-spacing: -.012em;
-    line-height: 1.25;
+    letter-spacing: -.015em;
+    line-height: 1.3;
     text-wrap: balance;
 }
 
@@ -124,6 +126,12 @@ textarea {
 }
 
 ::selection {
-    background: var(--highlight);
+    background: var(--accent-soft);
     color: var(--ink);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
 }

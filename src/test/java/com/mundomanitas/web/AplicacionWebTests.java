@@ -38,6 +38,25 @@ class AplicacionWebTests {
     }
 
     @Test
+    void landingEsPublicaParaVisitantes() throws Exception {
+        mockMvc.perform(get("/"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Cada lección es")));
+
+        mockMvc.perform(get("/inicio"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Cada lección es")));
+    }
+
+    @Test
+    @WithUserDetails("alumno@mundomanitas.com")
+    void landingRedirigeAlDashboardConSesion() throws Exception {
+        mockMvc.perform(get("/"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/dashboard"));
+    }
+
+    @Test
     void dashboardRequiereAutenticacion() throws Exception {
         mockMvc.perform(get("/dashboard"))
             .andExpect(status().is3xxRedirection())
@@ -118,7 +137,7 @@ class AplicacionWebTests {
     void administradorPuedeGestionarUsuariosYContenido() throws Exception {
         mockMvc.perform(get("/admin/usuarios"))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Cuentas de la plataforma")));
+            .andExpect(content().string(containsString("Usuarios de la plataforma")));
 
         mockMvc.perform(get("/admin/contenido"))
             .andExpect(status().isOk())

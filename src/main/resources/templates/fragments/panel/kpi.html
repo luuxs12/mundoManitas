@@ -15,10 +15,14 @@
                 </th:block>
             </span>
         </span>
+
         <strong class="kpi-value" th:text="${kpi.valor}">0</strong>
-        <span class="kpi-detail" th:text="${kpi.detalle}">Detalle del indicador</span>
-        <span class="kpi-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+
+        <span class="kpi-foot">
+            <span class="kpi-detail" th:text="${kpi.detalle}">Detalle del indicador</span>
+            <span class="kpi-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </span>
         </span>
     </a>
 </div>

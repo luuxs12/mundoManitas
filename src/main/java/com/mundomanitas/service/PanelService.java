@@ -247,7 +247,7 @@ public class PanelService {
             "Alumnos en riesgo",
             String.valueOf(enRiesgo),
             "Con avance menor al 30%",
-            enRiesgo == 0 ? "ok" : "warn",
+            enRiesgo == 0 ? "ok" : "danger",
             "alerta",
             "/admin#rendimiento"
         ));

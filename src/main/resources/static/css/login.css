@@ -21,9 +21,10 @@
     flex-direction: column;
     overflow: hidden;
     background:
-        radial-gradient(circle at 85% 12%, rgba(232, 68, 31, .24), transparent 30%),
-        #141210;
-    color: #f4f1e8;
+        radial-gradient(circle at 84% 10%, rgba(15, 118, 110, .32), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(28, 63, 94, .55), transparent 46%),
+        #102132;
+    color: #eaf0f5;
 }
 
 .abstract-grid {
@@ -48,7 +49,7 @@
     height: 300px;
     top: -170px;
     right: -80px;
-    border: 1px solid rgba(232, 68, 31, .35);
+    border: 1px solid rgba(94, 234, 212, .22);
 }
 
 .shape-two {
@@ -64,9 +65,9 @@
     height: 7px;
     top: 22%;
     left: 48%;
-    background: var(--accent);
+    background: #5eead4;
     box-shadow:
-        150px 60px 0 2px rgba(232, 68, 31, .45),
+        150px 60px 0 2px rgba(94, 234, 212, .35),
         -80px 260px 0 1px rgba(255, 255, 255, .2);
 }
 
@@ -99,7 +100,7 @@
 }
 
 .login-brand span {
-    color: #a8a196;
+    color: #a9bacb;
 }
 
 .login-left-content {
@@ -129,14 +130,15 @@
     max-width: 540px;
     margin-top: 16px;
     font-size: clamp(38px, 3.1vw, 52px);
-    line-height: 1.03;
-    color: #f8f4e9;
+    line-height: 1.04;
+    letter-spacing: -.035em;
+    color: #f6fafc;
 }
 
 .login-copy > p {
     max-width: 470px;
     margin-top: 18px;
-    color: #b9b2a6;
+    color: #adc0d2;
     font-size: 14px;
     line-height: 1.7;
 }
@@ -165,9 +167,9 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border-radius: var(--radius-xs);
-    background: rgba(214, 242, 79, .14);
-    color: var(--highlight);
+    border-radius: 10px;
+    background: rgba(94, 234, 212, .14);
+    color: #5eead4;
 }
 
 .benefit-icon svg {
@@ -186,7 +188,7 @@
 
 .login-benefit span {
     margin-top: 3px;
-    color: #a8a196;
+    color: #a9bacb;
     font-size: 11.5px;
     line-height: 1.45;
 }
@@ -214,7 +216,7 @@
     width: 340px;
     height: 340px;
     border-radius: 50%;
-    background: rgba(232, 68, 31, .2);
+    background: rgba(15, 118, 110, .3);
     filter: blur(70px);
 }
 
@@ -338,24 +340,25 @@
 
 .login-submit {
     width: 100%;
-    height: 46px;
+    height: 48px;
     border: 0;
-    border-radius: var(--radius-xs);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     background: var(--primary);
-    color: #fffdf8;
-    font-size: 11.5px;
+    color: #ffffff;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: .1em;
+    letter-spacing: .06em;
     text-transform: uppercase;
-    transition: background .16s;
+    transition: background .16s, box-shadow .16s;
 }
 
 .login-submit:hover {
     background: var(--primary-dark);
+    box-shadow: 0 12px 24px -16px rgba(28, 63, 94, .95);
 }
 
 .login-register {

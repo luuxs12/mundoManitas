@@ -28,11 +28,6 @@ public class DashboardController {
         this.usuarioActual = usuarioActual;
     }
 
-    @GetMapping("/")
-    public String inicio() {
-        return "redirect:/dashboard";
-    }
-
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
         Map<String, Object> datos = dashboardService.cargar(authentication.getName());

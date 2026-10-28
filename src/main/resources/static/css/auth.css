@@ -5,9 +5,9 @@
     align-items: center;
     justify-content: center;
     background:
-        linear-gradient(rgba(23, 21, 18, .035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(23, 21, 18, .035) 1px, transparent 1px),
-        radial-gradient(circle at 88% 12%, rgba(232, 68, 31, .09), transparent 34%),
+        linear-gradient(rgba(28, 63, 94, .03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(28, 63, 94, .03) 1px, transparent 1px),
+        radial-gradient(circle at 88% 12%, rgba(15, 118, 110, .1), transparent 34%),
         var(--paper);
     background-size: 34px 34px, 34px 34px, auto, auto;
 }
@@ -16,9 +16,9 @@
     width: 100%;
     max-width: 470px;
     padding: 34px 32px;
-    border: 1px solid var(--ink);
+    border: 1px solid var(--border);
     border-top: 4px solid var(--accent);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     background: var(--surface);
     box-shadow: var(--shadow-raised);
 }
@@ -81,14 +81,14 @@
     height: 46px;
     margin-top: 4px;
     border: 0;
-    border-radius: var(--radius-xs);
+    border-radius: 10px;
     background: var(--primary);
-    color: #fffdf8;
-    font-size: 11.5px;
+    color: #ffffff;
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: .1em;
+    letter-spacing: .06em;
     text-transform: uppercase;
-    transition: background .16s;
+    transition: background .16s, box-shadow .16s;
 }
 
 .auth-submit:hover {
@@ -174,22 +174,23 @@
     flex-direction: column;
     gap: 9px;
     border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     background: var(--surface-alt);
     transition: border-color .16s, transform .16s, box-shadow .16s;
 }
 
 .auth-choice:hover {
-    border-color: var(--ink);
+    border-color: var(--accent);
     transform: translateY(-2px);
     box-shadow: var(--shadow-raised);
 }
 
 .auth-choice-tag {
     align-self: flex-start;
-    padding: 3px 7px;
+    padding: 4px 8px;
+    border-radius: 6px;
     background: var(--ink);
-    color: var(--paper);
+    color: #ffffff;
     font-size: 9.5px;
     font-weight: 700;
     letter-spacing: .12em;
@@ -198,7 +199,7 @@
 .auth-choice strong {
     font-family: var(--font-display);
     font-size: 17px;
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1.15;
 }
 
@@ -223,7 +224,7 @@
 }
 
 .auth-choice-dark .auth-choice-copy {
-    color: #b9b2a6;
+    color: #aebfd0;
 }
 
 .auth-choice-dark .auth-choice-tag {

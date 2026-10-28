@@ -6,19 +6,15 @@
     <title>403 – Acceso denegado | Mundo Manitas</title>
     <link rel="stylesheet" th:href="@{/css/base.css}">
     <link rel="stylesheet" th:href="@{/css/components.css}">
-    <style>
-        .error-page { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:1.5rem; text-align:center; padding:2rem; }
-        .error-code { font-size:6rem; font-weight:800; opacity:0.15; line-height:1; }
-        .error-page h1 { font-size:1.75rem; }
-        .error-page p { opacity:0.6; max-width:400px; }
-    </style>
 </head>
 <body class="app-body">
     <div class="error-page">
-        <div class="error-code">403</div>
-        <h1>Acceso denegado</h1>
-        <p th:text="${mensaje}">No tienes permisos para acceder a este recurso.</p>
-        <a href="/dashboard" class="btn btn-primary">Volver al Dashboard</a>
+        <div class="error-card">
+            <span class="error-code">ERROR 403</span>
+            <h1>Acceso denegado</h1>
+            <p th:text="${mensaje}">No tienes permisos para acceder a este recurso.</p>
+            <a href="/dashboard" class="btn btn-primary">Volver al Dashboard</a>
+        </div>
     </div>
 </body>
 </html>

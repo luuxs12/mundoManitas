@@ -9,8 +9,9 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     background:
-        linear-gradient(120deg, rgba(232, 68, 31, .07), transparent 42%),
+        radial-gradient(circle at 92% 0%, rgba(15, 118, 110, .12), transparent 42%),
         var(--surface);
+    box-shadow: var(--shadow-card);
 }
 
 .course-detail-copy {
@@ -21,9 +22,9 @@
 .course-detail-hero h1 {
     max-width: 760px;
     margin-top: 10px;
-    font-size: 40px;
+    font-size: clamp(28px, 3.4vw, 40px);
     line-height: 1.12;
-    letter-spacing: -1.4px;
+    letter-spacing: -1.2px;
 }
 
 .course-detail-hero p {
@@ -74,9 +75,13 @@
 .detail-progress-card>strong {
     display: block;
     margin: 8px 0 14px;
-    color: var(--primary);
+    color: var(--accent);
+    font-family: var(--font-display);
     font-size: 42px;
+    font-weight: 800;
     line-height: 1;
+    letter-spacing: -.04em;
+    font-variant-numeric: tabular-nums;
 }
 
 .detail-progress-card small {
@@ -310,7 +315,7 @@
     justify-content: center;
     border-radius: var(--radius-sm);
     background: var(--ink);
-    color: #fffdf8;
+    color: #ffffff;
 }
 
 .lesson-preview svg {
