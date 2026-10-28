@@ -219,11 +219,11 @@ Los paquetes de `com.mundomanitas`:
 | `web` | `ControllerAdvice` global, navegación del sidebar y errores de vistas |
 | `exception` | Excepciones de negocio |
 
-**Reparto del código.** El backend es Java de extremo a extremo. De los 204 archivos fuente,
-149 son Java (73 %) y suman 10.811 líneas; el resto es la capa de presentación (HTML, CSS) y
+**Reparto del código.** El backend es Java de extremo a extremo. De los 215 archivos fuente,
+162 son Java (75 %) y suman 12.882 líneas; el resto es la capa de presentación (HTML, CSS) y
 los scripts de apoyo (SQL, PowerShell, configuración). Si se mide solo la lógica de aplicación
-—Java, SQL, configuración y scripts, sin plantillas ni hojas de estilo—, Java representa cerca
-del 90 %. El único JavaScript de la aplicación es el de la landing.
+—Java, SQL, configuración y scripts, sin plantillas ni hojas de estilo—, Java representa más
+del 95 %. El único JavaScript de la aplicación es el de la landing.
 
 ### 3.2 Por qué DAO si ya existe Spring Data
 
