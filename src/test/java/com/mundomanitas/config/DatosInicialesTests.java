@@ -1,11 +1,15 @@
 package com.mundomanitas.config;
 
+import com.mundomanitas.repository.AnuncioRepository;
+import com.mundomanitas.repository.CompraRepository;
 import com.mundomanitas.repository.EjercicioRepository;
+import com.mundomanitas.repository.FavoritoRepository;
 import com.mundomanitas.repository.InscripcionRepository;
 import com.mundomanitas.repository.ModuloRepository;
 import com.mundomanitas.repository.ModuloSistemaRepository;
 import com.mundomanitas.repository.PostulacionDocenteRepository;
 import com.mundomanitas.repository.ProgresoRepository;
+import com.mundomanitas.repository.ResenaRepository;
 import com.mundomanitas.repository.RolRepository;
 import com.mundomanitas.repository.UsuarioRepository;
 import com.mundomanitas.repository.VideoRepository;
@@ -15,6 +19,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -60,17 +66,29 @@ class DatosInicialesTests {
     @Autowired
     private PostulacionDocenteRepository postulacionRepository;
 
+    @Autowired
+    private CompraRepository compraRepository;
+
+    @Autowired
+    private FavoritoRepository favoritoRepository;
+
+    @Autowired
+    private ResenaRepository resenaRepository;
+
+    @Autowired
+    private AnuncioRepository anuncioRepository;
+
     @Test
     void laBaseVaciaQuedaSembradaConUsuariosRolesYContenido() {
-        assertEquals(8, usuarioRepository.count(), "Deben existir los ocho usuarios demo");
+        assertEquals(16, usuarioRepository.count(), "Deben existir las dieciséis cuentas demo");
         assertEquals(5, rolRepository.count(), "Deben existir los cinco roles del sistema");
-        assertEquals(8, moduloSistemaRepository.count(), "Deben existir los ocho módulos de navegación");
+        assertEquals(9, moduloSistemaRepository.count(), "Deben existir los nueve módulos de navegación");
 
-        assertTrue(moduloRepository.count() >= 4);
-        assertTrue(videoRepository.count() >= 3);
-        assertTrue(ejercicioRepository.count() >= 2);
-        assertTrue(progresoRepository.count() >= 4);
-        assertTrue(inscripcionRepository.count() >= 4);
+        assertTrue(moduloRepository.count() >= 12, "Deben existir al menos doce cursos demo");
+        assertTrue(videoRepository.count() >= 24, "Cada curso demo debe tener videos");
+        assertTrue(ejercicioRepository.count() >= 12, "Cada curso demo debe tener ejercicios");
+        assertTrue(progresoRepository.count() >= 20);
+        assertTrue(inscripcionRepository.count() >= 20);
 
         assertTrue(usuarioRepository.findByEmailIgnoreCase("alumno@mundomanitas.com").isPresent());
         assertTrue(usuarioRepository.findByEmailIgnoreCase("maria@mundomanitas.com").isPresent());
@@ -80,15 +98,28 @@ class DatosInicialesTests {
     }
 
     @Test
-    void losCursosDemoTienenDocenteAsignado() {
-        var docente = usuarioRepository.findByEmailIgnoreCase("docente@mundomanitas.com").orElseThrow();
+    void losCursosDemoTienenUnDocenteAsignado() {
+        Set<Integer> docentes = Set.of(
+            usuarioRepository.findByEmailIgnoreCase("docente@mundomanitas.com").orElseThrow().getIdUsuario(),
+            usuarioRepository.findByEmailIgnoreCase("carlos@mundomanitas.com").orElseThrow().getIdUsuario(),
+            usuarioRepository.findByEmailIgnoreCase("elena@mundomanitas.com").orElseThrow().getIdUsuario(),
+            usuarioRepository.findByEmailIgnoreCase("jorge@mundomanitas.com").orElseThrow().getIdUsuario()
+        );
 
         assertTrue(moduloRepository.count() > 0);
         assertTrue(
             moduloRepository.findAllByOrderByOrdenAsc().stream()
-                .allMatch(modulo -> docente.getIdUsuario().equals(modulo.getIdDocente())),
-            "Todos los cursos demo deben pertenecer al docente de ejemplo"
+                .allMatch(modulo -> docentes.contains(modulo.getIdDocente())),
+            "Todos los cursos demo deben pertenecer a uno de los docentes de ejemplo"
         );
+    }
+
+    @Test
+    void laComunidadDemoTieneFavoritosResenasYAnuncios() {
+        assertTrue(favoritoRepository.count() >= 7, "Deben existir favoritos de ejemplo");
+        assertTrue(resenaRepository.count() >= 6, "Deben existir reseñas de ejemplo");
+        assertTrue(anuncioRepository.count() >= 6, "Deben existir anuncios de ejemplo");
+        assertTrue(compraRepository.count() >= 5, "Deben existir compras premium simuladas");
     }
 
     @Test
@@ -102,6 +133,10 @@ class DatosInicialesTests {
         long progresos = progresoRepository.count();
         long inscripciones = inscripcionRepository.count();
         long postulaciones = postulacionRepository.count();
+        long compras = compraRepository.count();
+        long favoritos = favoritoRepository.count();
+        long resenas = resenaRepository.count();
+        long anuncios = anuncioRepository.count();
 
         semillas.run();
 
@@ -114,6 +149,10 @@ class DatosInicialesTests {
         assertEquals(progresos, progresoRepository.count());
         assertEquals(inscripciones, inscripcionRepository.count());
         assertEquals(postulaciones, postulacionRepository.count());
+        assertEquals(compras, compraRepository.count());
+        assertEquals(favoritos, favoritoRepository.count());
+        assertEquals(resenas, resenaRepository.count());
+        assertEquals(anuncios, anuncioRepository.count());
     }
 
     @Test
@@ -124,6 +163,7 @@ class DatosInicialesTests {
 
         assertNotNull(estudiante.getModulos());
         assertTrue(estudiante.getModulos().size() >= 3);
+        assertTrue(estudiante.getModulos().stream().anyMatch(m -> "FAVORITOS".equals(m.getCodigo())));
         assertTrue(docente.getModulos().stream().anyMatch(m -> "ADMIN_CONTENIDO".equals(m.getCodigo())));
         assertTrue(docente.getModulos().stream().anyMatch(m -> "DOCENTE_CURSOS".equals(m.getCodigo())));
         assertTrue(administrador.getModulos().stream().anyMatch(m -> "ADMIN_USUARIOS".equals(m.getCodigo())));

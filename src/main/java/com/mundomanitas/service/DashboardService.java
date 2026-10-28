@@ -31,17 +31,20 @@ public class DashboardService {
     private final ProgresoDao progresoDao;
     private final CursoDao cursoDao;
     private final CatalogoDao catalogoDao;
+    private final ComunidadService comunidadService;
 
     public DashboardService(
         UsuarioDao usuarioDao,
         ProgresoDao progresoDao,
         CursoDao cursoDao,
-        CatalogoDao catalogoDao
+        CatalogoDao catalogoDao,
+        ComunidadService comunidadService
     ) {
         this.usuarioDao = usuarioDao;
         this.progresoDao = progresoDao;
         this.cursoDao = cursoDao;
         this.catalogoDao = catalogoDao;
+        this.comunidadService = comunidadService;
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +60,7 @@ public class DashboardService {
 
         switch (usuario.getTipo()) {
             case "estudiante" -> cargarEstudiante(usuario, modelo);
-            case "docente" -> cargarDocente(modelo);
+            case "docente" -> cargarDocente(usuario, modelo);
             case "administrador" -> cargarAdministrador(modelo);
             case "sistemas" -> cargarSistemas(modelo);
             default -> {
@@ -135,12 +138,18 @@ public class DashboardService {
         modelo.put("porIniciar", porIniciar);
         modelo.put("progresoGeneral", progresoGeneral);
         modelo.put("cursosActivos", cursosActivos);
+        modelo.put("totalFavoritos", comunidadService.contarFavoritos(usuario.getIdUsuario()));
+        modelo.put("totalResenas", comunidadService.contarResenasDeEstudiante(usuario.getIdUsuario()));
+        modelo.put("anunciosRecientes", comunidadService.anunciosParaEstudiante(usuario.getIdUsuario(), 3));
     }
 
-    private void cargarDocente(Map<String, Object> modelo) {
+    private void cargarDocente(Usuario usuario, Map<String, Object> modelo) {
         modelo.put("totalModulosEducativos", cursoDao.contarModulos());
         modelo.put("totalVideos", cursoDao.contarVideos());
         modelo.put("totalEjercicios", cursoDao.contarEjercicios());
+        modelo.put("totalAnuncios", comunidadService.contarAnunciosActivosDeDocente(usuario.getIdUsuario()));
+        modelo.put("totalResenasDocente", comunidadService.contarResenasDeDocente(usuario.getIdUsuario()));
+        modelo.put("promedioResenasDocente", comunidadService.promedioResenasDeDocente(usuario.getIdUsuario()));
     }
 
     private void cargarAdministrador(Map<String, Object> modelo) {

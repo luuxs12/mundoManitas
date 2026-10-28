@@ -104,6 +104,7 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioDto crear(UsuarioRequest request) {
+        validarNombreYEmail(request.nombre(), request.email());
         String email = normalizarEmail(request.email());
 
         if (usuarioDao.existeEmail(email)) {
@@ -183,6 +184,13 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioDto actualizar(Integer id, UsuarioRequest request) {
+        return actualizar(id, request, null);
+    }
+
+    @Transactional
+    public UsuarioDto actualizar(Integer id, UsuarioRequest request, Integer idSolicitante) {
+        validarNombreYEmail(request.nombre(), request.email());
+
         Usuario usuario = usuarioDao.buscarPorIdConRol(id)
             .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
@@ -190,6 +198,29 @@ public class UsuarioService {
 
         if (!usuario.getEmail().equalsIgnoreCase(email) && usuarioDao.existeEmail(email)) {
             throw new ReglaNegocioException("Ya existe un usuario con ese correo.");
+        }
+
+        boolean esPropiaCuenta = id.equals(idSolicitante);
+        boolean sigueSiendoAdministrativo = esRolAdministrativo(request.rol());
+
+        if (esPropiaCuenta && Boolean.FALSE.equals(request.activo())) {
+            throw new ReglaNegocioException("No puedes desactivar tu propia cuenta.");
+        }
+
+        if (esPropiaCuenta
+            && esAdministrativo(usuario)
+            && !sigueSiendoAdministrativo) {
+            throw new ReglaNegocioException(
+                "No puedes quitarte el rol administrativo a tu propia cuenta."
+            );
+        }
+
+        if (esAdministrativo(usuario)
+            && !sigueSiendoAdministrativo
+            && esUltimoAdministrativo(usuario)) {
+            throw new ReglaNegocioException(
+                "Debe quedar al menos una cuenta administrativa activa."
+            );
         }
 
         usuario.setNombre(StringUtils.trim(request.nombre()));
@@ -216,8 +247,23 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioDto cambiarEstado(Integer id, boolean activo) {
+        return cambiarEstado(id, activo, null);
+    }
+
+    @Transactional
+    public UsuarioDto cambiarEstado(Integer id, boolean activo, Integer idSolicitante) {
         Usuario usuario = usuarioDao.buscarPorIdConRol(id)
             .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+        if (!activo && id.equals(idSolicitante)) {
+            throw new ReglaNegocioException("No puedes desactivar tu propia cuenta.");
+        }
+
+        if (!activo && esAdministrativo(usuario) && esUltimoAdministrativo(usuario)) {
+            throw new ReglaNegocioException(
+                "No puedes desactivar la última cuenta administrativa activa."
+            );
+        }
 
         usuario.setActivo(activo);
 
@@ -239,8 +285,23 @@ public class UsuarioService {
 
     @Transactional
     public void eliminar(Integer id) {
+        eliminar(id, null);
+    }
+
+    @Transactional
+    public void eliminar(Integer id, Integer idSolicitante) {
         Usuario usuario = usuarioDao.buscarPorIdConRol(id)
             .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
+
+        if (id.equals(idSolicitante)) {
+            throw new ReglaNegocioException("No puedes eliminar tu propia cuenta.");
+        }
+
+        if (esAdministrativo(usuario) && esUltimoAdministrativo(usuario)) {
+            throw new ReglaNegocioException(
+                "No puedes eliminar la última cuenta administrativa activa."
+            );
+        }
 
         usuarioDao.eliminar(usuario);
 
@@ -391,6 +452,45 @@ public class UsuarioService {
 
     private String normalizarEmail(String email) {
         return StringUtils.trimToEmpty(email).toLowerCase(Locale.ROOT);
+    }
+
+    private void validarNombreYEmail(String nombre, String email) {
+        String nombreLimpio = StringUtils.trimToEmpty(nombre);
+
+        if (nombreLimpio.length() < 3 || nombreLimpio.length() > 100) {
+            throw new ReglaNegocioException(
+                "El nombre debe tener entre 3 y 100 caracteres."
+            );
+        }
+
+        String emailLimpio = normalizarEmail(email);
+
+        if (emailLimpio.length() > 100
+            || !emailLimpio.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            throw new ReglaNegocioException("El correo electrónico no es válido.");
+        }
+    }
+
+    private boolean esAdministrativo(Usuario usuario) {
+        return usuario.getRol() != null
+            && ("ADMINISTRADOR".equalsIgnoreCase(usuario.getRol().getCodigo())
+                || "SISTEMAS".equalsIgnoreCase(usuario.getRol().getCodigo()));
+    }
+
+    private boolean esRolAdministrativo(String codigo) {
+        return "ADMINISTRADOR".equalsIgnoreCase(codigo)
+            || "SISTEMAS".equalsIgnoreCase(codigo);
+    }
+
+    private boolean esUltimoAdministrativo(Usuario usuario) {
+        if (!esAdministrativo(usuario)) {
+            return false;
+        }
+
+        long activos = usuarioDao.contarActivosPorRol("ADMINISTRADOR")
+            + usuarioDao.contarActivosPorRol("SISTEMAS");
+
+        return activos <= 1;
     }
 
     private UsuarioDto toDto(Usuario usuario) {

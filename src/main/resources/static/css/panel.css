@@ -546,3 +546,70 @@
         flex: 1;
     }
 }
+
+/* ==========================================================================
+   Anuncios y reseñas del panel docente
+   ========================================================================== */
+
+.announcement-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+}
+
+.announcement-form .btn {
+    align-self: flex-start;
+}
+
+.announcement-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.announcement-admin {
+    padding: 14px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+}
+
+.announcement-admin p {
+    margin: 0 0 10px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+}
+
+.announcement-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.link-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--accent-dark);
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.link-button:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 640px) {
+    .announcement-form .btn {
+        width: 100%;
+        align-self: stretch;
+    }
+}

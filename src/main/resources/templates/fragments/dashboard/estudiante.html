@@ -21,7 +21,7 @@
         </div>
     </section>
 
-    <section class="stats-grid">
+    <section class="stats-grid stats-grid-six">
         <a class="stat-card card" th:href="@{/cursos}">
             <div class="stat-icon purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path></svg></div>
             <div><span>Cursos disponibles</span><strong th:text="${totalCursos}">0</strong></div>
@@ -37,6 +37,14 @@
         <a class="stat-card card" th:href="@{/cursos}">
             <div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></div>
             <div><span>Por iniciar</span><strong th:text="${porIniciar}">0</strong></div>
+        </a>
+        <a class="stat-card card" th:href="@{/cursos(vista='favoritos')}">
+            <div class="stat-icon pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7 3.7C19 15.6 12 20 12 20Z"></path></svg></div>
+            <div><span>Favoritos</span><strong th:text="${totalFavoritos}">0</strong></div>
+        </a>
+        <a class="stat-card card" th:href="@{/cursos}">
+            <div class="stat-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 14.8 8.7 21 9.6l-4.5 4.4 1.1 6.2L12 17.3l-5.6 2.9 1.1-6.2L3 9.6l6.2-.9L12 3Z"></path></svg></div>
+            <div><span>Mis reseñas</span><strong th:text="${totalResenas}">0</strong></div>
         </a>
     </section>
 
@@ -72,6 +80,22 @@
             </div>
             <p class="progress-message">Tu progreso general se calcula a partir de los módulos disponibles en la plataforma.</p>
         </section>
+    </section>
+
+    <section class="card dashboard-card dashboard-announcements" th:if="${!#lists.isEmpty(anunciosRecientes)}">
+        <div class="card-heading">
+            <div><span>AVISOS</span><h3>Anuncios de tus cursos</h3></div>
+            <a th:href="@{/cursos}">Ir a cursos</a>
+        </div>
+
+        <article class="announcement" th:each="anuncio : ${anunciosRecientes}">
+            <div class="announcement-head">
+                <strong th:text="${anuncio.titulo}">Título</strong>
+                <span th:text="${anuncio.fechaTexto}">01/01/2026</span>
+            </div>
+            <p th:text="${anuncio.mensaje}">Mensaje del anuncio.</p>
+            <small th:text="|${anuncio.autor}|">Docente</small>
+        </article>
     </section>
 </th:block>
 </body>

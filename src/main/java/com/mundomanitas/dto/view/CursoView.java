@@ -23,6 +23,7 @@ public class CursoView {
     private final BigDecimal precio;
     private final boolean comprado;
     private final boolean accesible;
+    private final boolean favorito;
 
     public CursoView(
         Integer idModulo,
@@ -40,7 +41,8 @@ public class CursoView {
         boolean premium,
         BigDecimal precio,
         boolean comprado,
-        boolean accesible
+        boolean accesible,
+        boolean favorito
     ) {
         this.idModulo = idModulo;
         this.titulo = titulo;
@@ -58,6 +60,7 @@ public class CursoView {
         this.precio = precio == null ? BigDecimal.ZERO : precio;
         this.comprado = comprado;
         this.accesible = accesible;
+        this.favorito = favorito;
     }
 
     public Integer getIdModulo() {
@@ -122,5 +125,9 @@ public class CursoView {
 
     public boolean isAccesible() {
         return accesible;
+    }
+
+    public boolean isFavorito() {
+        return favorito;
     }
 }

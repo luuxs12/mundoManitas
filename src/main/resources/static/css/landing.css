@@ -4,10 +4,10 @@
    ========================================================================== */
 
 body.lp {
-    --lp-cream: #fff9ef;
-    --lp-cream-deep: #f6ead6;
-    --lp-ink: #10302e;
-    --lp-muted: #4e6e69;
+    --lp-cream: #fbf4e6;
+    --lp-cream-deep: #f3e6cf;
+    --lp-ink: #16302c;
+    --lp-muted: #526d67;
     --lp-teal: #0f766e;
     --lp-teal-deep: #0b5f59;
     --lp-teal-bright: #14b8a6;
@@ -19,7 +19,7 @@ body.lp {
     --lp-yellow: #facc15;
     --lp-lemon: #fff3bf;
     --lp-blue: #1d4ed8;
-    --lp-card: #fffdf7;
+    --lp-card: #fffcf4;
     --lp-line: #e8dcc8;
     --lp-radius: 28px;
     --lp-shell: 1180px;

@@ -361,4 +361,46 @@ class AplicacionWebTests {
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("Explorar catálogo")));
     }
+
+    @Test
+    @WithUserDetails("alumno@mundomanitas.com")
+    void elEstudiantePuedeGuardarYQuitarUnFavorito() throws Exception {
+        mockMvc.perform(post("/cursos/4/favorito")
+                .param("origen", "catalogo")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/cursos"));
+
+        mockMvc.perform(get("/cursos/favoritos"))
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("Pensamiento computacional")));
+
+        mockMvc.perform(post("/cursos/4/favorito")
+                .param("origen", "favoritos")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/cursos/favoritos"));
+    }
+
+    @Test
+    @WithUserDetails("renzo@mundomanitas.com")
+    void elEstudianteInscritoPuedePublicarUnaResena() throws Exception {
+        mockMvc.perform(post("/cursos/1/resena")
+                .param("calificacion", "5")
+                .param("comentario", "Una experiencia muy completa y clara.")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/cursos/1#resenas"));
+    }
+
+    @Test
+    @WithUserDetails("docente@mundomanitas.com")
+    void elDocentePuedePublicarUnAnuncioEnSuCurso() throws Exception {
+        mockMvc.perform(post("/docente/cursos/3/anuncios")
+                .param("titulo", "Repaso general")
+                .param("mensaje", "El repaso será el viernes a las seis de la tarde.")
+                .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/docente/cursos/3#anuncios"));
+    }
 }

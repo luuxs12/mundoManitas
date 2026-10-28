@@ -10,11 +10,13 @@ import com.mundomanitas.dto.api.UsuarioRequest;
 import com.mundomanitas.dto.api.VideoDto;
 import com.mundomanitas.dto.api.VideoRequest;
 import com.mundomanitas.service.CursoService;
+import com.mundomanitas.service.UsuarioActualService;
 import com.mundomanitas.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -34,10 +36,16 @@ public class AdminApiController {
 
     private final UsuarioService usuarioService;
     private final CursoService cursoService;
+    private final UsuarioActualService usuarioActual;
 
-    public AdminApiController(UsuarioService usuarioService, CursoService cursoService) {
+    public AdminApiController(
+        UsuarioService usuarioService,
+        CursoService cursoService,
+        UsuarioActualService usuarioActual
+    ) {
         this.usuarioService = usuarioService;
         this.cursoService = cursoService;
+        this.usuarioActual = usuarioActual;
     }
 
     // ------------------------------------------------------------------
@@ -75,22 +83,30 @@ public class AdminApiController {
     @PutMapping("/usuarios/{id}")
     public UsuarioDto actualizarUsuario(
         @PathVariable Integer id,
-        @Valid @RequestBody UsuarioRequest request
+        @Valid @RequestBody UsuarioRequest request,
+        Authentication authentication
     ) {
-        return usuarioService.actualizar(id, request);
+        Integer idActual = usuarioActual.obtener(authentication).getIdUsuario();
+        return usuarioService.actualizar(id, request, idActual);
     }
 
     @PatchMapping("/usuarios/{id}/estado")
     public UsuarioDto cambiarEstado(
         @PathVariable Integer id,
-        @RequestParam boolean activo
+        @RequestParam boolean activo,
+        Authentication authentication
     ) {
-        return usuarioService.cambiarEstado(id, activo);
+        Integer idActual = usuarioActual.obtener(authentication).getIdUsuario();
+        return usuarioService.cambiarEstado(id, activo, idActual);
     }
 
     @DeleteMapping("/usuarios/{id}")
-    public ResponseEntity<MensajeResponse> eliminarUsuario(@PathVariable Integer id) {
-        usuarioService.eliminar(id);
+    public ResponseEntity<MensajeResponse> eliminarUsuario(
+        @PathVariable Integer id,
+        Authentication authentication
+    ) {
+        Integer idActual = usuarioActual.obtener(authentication).getIdUsuario();
+        usuarioService.eliminar(id, idActual);
 
         return ResponseEntity.ok(new MensajeResponse("Usuario eliminado correctamente."));
     }

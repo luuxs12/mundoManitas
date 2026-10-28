@@ -158,8 +158,16 @@ Cinco minutos después de arrancar deberías poder hacer esto:
 | Estudiante | `maria@mundomanitas.com` | `123456` |
 | Estudiante | `diego@mundomanitas.com` | `123456` |
 | Estudiante | `lucia@mundomanitas.com` | `123456` |
+| Estudiante | `sofia@mundomanitas.com` | `123456` |
+| Estudiante | `mateo@mundomanitas.com` | `123456` |
+| Estudiante | `valeria@mundomanitas.com` | `123456` |
+| Estudiante | `renzo@mundomanitas.com` | `123456` |
 | Padre | `padre@mundomanitas.com` | `123456` |
+| Padre | `rosa@mundomanitas.com` | `123456` |
 | Docente | `docente@mundomanitas.com` | `123456` |
+| Docente | `carlos@mundomanitas.com` | `123456` |
+| Docente | `elena@mundomanitas.com` | `123456` |
+| Docente | `jorge@mundomanitas.com` | `123456` |
 | Administrador | `admin@mundomanitas.com` | `123456` |
 | Sistemas | `sistemas@mundomanitas.com` | `123456` |
 
@@ -167,8 +175,10 @@ Las cuentas demo conservan `123456` a propósito para facilitar la evaluación. 
 contraseñas se exige al crear cuentas, al cambiarlas y al restablecerlas, pero no al iniciar
 sesión; de lo contrario las cuentas históricas dejarían de funcionar.
 
-La siembra también crea una postulación pendiente de ejemplo (`ana.quispe@ejemplo.com`) para
-probar el flujo de aprobación.
+La siembra crea **12 cursos**, **16 cuentas**, compras premium, favoritos, reseñas y anuncios de
+ejemplo. Los cuatro docentes tienen cursos asignados y cada estudiante tiene un avance distinto
+para que los paneles no se vean vacíos. También crea una postulación pendiente de ejemplo
+(`ana.quispe@ejemplo.com`) para probar el flujo de aprobación.
 
 ---
 
@@ -299,6 +309,9 @@ handler global. La excepción debe llevar un mensaje útil, en español, sin jer
 | `video_progreso` | Marca de video completado |
 | `intento_ejercicio` | Cada intento, con respuesta, resultado y puntaje |
 | `compra` | Compra simulada de un curso premium: monto, referencia, método y fecha |
+| `favorito` | Curso guardado por un estudiante; único por pareja estudiante/módulo |
+| `resena` | Calificación y comentario de un estudiante sobre un curso; única por pareja |
+| `anuncio` | Comunicado del docente responsable del curso, con estado activo |
 | `postulacion_docente` | Solicitud de alta docente y su resolución |
 
 Los identificadores se guardan en minúsculas (`idmodulo`, `idestudiante`) porque PostgreSQL
@@ -318,6 +331,11 @@ sorpresas.
 - `compra` es única por `(idestudiante, idmodulo)`: la restricción `uk_compra_estudiante_modulo`
   impide cobrar dos veces el mismo curso. La compra guarda `monto`, `referencia`, `metodoPago`
   (`SIMULADO`) y `fechaCompra` para que quede auditable.
+- `favorito` y `resena` son únicos por `(idestudiante, idmodulo)`: un estudiante no puede guardar
+  dos veces el mismo curso ni publicar dos reseñas del mismo módulo. `ComunidadService` actualiza
+  la reseña existente en lugar de insertar otra.
+- `anuncio` guarda `idModulo`, `idDocente`, `titulo`, `mensaje`, `activo` y fechas. La propiedad
+  se valida en el servicio, no solo en la vista.
 
 ### 4.3 Flyway
 
@@ -330,11 +348,12 @@ Las migraciones están en `src/main/resources/db/migration`:
 | `V3__course_owner.sql` | `modulo.idDocente` para el panel docente |
 | `V4__teacher_applications.sql` | `postulacion_docente` |
 | `V5__premium_courses.sql` | `modulo.premium`, `modulo.precio`, tabla `compra` y el curso demo premium (módulo 3, `S/ 49.90`) |
+| `V6__classroom_community.sql` | Tablas `favorito`, `resena` y `anuncio`, con índices y restricciones de unicidad |
 
 Reglas de oro:
 
 1. **No edites una migración ya aplicada.** Flyway guarda un checksum; si cambia, la aplicación
-   no arranca. Para corregir algo, crea `V6__descripcion.sql`.
+   no arranca. Para corregir algo, crea `V7__descripcion.sql`.
 2. Usa `IF NOT EXISTS` cuando tenga sentido; la siembra y las migraciones se ejecutan sobre bases
    que pueden tener datos.
 3. Prueba la migración contra una base limpia y contra una base con datos. No basta con que
@@ -345,7 +364,7 @@ Reglas de oro:
 Ejemplo de migración nueva:
 
 ```sql
--- V5__add_module_cover.sql
+-- V7__add_module_cover.sql
 ALTER TABLE modulo ADD COLUMN IF NOT EXISTS portada varchar(200);
 ```
 
@@ -354,10 +373,12 @@ ALTER TABLE modulo ADD COLUMN IF NOT EXISTS portada varchar(200);
 `DatosInicialesConfig` es un `CommandLineRunner` idempotente. En cada arranque:
 
 - Crea roles y secciones de navegación si no existen.
-- Crea los usuarios demo si el correo no está registrado.
-- Crea los cuatro módulos y el contenido de Java solo si `modulo` está vacía.
+- Crea las dieciséis cuentas demo (ocho estudiantes, dos padres, cuatro docentes, administrador y
+  sistemas) si el correo no está registrado.
+- Crea los doce cursos con videos y ejercicios solo si `modulo` está vacía.
 - Asigna los módulos sin docente al docente demo.
-- Crea perfiles de estudiante, progreso y matrículas solo si no hay registros previos.
+- Crea perfiles de estudiante, progreso, matrículas, compras premium, favoritos, reseñas y
+  anuncios solo si no hay registros previos.
 
 Eso significa que **reiniciar la aplicación no borra el avance real**: los métodos de siembra
 salen temprano si ya hay datos. Para dejar la base como recién instalada hay que borrarla:
@@ -412,6 +433,11 @@ a los roles y agregar la regla en `SecurityConfig`.
 | `/reportes/progreso.xlsx` | `DOCENTE`, `ADMINISTRADOR`, `SISTEMAS` |
 | `/reportes/certificado/**` | Autenticado (el servicio exige 100 %) |
 | `/actuator/health`, `/actuator/info` | Público |
+
+Dentro de `/cursos/**`, los endpoints de comunidad heredan `MODULO_CURSOS`: favoritos y reseñas
+para estudiantes, y lectura del catálogo para el resto. Los anuncios se publican desde
+`/docente/cursos/{id}/anuncios`, por lo que exigen `MODULO_DOCENTE_CURSOS` además de la
+verificación de propiedad en `ComunidadService`.
 
 La landing `/` es pública, pero si la petición trae una sesión válida el controlador redirige a
 `/dashboard`. Así el enlace del logo funciona igual para visitantes y para usuarios.
@@ -617,6 +643,29 @@ En la vista, el curso bloqueado muestra el paywall (`premium-paywall`), el preci
 compra. Tras comprar, la tarjeta cambia a "Comprado", el módulo aparece en "Mis cursos" y el
 contenido queda disponible.
 
+La semilla incluye otros dos premium de ejemplo: `Desarrollo de apps móviles` (`S/ 69.90`) e
+`Inteligencia artificial aplicada` (`S/ 79.90`), para probar el catálogo con varios candados.
+
+### 7.3.2 Comunidad del aula
+
+`ComunidadService` concentra favoritos, reseñas y anuncios. Todas las operaciones validan el
+acceso antes de escribir:
+
+1. **Favoritos.** `POST /cursos/{id}/favorito` alterna el registro. La lista se consulta en
+   `/cursos/favoritos` y solo el estudiante autenticado la ve. El corazón del catálogo y del
+   detalle usa `CursoView.favorito` para pintar el estado.
+2. **Reseñas.** `POST /cursos/{id}/resena` exige inscripción o compra. La calificación debe estar
+   entre 1 y 5 y el comentario entre 10 y 500 caracteres. Si ya existe una reseña del mismo
+   estudiante y curso, se actualiza. `POST /cursos/{id}/resenas/{idResena}/eliminar` solo permite
+   borrar la propia.
+3. **Anuncios.** `POST /docente/cursos/{id}/anuncios` valida que el usuario sea el docente
+   responsable (`modulo.idDocente`) o administrador. El título tiene entre 4 y 120 caracteres y
+   el mensaje entre 10 y 1000. Los anuncios activos se muestran en el detalle y en el dashboard
+   del estudiante.
+
+Las vistas reutilizan estilos en `components.css` (anuncios, reseñas, estrellas y estados vacíos)
+para que el mismo lenguaje visual funcione en catálogo, detalle, dashboard y panel docente.
+
 ### 7.4 Panel docente
 
 `/docente/cursos` muestra solo los módulos cuyo `idDocente` coincide con el usuario. Los KPIs
@@ -728,7 +777,8 @@ PostgreSQL.
 | `PostulacionServiceTests` | Validación, alta pendiente, aprobación, rechazo |
 | `PostulacionApiTests` | Postulación por API y permisos |
 | `CompraServiceTests` | Compra premium, idempotencia, precio inválido, paywall y acceso al contenido |
-| `DatosInicialesTests` | Siembra idempotente, roles, módulos y postulación demo |
+| `ComunidadServiceTests` | Favoritos, reseñas con acceso, validaciones y anuncios del docente dueño |
+| `DatosInicialesTests` | Siembra idempotente, roles, doce cursos, dieciséis cuentas y comunidad demo |
 
 ### 9.2 Ejecutar
 
@@ -901,6 +951,7 @@ En ambos casos, `COOKIE_SECURE=true` y `SameSite=Lax`.
 | `npm.ps1` o `uipro.ps1` bloqueado | ExecutionPolicy | Usa el `.cmd` correspondiente o `-ExecutionPolicy Bypass` |
 | `psql` pide contraseña y no la acepta | `PGPASSWORD` no definida | `$env:PGPASSWORD = "..."` antes de invocar `psql` |
 | El docente ve un curso ajeno | Se asignó mal `idDocente` | Corrige el módulo desde administración o la base |
+| 403 al publicar un anuncio | El formulario apunta a `/cursos/...` en vez de `/docente/cursos/...` | Usa la ruta del panel docente; `MODULO_CURSOS` no basta para un docente |
 | El certificado no se genera | El módulo no está al 100 % | Completa videos y ejercicios; el servicio lo exige |
 | La landing muestra "0 videos" | Ya no debería: los conteos se ocultan si son cero | Si reaparece, revisa la condición en `landing.html` |
 
@@ -921,6 +972,7 @@ de las dos primeras.
 | El catálogo | `templates/cursos.html`, `static/css/cursos.css`, `controller/CursosController.java`, `service/CursoService.java` |
 | El detalle y el progreso | `templates/curso-detalle.html`, `static/css/curso-detalle.css`, `service/ProgresoService.java`, `service/EjercicioService.java` |
 | La compra premium | `service/CompraService.java`, `dao/CompraDao.java`, `entity/Compra.java`, `templates/cursos.html`, `templates/curso-detalle.html` |
+| Favoritos, reseñas y anuncios | `service/ComunidadService.java`, `dao/ComunidadDao.java`, `entity/Favorito.java`, `entity/Resena.java`, `entity/Anuncio.java`, `templates/curso-detalle.html`, `templates/docente/curso.html` |
 | El panel docente | `templates/docente/*`, `controller/DocenteController.java`, `service/PanelService.java` |
 | La administración | `templates/admin/*`, `controller/Admin*.java`, `static/css/panel.css` |
 | Los reportes | `service/ReporteService.java`, `service/CertificadoService.java`, `controller/ReporteController.java` |
@@ -984,7 +1036,7 @@ Esta sección existe para que nadie tenga que redescubrir el contexto a los golp
 
 ## 16. Checklist de entrega
 
-- [x] `.\mvnw.cmd test` en verde (85 pruebas).
+- [x] `.\mvnw.cmd test` en verde (97 pruebas).
 - [x] `.\mvnw.cmd -DskipTests package` sin errores.
 - [x] Landing en 1440 px y 390 px sin solapamientos.
 - [x] Login con los cinco roles.

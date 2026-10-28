@@ -162,6 +162,7 @@ class CompraServiceTests {
     @Test
     void elTotalInvertidoSumaLasComprasDelEstudiante() {
         Integer alumno = idAlumno();
+        BigDecimal inicial = compraService.totalInvertido(alumno);
         ModuloDto primero = crearPremium("Premium total uno", "10.50", 94);
         ModuloDto segundo = crearPremium("Premium total dos", "20.25", 95);
 
@@ -170,7 +171,7 @@ class CompraServiceTests {
 
         assertEquals(
             0,
-            new BigDecimal("30.75").compareTo(compraService.totalInvertido(alumno))
+            inicial.add(new BigDecimal("30.75")).compareTo(compraService.totalInvertido(alumno))
         );
 
         List<CompraView> compras = compraService.listarPorEstudiante(alumno);

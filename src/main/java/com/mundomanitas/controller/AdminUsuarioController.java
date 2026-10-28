@@ -85,16 +85,18 @@ public class AdminUsuarioController {
         @RequestParam(required = false) String contrasena,
         @RequestParam String rol,
         @RequestParam(defaultValue = "false") boolean activo,
+        Authentication authentication,
         RedirectAttributes flash
     ) {
         try {
+            Usuario actual = usuarioActual.obtener(authentication);
             usuarioService.actualizar(id, new UsuarioRequest(
                 nombre,
                 email,
                 contrasena,
                 rol,
                 activo
-            ));
+            ), actual.getIdUsuario());
             flash.addFlashAttribute("exito", "Usuario actualizado correctamente.");
         } catch (ReglaNegocioException ex) {
             flash.addFlashAttribute("error", ex.getMessage());
@@ -107,22 +109,33 @@ public class AdminUsuarioController {
     public String cambiarEstado(
         @PathVariable Integer id,
         @RequestParam boolean activo,
+        Authentication authentication,
         RedirectAttributes flash
     ) {
-        usuarioService.cambiarEstado(id, activo);
+        try {
+            Usuario actual = usuarioActual.obtener(authentication);
+            usuarioService.cambiarEstado(id, activo, actual.getIdUsuario());
 
-        flash.addFlashAttribute(
-            "exito",
-            activo ? "Usuario activado." : "Usuario desactivado."
-        );
+            flash.addFlashAttribute(
+                "exito",
+                activo ? "Usuario activado." : "Usuario desactivado."
+            );
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
 
         return "redirect:/admin/usuarios";
     }
 
     @PostMapping("/admin/usuarios/{id}/eliminar")
-    public String eliminar(@PathVariable Integer id, RedirectAttributes flash) {
+    public String eliminar(
+        @PathVariable Integer id,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
         try {
-            usuarioService.eliminar(id);
+            Usuario actual = usuarioActual.obtener(authentication);
+            usuarioService.eliminar(id, actual.getIdUsuario());
             flash.addFlashAttribute("exito", "Usuario eliminado.");
         } catch (ReglaNegocioException ex) {
             flash.addFlashAttribute("error", ex.getMessage());

@@ -2,8 +2,11 @@ package com.mundomanitas.controller;
 
 import com.mundomanitas.dto.view.AlumnoProgresoView;
 import com.mundomanitas.dto.view.CursoDocenteView;
+import com.mundomanitas.dto.view.ResenaResumenView;
 import com.mundomanitas.entity.Modulo;
 import com.mundomanitas.entity.Usuario;
+import com.mundomanitas.exception.ReglaNegocioException;
+import com.mundomanitas.service.ComunidadService;
 import com.mundomanitas.service.PanelService;
 import com.mundomanitas.service.UsuarioActualService;
 import org.springframework.security.core.Authentication;
@@ -11,7 +14,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -24,13 +30,16 @@ import java.util.List;
 public class DocenteController {
 
     private final PanelService panelService;
+    private final ComunidadService comunidadService;
     private final UsuarioActualService usuarioActual;
 
     public DocenteController(
         PanelService panelService,
+        ComunidadService comunidadService,
         UsuarioActualService usuarioActual
     ) {
         this.panelService = panelService;
+        this.comunidadService = comunidadService;
         this.usuarioActual = usuarioActual;
     }
 
@@ -70,7 +79,58 @@ public class DocenteController {
         model.addAttribute("alumnos", alumnos);
         model.addAttribute("sinIniciar", sinIniciar);
         model.addAttribute("completaron", completaron);
+        model.addAttribute("anuncios", comunidadService.anunciosDelCurso(id));
+
+        ResenaResumenView resenas = comunidadService.resenasDeCurso(id, null, false);
+        model.addAttribute("resenas", resenas.getResenas());
+        model.addAttribute("totalResenas", resenas.getTotal());
+        model.addAttribute("promedioResenas", resenas.getPromedioTexto());
 
         return "docente/curso";
+    }
+
+    @PostMapping("/cursos/{id}/anuncios")
+    public String publicarAnuncio(
+        @PathVariable Integer id,
+        @RequestParam String titulo,
+        @RequestParam String mensaje,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
+        Usuario usuario = usuarioActual.obtener(authentication);
+
+        try {
+            comunidadService.publicarAnuncio(
+                id,
+                usuario.getIdUsuario(),
+                false,
+                titulo,
+                mensaje
+            );
+            flash.addFlashAttribute("exito", "Anuncio publicado para los estudiantes del curso.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/docente/cursos/" + id + "#anuncios";
+    }
+
+    @PostMapping("/cursos/{id}/anuncios/{idAnuncio}/eliminar")
+    public String eliminarAnuncio(
+        @PathVariable Integer id,
+        @PathVariable Integer idAnuncio,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
+        Usuario usuario = usuarioActual.obtener(authentication);
+
+        try {
+            comunidadService.eliminarAnuncio(idAnuncio, usuario.getIdUsuario(), false);
+            flash.addFlashAttribute("exito", "Anuncio eliminado.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/docente/cursos/" + id + "#anuncios";
     }
 }

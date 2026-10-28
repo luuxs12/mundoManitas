@@ -132,6 +132,20 @@
                             Descargar certificado
                         </a>
 
+                        <form th:action="@{/cursos/{id}/favorito(id=${modulo.idModulo})}" method="post">
+                            <input type="hidden" name="origen" value="detalle">
+                            <button class="btn btn-secondary favorite-detail" type="submit"
+                                    th:classappend="${favorito} ? ' is-active' : ''">
+                                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7 3.7C19 15.6 12 20 12 20Z"></path>
+                                </svg>
+                                <span th:text="${favorito ? 'En tus favoritos' : 'Guardar en favoritos'}">
+                                    Guardar en favoritos
+                                </span>
+                            </button>
+                        </form>
+
                     </div>
 
                 </div>
@@ -184,8 +198,8 @@
                     <span class="section-label">CONTENIDO PREMIUM</span>
                     <h2>Desbloquea el curso completo</h2>
                     <p>
-                        Este módulo incluye <strong th:text="|${totalVideos} videos|">0 videos</strong> y
-                        <strong th:text="|${totalEjercicios} ejercicios|">0 ejercicios</strong>.
+                        Este módulo incluye <strong th:text="|${totalVideos} ${totalVideos == 1 ? 'video' : 'videos'}|">0 videos</strong> y
+                        <strong th:text="|${totalEjercicios} ${totalEjercicios == 1 ? 'ejercicio' : 'ejercicios'}|">0 ejercicios</strong>.
                         Al comprarlo se registra tu acceso y queda disponible en “Mis cursos”.
                     </p>
 
@@ -436,6 +450,122 @@
                     </div>
 
                 </aside>
+
+            </section>
+
+            <section class="classroom-community" th:if="${!bloqueado}">
+
+                <section class="community-card card" id="anuncios" th:if="${!#lists.isEmpty(anuncios)}">
+
+                    <div class="card-heading">
+                        <div>
+                            <span>AVISOS</span>
+                            <h3>Anuncios del docente</h3>
+                        </div>
+
+                        <span class="badge badge-info"
+                            th:text="${#lists.size(anuncios) == 1 ? '1 activo' : #lists.size(anuncios) + ' activos'}">1 activo</span>
+                    </div>
+
+                    <article class="announcement" th:each="anuncio : ${anuncios}">
+                        <div class="announcement-head">
+                            <strong th:text="${anuncio.titulo}">Título del anuncio</strong>
+                            <span th:text="${anuncio.fechaTexto}">01/01/2026</span>
+                        </div>
+                        <p th:text="${anuncio.mensaje}">Mensaje del anuncio.</p>
+                        <small th:text="|Publicado por ${anuncio.autor}|">Publicado por Docente</small>
+                    </article>
+
+                </section>
+
+                <section class="community-card card" id="resenas">
+
+                    <div class="card-heading">
+                        <div>
+                            <span>OPINIONES</span>
+                            <h3>Reseñas del curso</h3>
+                        </div>
+
+                        <div class="rating-summary" th:if="${totalResenas > 0}">
+                            <strong th:text="${promedioResenas}">4.5</strong>
+                            <span class="stars" aria-hidden="true">★★★★★</span>
+                            <small th:text="|${totalResenas} ${totalResenas == 1 ? 'reseña' : 'reseñas'}|">3 reseñas</small>
+                        </div>
+                    </div>
+
+                    <form class="review-form" th:if="${puedeResenar}"
+                          th:action="@{/cursos/{id}/resena(id=${modulo.idModulo})}" method="post">
+
+                        <div class="review-form-head">
+                            <strong th:text="${miResena != null ? 'Actualiza tu reseña' : 'Deja tu reseña'}">
+                                Deja tu reseña
+                            </strong>
+                            <small>Tu opinión ayuda a otros estudiantes a elegir.</small>
+                        </div>
+
+                        <label class="review-field">
+                            <span>Calificación</span>
+                            <select class="form-control" name="calificacion" required>
+                                <option value="5" th:selected="${miResena != null and miResena.calificacion == 5}">5 estrellas</option>
+                                <option value="4" th:selected="${miResena != null and miResena.calificacion == 4}">4 estrellas</option>
+                                <option value="3" th:selected="${miResena != null and miResena.calificacion == 3}">3 estrellas</option>
+                                <option value="2" th:selected="${miResena != null and miResena.calificacion == 2}">2 estrellas</option>
+                                <option value="1" th:selected="${miResena != null and miResena.calificacion == 1}">1 estrella</option>
+                            </select>
+                        </label>
+
+                        <label class="review-field review-field-wide">
+                            <span>Comentario</span>
+                            <textarea class="form-control" name="comentario" rows="3" maxlength="500" required
+                                placeholder="Cuéntanos qué te pareció el curso"
+                                th:text="${miResena != null ? miResena.comentario : ''}"></textarea>
+                        </label>
+
+                        <button class="btn btn-primary" type="submit">
+                            <span th:text="${miResena != null ? 'Actualizar reseña' : 'Publicar reseña'}">
+                                Publicar reseña
+                            </span>
+                        </button>
+
+                    </form>
+
+                    <div class="review-list" th:if="${!#lists.isEmpty(resenas)}">
+
+                        <article class="review-item" th:each="resena : ${resenas}">
+
+                            <div class="review-avatar" th:text="${resena.inicial}">M</div>
+
+                            <div class="review-body">
+
+                                <div class="review-head">
+                                    <strong th:text="${resena.nombreEstudiante}">Estudiante</strong>
+                                    <span class="review-stars" aria-hidden="true">
+                                        <span th:each="numero : ${#numbers.sequence(1, 5)}"
+                                              th:classappend="${numero <= resena.calificacion ? 'on' : ''}">&#9733;</span>
+                                    </span>
+                                    <small th:text="${resena.fechaTexto}">01/01/2026</small>
+                                </div>
+
+                                <p th:text="${resena.comentario}">Comentario de la reseña.</p>
+
+                                <form th:if="${resena.propia}"
+                                      th:action="@{/cursos/{id}/resenas/{idResena}/eliminar(id=${modulo.idModulo}, idResena=${resena.idResena})}"
+                                      method="post">
+                                    <button class="link-button" type="submit">Eliminar mi reseña</button>
+                                </form>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                    <div class="community-empty" th:if="${#lists.isEmpty(resenas)}">
+                        <strong>Todavía no hay reseñas.</strong>
+                        <span>Si ya cursaste este módulo, sé la primera persona en opinar.</span>
+                    </div>
+
+                </section>
 
             </section>
 

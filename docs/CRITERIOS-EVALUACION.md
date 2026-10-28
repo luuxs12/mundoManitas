@@ -14,7 +14,7 @@ Este documento relaciona cada criterio de **Desarrollo de la Solución Informát
 | **MVC** | Controladores delgados, servicios con la lógica y vistas Thymeleaf. La API REST reutiliza los mismos servicios. | `src/main/java/com/mundomanitas/controller`, `api`, `service` y `src/main/resources/templates` |
 | **DAO** | Contrato genérico `GenericDao<T, ID>`, implementación base `AbstractDao` y DAOs concretos por entidad. Los servicios dependen de las interfaces, no de JPA directamente. | `src/main/java/com/mundomanitas/dao` |
 | **SOLID** | SRP (controlador / servicio / DAO separados), OCP y DIP (servicios contra interfaces), LSP e ISP (`GenericDao` + `AbstractDao`), DTO para no exponer entidades. | `dao/`, `service/`, `dto/view/`, `dto/api/` y sección **Arquitectura** del `README.md` |
-| **TDD / pruebas automatizadas** | Suite de pruebas de integración y unitarias con JUnit 5, MockMvc, Spring Security Test y H2. Se ejecutan con `./mvnw test`. | `src/test/java/com/mundomanitas` — **79 pruebas**, 0 fallos |
+| **TDD / pruebas automatizadas** | Suite de pruebas de integración y unitarias con JUnit 5, MockMvc, Spring Security Test y H2. Se ejecutan con `./mvnw test`. | `src/test/java/com/mundomanitas` — **97 pruebas**, 0 fallos |
 | **Seguridad** | Spring Security con sesión + JWT, CSRF, autorización por rol y por módulo, bloqueo de cuentas, política de contraseñas, recuperación con token de un solo uso y páginas 401/403/404. | `security/`, `config/SecurityConfig`, `application-prod.properties` y sección **Seguridad** del `README.md` |
 
 **Comprobación rápida**
@@ -23,7 +23,7 @@ Este documento relaciona cada criterio de **Desarrollo de la Solución Informát
 ./mvnw test
 ```
 
-Resultado esperado: `Tests run: 79, Failures: 0, Errors: 0`.
+Resultado esperado: `Tests run: 97, Failures: 0, Errors: 0`.
 
 ---
 

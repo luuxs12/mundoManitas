@@ -810,3 +810,17 @@
         padding-left: 46px;
     }
 }
+
+/* ==========================================================================
+   Favorito en el detalle
+   ========================================================================== */
+
+.favorite-detail.is-active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+}
+
+.favorite-detail.is-active svg {
+    fill: currentColor;
+}

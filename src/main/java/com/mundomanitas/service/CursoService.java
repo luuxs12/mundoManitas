@@ -1,6 +1,7 @@
 package com.mundomanitas.service;
 
 import com.mundomanitas.dao.CompraDao;
+import com.mundomanitas.dao.ComunidadDao;
 import com.mundomanitas.dao.CursoDao;
 import com.mundomanitas.dao.InscripcionDao;
 import com.mundomanitas.dao.ProgresoDao;
@@ -54,6 +55,7 @@ public class CursoService {
     private final InscripcionDao inscripcionDao;
     private final ProgresoDao progresoDao;
     private final CompraDao compraDao;
+    private final ComunidadDao comunidadDao;
     private final InscripcionService inscripcionService;
     private final ProgresoService progresoService;
     private final EjercicioService ejercicioService;
@@ -64,6 +66,7 @@ public class CursoService {
         InscripcionDao inscripcionDao,
         ProgresoDao progresoDao,
         CompraDao compraDao,
+        ComunidadDao comunidadDao,
         InscripcionService inscripcionService,
         ProgresoService progresoService,
         EjercicioService ejercicioService,
@@ -73,6 +76,7 @@ public class CursoService {
         this.inscripcionDao = inscripcionDao;
         this.progresoDao = progresoDao;
         this.compraDao = compraDao;
+        this.comunidadDao = comunidadDao;
         this.inscripcionService = inscripcionService;
         this.progresoService = progresoService;
         this.ejercicioService = ejercicioService;
@@ -119,13 +123,18 @@ public class CursoService {
                 .collect(Collectors.toSet())
             : Set.of();
 
+        Set<Integer> favoritos = esEstudiante
+            ? idsFavoritos(idEstudiante)
+            : Set.of();
+
         return cursoDao.buscarModulos(q, pageable)
             .map(modulo -> construirCursoView(
                 modulo,
                 progresos.get(modulo.getIdModulo()),
                 esEstudiante,
                 inscritos.contains(modulo.getIdModulo()),
-                comprados.contains(modulo.getIdModulo())
+                comprados.contains(modulo.getIdModulo()),
+                favoritos.contains(modulo.getIdModulo())
             ));
     }
 
@@ -155,6 +164,75 @@ public class CursoService {
         return listarFiltrado(idEstudiante, q, page, size, false);
     }
 
+    /**
+     * Cursos que el estudiante guardó en su lista de favoritos.
+     */
+    @Transactional(readOnly = true)
+    public Page<CursoView> listarFavoritos(
+        Integer idEstudiante,
+        String q,
+        int page,
+        int size
+    ) {
+        Map<Integer, Progreso> progresos = progresoDao.listarPorEstudiante(idEstudiante)
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    Progreso::getIdModulo,
+                    Function.identity(),
+                    (primero, segundo) -> primero
+                )
+            );
+
+        Set<Integer> inscritos = inscripcionDao.listarPorEstudiante(idEstudiante)
+            .stream()
+            .map(Inscripcion::getIdModulo)
+            .collect(Collectors.toSet());
+
+        Set<Integer> comprados = modulosComprados(idEstudiante);
+        Set<Integer> favoritos = idsFavoritos(idEstudiante);
+        String filtro = q == null ? "" : q.trim().toLowerCase(Locale.ROOT);
+
+        List<Modulo> modulos = cursoDao.listarModulos().stream()
+            .filter(modulo -> favoritos.contains(modulo.getIdModulo()))
+            .filter(modulo -> coincide(modulo, filtro))
+            .toList();
+
+        int tamano = Math.min(Math.max(size, 1), TAMANO_MAXIMO_PAGINA);
+        int pagina = Math.max(page, 0);
+        int desde = Math.min(pagina * tamano, modulos.size());
+        int hasta = Math.min(desde + tamano, modulos.size());
+
+        List<CursoView> contenido = modulos.subList(desde, hasta).stream()
+            .map(modulo -> construirCursoView(
+                modulo,
+                progresos.get(modulo.getIdModulo()),
+                true,
+                inscritos.contains(modulo.getIdModulo()),
+                comprados.contains(modulo.getIdModulo()),
+                true
+            ))
+            .toList();
+
+        return new PageImpl<>(
+            contenido,
+            PageRequest.of(pagina, tamano, Sort.by(Sort.Direction.ASC, "orden")),
+            modulos.size()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Integer> idsFavoritos(Integer idEstudiante) {
+        return comunidadDao.listarFavoritos(idEstudiante).stream()
+            .map(favorito -> favorito.getIdModulo())
+            .collect(Collectors.toSet());
+    }
+
+    @Transactional(readOnly = true)
+    public long contarFavoritos(Integer idEstudiante) {
+        return comunidadDao.contarFavoritos(idEstudiante);
+    }
+
     private Page<CursoView> listarFiltrado(
         Integer idEstudiante,
         String q,
@@ -182,6 +260,8 @@ public class CursoService {
             .map(compra -> compra.getIdModulo())
             .collect(Collectors.toSet());
 
+        Set<Integer> favoritos = idsFavoritos(idEstudiante);
+
         String filtro = q == null ? "" : q.trim().toLowerCase(Locale.ROOT);
 
         List<Modulo> modulos = cursoDao.listarModulos().stream()
@@ -208,7 +288,8 @@ public class CursoService {
                 progresos.get(modulo.getIdModulo()),
                 true,
                 inscritos.contains(modulo.getIdModulo()),
-                comprados.contains(modulo.getIdModulo())
+                comprados.contains(modulo.getIdModulo()),
+                favoritos.contains(modulo.getIdModulo())
             ))
             .toList();
 
@@ -522,6 +603,8 @@ public class CursoService {
             throw new ReglaNegocioException("Ya existe un módulo con ese título.");
         }
 
+        validarPrecio(request);
+
         Modulo modulo = new Modulo();
         modulo.setTitulo(request.titulo());
         modulo.setDescripcion(request.descripcion());
@@ -547,6 +630,8 @@ public class CursoService {
             && cursoDao.existeTituloModulo(request.titulo())) {
             throw new ReglaNegocioException("Ya existe un módulo con ese título.");
         }
+
+        validarPrecio(request);
 
         modulo.setTitulo(request.titulo());
         modulo.setDescripcion(request.descripcion());
@@ -578,6 +663,9 @@ public class CursoService {
 
         inscripcionDao.eliminarPorModulo(idModulo);
         progresoDao.eliminarProgresoPorModulo(idModulo);
+        comunidadDao.eliminarFavoritosPorModulo(idModulo);
+        comunidadDao.eliminarResenasPorModulo(idModulo);
+        comunidadDao.eliminarAnunciosPorModulo(idModulo);
         cursoDao.eliminarVideosDeModulo(idModulo);
         cursoDao.eliminarEjerciciosDeModulo(idModulo);
         cursoDao.eliminarModulo(idModulo);
@@ -773,7 +861,8 @@ public class CursoService {
         Progreso progreso,
         boolean esEstudiante,
         boolean inscrito,
-        boolean comprado
+        boolean comprado,
+        boolean favorito
     ) {
         int porcentaje = progreso == null || progreso.getPorcentaje() == null
             ? 0
@@ -797,7 +886,8 @@ public class CursoService {
             modulo.isPremium(),
             modulo.getPrecio(),
             comprado,
-            accesible
+            accesible,
+            favorito
         );
     }
 
@@ -850,6 +940,26 @@ public class CursoService {
 
     private String normalizarNivel(String nivel) {
         return nivel == null ? "basico" : nivel.trim().toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Un curso premium debe tener un precio positivo y razonable.
+     */
+    private void validarPrecio(ModuloRequest request) {
+        if (!request.esPremium()) {
+            return;
+        }
+
+        if (request.precio() == null
+            || request.precio().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ReglaNegocioException(
+                "Un curso premium debe tener un precio mayor que cero."
+            );
+        }
+
+        if (request.precio().compareTo(new BigDecimal("9999.99")) > 0) {
+            throw new ReglaNegocioException("El precio del curso excede el máximo permitido.");
+        }
     }
 
     private ModuloDto toDto(Modulo modulo) {

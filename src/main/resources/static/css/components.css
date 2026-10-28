@@ -1089,3 +1089,261 @@ details summary:hover {
         padding: 11px 12px;
     }
 }
+
+/* ==========================================================================
+   Comunidad del aula: anuncios y reseñas
+   ========================================================================== */
+
+.classroom-community {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 22px;
+    margin-top: 22px;
+    align-items: start;
+}
+
+.community-card {
+    padding: 24px;
+}
+
+.rating-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface-alt);
+}
+
+.rating-summary strong {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--ink);
+}
+
+.rating-summary .stars {
+    color: #e8a33d;
+    font-size: 13px;
+    letter-spacing: .1em;
+}
+
+.rating-summary small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.announcement {
+    padding: 14px 16px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+}
+
+.announcement + .announcement {
+    margin-top: 12px;
+}
+
+.announcement-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.announcement-head strong {
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.announcement-head span {
+    color: var(--muted);
+    font-size: 11.5px;
+    white-space: nowrap;
+}
+
+.announcement p {
+    margin: 0 0 6px;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+}
+
+.announcement small {
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+.review-form {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-alt);
+}
+
+.review-form .btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+}
+
+.review-form-head {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.review-form-head strong {
+    color: var(--ink);
+}
+
+.review-form-head small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.review-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.review-field > span {
+    color: var(--muted-dark);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.review-field textarea {
+    resize: vertical;
+    min-height: 76px;
+}
+
+.review-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.review-item {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+}
+
+.review-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    font-family: var(--font-display);
+    font-weight: 800;
+}
+
+.review-body {
+    min-width: 0;
+    flex: 1;
+}
+
+.review-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.review-head strong {
+    color: var(--ink);
+    font-size: 13.5px;
+}
+
+.review-head small {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+.review-stars {
+    display: inline-flex;
+    gap: 1px;
+    color: #e3d4b8;
+    font-size: 12px;
+}
+
+.review-stars .on {
+    color: #e8a33d;
+}
+
+.review-body p {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+}
+
+.review-body .link-button {
+    margin-top: 6px;
+}
+
+.review-list.compact .review-item {
+    padding: 12px;
+}
+
+.review-list.compact .review-body p {
+    font-size: 12.5px;
+}
+
+.community-empty {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 20px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.community-empty strong {
+    color: var(--ink);
+}
+
+@media (max-width: 1080px) {
+    .classroom-community {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .community-card {
+        padding: 18px;
+    }
+
+    .review-form {
+        grid-template-columns: 1fr;
+    }
+
+    .review-form .btn {
+        width: 100%;
+    }
+
+    .review-head small {
+        margin-left: 0;
+    }
+}

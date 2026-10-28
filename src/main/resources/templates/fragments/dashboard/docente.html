@@ -38,7 +38,7 @@
                 <div class="continue-course-info">
                     <strong th:text="${curso.titulo}">Curso</strong>
                     <span>
-                        <span th:text="|${curso.inscritos} alumnos|">0 alumnos</span>
+                        <span th:text="|${curso.inscritos} ${curso.inscritos == 1 ? 'alumno' : 'alumnos'}|">0 alumnos</span>
                         · <span th:text="${curso.estado}">Estado</span>
                     </span>
                     <div class="course-progress-row">
@@ -69,6 +69,42 @@
                     <div><strong>Mi perfil</strong><span>Datos de tu cuenta</span></div>
                 </a>
             </div>
+        </section>
+    </section>
+
+    <section class="dashboard-grid">
+        <section class="card dashboard-card">
+            <div class="card-heading">
+                <div><span>COMUNIDAD</span><h3>Actividad del aula</h3></div>
+                <a th:href="@{/docente/cursos}">Ver cursos</a>
+            </div>
+
+            <div class="fact-list">
+                <div>
+                    <span>Anuncios activos</span>
+                    <strong th:text="${totalAnuncios}">0</strong>
+                </div>
+                <div>
+                    <span>Reseñas recibidas</span>
+                    <strong th:text="${totalResenasDocente}">0</strong>
+                </div>
+                <div>
+                    <span>Promedio de reseñas</span>
+                    <strong th:text="${#numbers.formatDecimal(promedioResenasDocente, 1, 1)}">0.0</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="card dashboard-card">
+            <div class="card-heading"><div><span>BUENAS PRÁCTICAS</span><h3>Acompaña a tus estudiantes</h3></div></div>
+            <p class="panel-copy">
+                Publica anuncios con fechas de entrega y revisa las reseñas de cada curso para
+                ajustar el contenido. Los mensajes y las opiniones se gestionan desde el detalle
+                de cada curso asignado.
+            </p>
+            <a class="btn btn-primary btn-full" th:href="@{/docente/cursos}">
+                Abrir mis cursos
+            </a>
         </section>
     </section>
 </th:block>

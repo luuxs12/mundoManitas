@@ -74,6 +74,9 @@ Entidades principales:
 - `Progreso` (avance por estudiante y módulo).
 - `Inscripcion` (matrícula del estudiante en un módulo).
 - `Compra` (compra simulada de un curso premium: monto, referencia, método y fecha).
+- `Favorito` (cursos guardados por un estudiante; lista privada).
+- `Resena` (calificación de 1 a 5 y comentario de un estudiante sobre un curso que cursa).
+- `Anuncio` (comunicado del docente responsable del curso para sus estudiantes).
 - `VideoProgreso` (video visto por estudiante).
 - `IntentoEjercicio` (respuestas y resultado de cada intento).
 - `PostulacionDocente` (solicitud de alta docente con `EstadoPostulacion`: pendiente, aprobada o rechazada).
@@ -87,6 +90,7 @@ El esquema se crea y evoluciona con Flyway:
 | `V3__course_owner.sql` | Docente responsable de cada módulo (`Modulo.idDocente`) para el panel docente |
 | `V4__teacher_applications.sql` | Postulaciones docentes (`postulacion_docente`): validación de LSP y experiencia en TI antes de crear la cuenta |
 | `V5__premium_courses.sql` | Cursos premium (`modulo.premium`, `modulo.precio`), tabla `compra` y módulo 3 de demostración (`S/ 49.90`) |
+| `V6__classroom_community.sql` | Tablas `favorito`, `resena` y `anuncio`, con índices y restricciones de unicidad por estudiante/curso |
 
 En desarrollo y producción `spring.jpa.hibernate.ddl-auto=validate`: Hibernate solo valida, Flyway
 es la única fuente de verdad del esquema.
@@ -142,8 +146,8 @@ Roles y accesos:
 
 | Rol | Vista principal | Qué muestra |
 | --- | --- | --- |
-| Estudiante | `/dashboard`, `/cursos` | Cursos inscritos y catálogo por pestañas, progreso por módulo y compra de cursos premium |
-| Docente | `/docente/cursos` | KPIs de sus cursos, avance por alumno y acceso al editor de contenido |
+| Estudiante | `/dashboard`, `/cursos` | Cursos inscritos, catálogo por pestañas, favoritos privados, progreso, reseñas y compra de cursos premium |
+| Docente | `/docente/cursos` | KPIs de sus cursos, avance por alumno, anuncios y reseñas recibidas |
 | Administrador / Sistemas | `/admin` | KPIs globales, usuarios por rol, rendimiento y finalización por curso |
 
 ### Cursos premium
@@ -158,7 +162,25 @@ pasarela de pago. La restricción única `(idestudiante, idmodulo)` impide cobra
 mismo curso, y `CursoService` bloquea los videos y ejercicios hasta que exista la compra.
 
 El módulo 3 (`Fundamentos de Java`, `S/ 49.90`) es el curso premium de demostración porque ya
-tiene videos y ejercicios cargados.
+tiene videos y ejercicios cargados. La semilla incluye además otros dos cursos premium:
+`Desarrollo de apps móviles` (`S/ 69.90`) e `Inteligencia artificial aplicada` (`S/ 79.90`).
+
+### Comunidad del aula
+
+Cada curso tiene una capa social acotada a sus participantes:
+
+- **Favoritos** (`POST /cursos/{id}/favorito`): el estudiante guarda o retira un curso. La lista
+  es privada y se consulta en `/cursos/favoritos`; el corazón del catálogo y del detalle refleja
+  el estado real.
+- **Reseñas** (`POST /cursos/{id}/resena`): solo puede opinar quien tiene acceso al curso
+  (inscripción o compra). La calificación va de 1 a 5 y el comentario tiene entre 10 y 500
+  caracteres. Cada estudiante tiene una sola reseña por curso y puede actualizarla o eliminarla.
+- **Anuncios** (`POST /docente/cursos/{id}/anuncios`): solo el docente responsable del curso o
+  la administración puede publicarlos. Los estudiantes los ven en el detalle y en su dashboard.
+
+Las reglas viven en `ComunidadService`; el acceso se valida con `verificarAcceso` y la propiedad
+del curso con `verificarPropiedad`. Los favoritos son privados por diseño: ninguna vista de otro
+rol los expone.
 
 ---
 
@@ -283,10 +305,22 @@ La aplicación queda disponible en <http://localhost:8080>.
 | Estudiante | `maria@mundomanitas.com` | `123456` |
 | Estudiante | `diego@mundomanitas.com` | `123456` |
 | Estudiante | `lucia@mundomanitas.com` | `123456` |
+| Estudiante | `sofia@mundomanitas.com` | `123456` |
+| Estudiante | `mateo@mundomanitas.com` | `123456` |
+| Estudiante | `valeria@mundomanitas.com` | `123456` |
+| Estudiante | `renzo@mundomanitas.com` | `123456` |
 | Padre | `padre@mundomanitas.com` | `123456` |
+| Padre | `rosa@mundomanitas.com` | `123456` |
 | Docente | `docente@mundomanitas.com` | `123456` |
+| Docente | `carlos@mundomanitas.com` | `123456` |
+| Docente | `elena@mundomanitas.com` | `123456` |
+| Docente | `jorge@mundomanitas.com` | `123456` |
 | Administrador | `admin@mundomanitas.com` | `123456` |
 | Sistemas | `sistemas@mundomanitas.com` | `123456` |
+
+La semilla crea **16 cuentas**, **12 cursos** (con videos y ejercicios), compras premium
+simuladas, favoritos, reseñas y anuncios de ejemplo. Los cuatro docentes tienen cursos asignados
+y cada estudiante tiene un avance distinto para que los paneles no se vean vacíos.
 
 > Las cuentas demo conservan la contraseña `123456` para facilitar la evaluación. La política de
 > contraseñas se exige al crear o cambiar una cuenta. También puedes registrar una cuenta nueva de
@@ -313,6 +347,7 @@ Las pruebas usan el perfil `test` con **H2 en memoria** y Flyway deshabilitado. 
 - Postulación docente: validación estricta, alta pendiente, aprobación con creación de cuenta y
   asignación de módulo, rechazo con motivo y permisos de acceso.
 - Generación de Excel y Word con Apache POI.
+- Favoritos, reseñas y anuncios: reglas de acceso, validaciones y endpoints web.
 - Semillas idempotentes con base de datos vacía.
 
 ### Verificación de extremo a extremo

@@ -11,5 +11,7 @@ public interface EjercicioRepository extends JpaRepository<Ejercicio, Integer> {
 
     long countByIdModulo(Integer idModulo);
 
+    boolean existsByIdModuloAndTituloIgnoreCase(Integer idModulo, String titulo);
+
     void deleteByIdModulo(Integer idModulo);
 }

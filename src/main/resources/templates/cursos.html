@@ -59,6 +59,10 @@
                         Explora el catálogo completo y inscríbete en los cursos que quieras sumar.
                     </p>
 
+                    <p th:if="${esEstudiante and vista == 'favoritos'}">
+                        Estos son los cursos que guardaste. Solo tú puedes ver esta lista.
+                    </p>
+
                     <p th:if="${!esEstudiante}">
                         Revisa los módulos de aprendizaje disponibles en Mundo Manitas.
                     </p>
@@ -77,6 +81,12 @@
                     th:href="@{/cursos(vista='explorar')}">
                     Explorar catálogo
                     <span class="count" th:text="${totalDisponibles}">0</span>
+                </a>
+
+                <a class="section-tab" th:classappend="${vista == 'favoritos'} ? ' active' : ''"
+                    th:href="@{/cursos/favoritos}">
+                    Favoritos
+                    <span class="count" th:text="${totalFavoritos}">0</span>
                 </a>
             </nav>
 
@@ -119,6 +129,22 @@
                         </span>
 
                         <strong th:text="${curso.inicial}">M</strong>
+
+                        <form class="favorite-form" th:if="${esEstudiante}"
+                              th:action="@{/cursos/{id}/favorito(id=${curso.idModulo})}"
+                              method="post">
+                            <input type="hidden" name="origen"
+                                   th:value="${vista == 'favoritos' ? 'favoritos' : 'catalogo'}">
+                            <button class="favorite-toggle" type="submit"
+                                    th:classappend="${curso.favorito} ? ' is-active' : ''"
+                                    th:aria-label="${curso.favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'}"
+                                    th:title="${curso.favorito ? 'Quitar de favoritos' : 'Guardar en favoritos'}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7 3.7C19 15.6 12 20 12 20Z"></path>
+                                </svg>
+                            </button>
+                        </form>
 
                     </div>
 
@@ -232,6 +258,12 @@
                 <th:block th:if="${esEstudiante and vista == 'explorar'}">
                     <strong>No hay cursos nuevos para ti.</strong>
                     <span>Ya estás inscrito en todos los módulos disponibles o la búsqueda no tiene coincidencias.</span>
+                </th:block>
+
+                <th:block th:if="${esEstudiante and vista == 'favoritos'}">
+                    <strong>Aún no guardaste ningún curso.</strong>
+                    <span>Toca el corazón de un curso para tenerlo siempre a mano.</span>
+                    <a class="btn btn-primary" th:href="@{/cursos(vista='explorar')}">Explorar catálogo</a>
                 </th:block>
 
                 <th:block th:if="${!esEstudiante}">

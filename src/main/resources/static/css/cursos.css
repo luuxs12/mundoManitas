@@ -241,6 +241,79 @@
 }
 
 /* ------------------------------------------------------------------
+   Portadas: variación cromática por tarjeta
+   ------------------------------------------------------------------ */
+
+.learning-card:nth-child(3n + 2) .learning-cover.cover-basico {
+    background: linear-gradient(135deg, #fdeccd, #f6d9a4 55%, #ecc47e);
+}
+
+.learning-card:nth-child(3n + 2) .learning-cover.cover-intermedio {
+    background: linear-gradient(135deg, #e6ebff, #c9d5fb 58%, #aabdf5);
+}
+
+.learning-card:nth-child(3n + 2) .learning-cover.cover-avanzado {
+    background: linear-gradient(135deg, #6d4b7c, #553a63 62%, #2f2338);
+}
+
+.learning-card:nth-child(3n) .learning-cover.cover-basico {
+    background: linear-gradient(135deg, #e4f4ff, #c2e6f8 55%, #99d4ed);
+}
+
+.learning-card:nth-child(3n) .learning-cover.cover-intermedio {
+    background: linear-gradient(135deg, #fbe4ee, #f6c6dc 58%, #eea6c4);
+}
+
+.learning-card:nth-child(3n) .learning-cover.cover-avanzado {
+    background: linear-gradient(135deg, #3f5d8a, #31496c 62%, #1f2f47);
+}
+
+/* ------------------------------------------------------------------
+   Favoritos
+   ------------------------------------------------------------------ */
+
+.favorite-form {
+    position: relative;
+    z-index: 3;
+    margin-left: auto;
+}
+
+.favorite-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: 50%;
+    background: rgba(255, 253, 247, .9);
+    color: var(--primary-dark);
+    box-shadow: 0 6px 14px -10px rgba(16, 48, 46, .6);
+    backdrop-filter: blur(4px);
+    transition: transform .16s ease, background .16s ease, color .16s ease;
+}
+
+.favorite-toggle svg {
+    width: 19px;
+    height: 19px;
+}
+
+.favorite-toggle:hover {
+    transform: scale(1.08);
+    background: #fff;
+}
+
+.favorite-toggle.is-active {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #fff;
+}
+
+.favorite-toggle.is-active svg {
+    fill: currentColor;
+}
+
+/* ------------------------------------------------------------------
    Responsive
    ------------------------------------------------------------------ */
 

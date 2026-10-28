@@ -136,7 +136,7 @@
                             <span>ALUMNOS</span>
                             <h3>Avance por estudiante</h3>
                         </div>
-                        <span class="badge badge-muted" th:text="|${#lists.size(alumnos)} inscritos|">0 inscritos</span>
+                        <span class="badge badge-muted" th:text="|${#lists.size(alumnos)} ${#lists.size(alumnos) == 1 ? 'inscrito' : 'inscritos'}|">0 inscritos</span>
                     </div>
 
                     <div class="student-table-wrap" th:if="${!#lists.isEmpty(alumnos)}">
@@ -237,6 +237,104 @@
                             th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}">
                             Abrir editor
                         </a>
+                    </section>
+
+                </aside>
+
+            </section>
+
+            <section class="panel-grid offset" id="anuncios">
+
+                <section class="panel-card card">
+
+                    <div class="card-heading">
+                        <div>
+                            <span>AVISOS</span>
+                            <h3>Anuncios del curso</h3>
+                        </div>
+                        <span class="badge badge-muted"
+                            th:text="${#lists.size(anuncios) == 1 ? '1 publicado' : #lists.size(anuncios) + ' publicados'}">0 publicados</span>
+                    </div>
+
+                    <form class="announcement-form"
+                          th:action="@{/docente/cursos/{id}/anuncios(id=${modulo.idModulo})}" method="post">
+
+                        <label class="review-field">
+                            <span>Título</span>
+                            <input class="form-control" type="text" name="titulo" required
+                                minlength="4" maxlength="120" placeholder="Ej. Entrega del proyecto final">
+                        </label>
+
+                        <label class="review-field">
+                            <span>Mensaje</span>
+                            <textarea class="form-control" name="mensaje" rows="3" required
+                                minlength="10" maxlength="1000"
+                                placeholder="Escribe el comunicado para tus estudiantes"></textarea>
+                        </label>
+
+                        <button class="btn btn-primary" type="submit">Publicar anuncio</button>
+                    </form>
+
+                    <div class="announcement-admin-list" th:if="${!#lists.isEmpty(anuncios)}">
+                        <article class="announcement-admin" th:each="anuncio : ${anuncios}">
+                            <div class="announcement-head">
+                                <strong th:text="${anuncio.titulo}">Título</strong>
+                                <span th:text="${anuncio.fechaTexto}">01/01/2026</span>
+                            </div>
+                            <p th:text="${anuncio.mensaje}">Mensaje.</p>
+                            <div class="announcement-actions">
+                                <span class="badge" th:classappend="${anuncio.activo} ? 'badge-active' : 'badge-muted'"
+                                    th:text="${anuncio.activo ? 'Activo' : 'Inactivo'}">Activo</span>
+                                <form th:action="@{/docente/cursos/{id}/anuncios/{idAnuncio}/eliminar(id=${modulo.idModulo}, idAnuncio=${anuncio.idAnuncio})}"
+                                      method="post">
+                                    <button class="link-button" type="submit">Eliminar</button>
+                                </form>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="empty-state" th:if="${#lists.isEmpty(anuncios)}">
+                        <strong>Aún no hay anuncios.</strong>
+                        <span>Publica el primero para mantener informados a tus estudiantes.</span>
+                    </div>
+
+                </section>
+
+                <aside class="panel-stack" id="resenas">
+
+                    <section class="panel-card card">
+
+                        <div class="card-heading">
+                            <div>
+                                <span>OPINIONES</span>
+                                <h3>Reseñas recibidas</h3>
+                            </div>
+                            <span class="badge badge-muted"
+                                th:text="|${promedioResenas} · ${totalResenas} ${totalResenas == 1 ? 'reseña' : 'reseñas'}|">0.0 · 0 reseñas</span>
+                        </div>
+
+                        <div class="review-list compact" th:if="${!#lists.isEmpty(resenas)}">
+                            <article class="review-item" th:each="resena : ${resenas}">
+                                <div class="review-avatar" th:text="${resena.inicial}">M</div>
+                                <div class="review-body">
+                                    <div class="review-head">
+                                        <strong th:text="${resena.nombreEstudiante}">Estudiante</strong>
+                                        <span class="review-stars" aria-hidden="true">
+                                            <span th:each="numero : ${#numbers.sequence(1, 5)}"
+                                                  th:classappend="${numero <= resena.calificacion ? 'on' : ''}">&#9733;</span>
+                                        </span>
+                                        <small th:text="${resena.fechaTexto}">01/01/2026</small>
+                                    </div>
+                                    <p th:text="${resena.comentario}">Comentario.</p>
+                                </div>
+                            </article>
+                        </div>
+
+                        <div class="empty-state" th:if="${#lists.isEmpty(resenas)}">
+                            <strong>Sin reseñas por ahora.</strong>
+                            <span>Cuando tus estudiantes opinen verás aquí su calificación.</span>
+                        </div>
+
                     </section>
 
                 </aside>

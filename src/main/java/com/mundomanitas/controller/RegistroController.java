@@ -5,8 +5,10 @@ import com.mundomanitas.dto.form.RegistroForm;
 import com.mundomanitas.exception.ReglaNegocioException;
 import com.mundomanitas.service.PostulacionService;
 import com.mundomanitas.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,10 +56,20 @@ public class RegistroController {
 
     @PostMapping({"/registro", "/registro/estudiante"})
     public String registrarEstudiante(
-        @ModelAttribute RegistroForm form,
+        @Valid @ModelAttribute RegistroForm form,
+        BindingResult bindingResult,
         Model model,
         RedirectAttributes flash
     ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute(
+                "error",
+                bindingResult.getFieldErrors().get(0).getDefaultMessage()
+            );
+            model.addAttribute("registroForm", form);
+            return "registro-estudiante";
+        }
+
         try {
             usuarioService.registrarEstudiante(form);
             flash.addFlashAttribute(

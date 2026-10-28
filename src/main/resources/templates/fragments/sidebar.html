@@ -22,7 +22,9 @@
         <a th:each="modulo : ${modulosSidebar}" th:href="@{${modulo.ruta}}" class="menu-item" th:classappend="${
                 rutaActual == modulo.ruta
                 or
-                (modulo.ruta == '/cursos' and #strings.startsWith(rutaActual, '/cursos/'))
+                (modulo.ruta == '/cursos' and #strings.startsWith(rutaActual, '/cursos/') and rutaActual != '/cursos/favoritos')
+                or
+                (modulo.ruta == '/cursos/favoritos' and rutaActual == '/cursos/favoritos')
                 or
                 (modulo.ruta == '/docente/cursos' and #strings.startsWith(rutaActual, '/docente/'))
                 or
@@ -48,6 +50,11 @@
                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
                     <path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path>
+                </svg>
+
+                <svg th:case="'FAVORITOS'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 20s-7-4.4-7-9.3A4.2 4.2 0 0 1 12 7a4.2 4.2 0 0 1 7 3.7C19 15.6 12 20 12 20Z"></path>
                 </svg>
 
                 <svg th:case="'DOCENTE_CURSOS'" class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"

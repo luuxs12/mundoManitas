@@ -14,5 +14,7 @@ public interface VideoRepository extends JpaRepository<Video, Integer> {
 
     long countByIdModulo(Integer idModulo);
 
+    boolean existsByIdModuloAndTituloIgnoreCase(Integer idModulo, String titulo);
+
     void deleteByIdModulo(Integer idModulo);
 }
