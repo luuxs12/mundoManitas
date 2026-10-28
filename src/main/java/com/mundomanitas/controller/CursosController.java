@@ -4,6 +4,8 @@ import com.mundomanitas.dto.api.IntentoResponse;
 import com.mundomanitas.dto.view.CursoDetalleView;
 import com.mundomanitas.dto.view.CursoView;
 import com.mundomanitas.entity.Usuario;
+import com.mundomanitas.exception.ReglaNegocioException;
+import com.mundomanitas.service.CompraService;
 import com.mundomanitas.service.CursoService;
 import com.mundomanitas.service.UsuarioActualService;
 import org.springframework.data.domain.Page;
@@ -20,13 +22,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CursosController {
 
     private final CursoService cursoService;
+    private final CompraService compraService;
     private final UsuarioActualService usuarioActual;
 
     public CursosController(
         CursoService cursoService,
+        CompraService compraService,
         UsuarioActualService usuarioActual
     ) {
         this.cursoService = cursoService;
+        this.compraService = compraService;
         this.usuarioActual = usuarioActual;
     }
 
@@ -105,8 +110,33 @@ public class CursosController {
         model.addAttribute("totalEjercicios", detalle.getTotalEjercicios());
         model.addAttribute("totalMinutos", detalle.getTotalMinutos());
         model.addAttribute("siguienteVideo", detalle.getSiguienteVideo());
+        model.addAttribute("premium", detalle.isPremium());
+        model.addAttribute("precio", detalle.getPrecio());
+        model.addAttribute("comprado", detalle.isComprado());
+        model.addAttribute("bloqueado", detalle.isBloqueado());
 
         return "curso-detalle";
+    }
+
+    @PostMapping("/cursos/{id}/comprar")
+    public String comprar(
+        @PathVariable Integer id,
+        Authentication authentication,
+        RedirectAttributes flash
+    ) {
+        Integer idEstudiante = usuarioActual.idEstudiante(authentication);
+
+        try {
+            compraService.comprar(idEstudiante, id);
+            flash.addFlashAttribute(
+                "exito",
+                "Compra registrada. Ya tienes acceso completo a este curso premium."
+            );
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
+
+        return "redirect:/cursos/" + id;
     }
 
     @PostMapping("/cursos/{id}/inscribirse")
@@ -116,9 +146,13 @@ public class CursosController {
         RedirectAttributes flash
     ) {
         Integer idEstudiante = usuarioActual.idEstudiante(authentication);
-        cursoService.inscribir(id, idEstudiante);
 
-        flash.addFlashAttribute("exito", "Te inscribiste al módulo correctamente.");
+        try {
+            cursoService.inscribir(id, idEstudiante);
+            flash.addFlashAttribute("exito", "Te inscribiste al módulo correctamente.");
+        } catch (ReglaNegocioException ex) {
+            flash.addFlashAttribute("error", ex.getMessage());
+        }
 
         return "redirect:/cursos/" + id;
     }

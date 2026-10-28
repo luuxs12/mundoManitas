@@ -19,6 +19,10 @@ public class CursoDetalleView {
     private final int totalEjercicios;
     private final int totalMinutos;
     private final VideoView siguienteVideo;
+    private final boolean premium;
+    private final BigDecimal precio;
+    private final boolean comprado;
+    private final boolean bloqueado;
 
     public CursoDetalleView(
         ModuloView modulo,
@@ -34,7 +38,11 @@ public class CursoDetalleView {
         int totalVideos,
         int totalEjercicios,
         int totalMinutos,
-        VideoView siguienteVideo
+        VideoView siguienteVideo,
+        boolean premium,
+        BigDecimal precio,
+        boolean comprado,
+        boolean bloqueado
     ) {
         this.modulo = modulo;
         this.videos = videos;
@@ -50,6 +58,10 @@ public class CursoDetalleView {
         this.totalEjercicios = totalEjercicios;
         this.totalMinutos = totalMinutos;
         this.siguienteVideo = siguienteVideo;
+        this.premium = premium;
+        this.precio = precio == null ? BigDecimal.ZERO : precio;
+        this.comprado = comprado;
+        this.bloqueado = bloqueado;
     }
 
     public ModuloView getModulo() {
@@ -106,5 +118,21 @@ public class CursoDetalleView {
 
     public VideoView getSiguienteVideo() {
         return siguienteVideo;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public boolean isComprado() {
+        return comprado;
+    }
+
+    public boolean isBloqueado() {
+        return bloqueado;
     }
 }

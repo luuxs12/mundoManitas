@@ -1,5 +1,6 @@
 package com.mundomanitas.service;
 
+import com.mundomanitas.dao.CompraDao;
 import com.mundomanitas.dao.CursoDao;
 import com.mundomanitas.dao.InscripcionDao;
 import com.mundomanitas.dao.ProgresoDao;
@@ -52,6 +53,7 @@ public class CursoService {
     private final CursoDao cursoDao;
     private final InscripcionDao inscripcionDao;
     private final ProgresoDao progresoDao;
+    private final CompraDao compraDao;
     private final InscripcionService inscripcionService;
     private final ProgresoService progresoService;
     private final EjercicioService ejercicioService;
@@ -61,6 +63,7 @@ public class CursoService {
         CursoDao cursoDao,
         InscripcionDao inscripcionDao,
         ProgresoDao progresoDao,
+        CompraDao compraDao,
         InscripcionService inscripcionService,
         ProgresoService progresoService,
         EjercicioService ejercicioService,
@@ -69,6 +72,7 @@ public class CursoService {
         this.cursoDao = cursoDao;
         this.inscripcionDao = inscripcionDao;
         this.progresoDao = progresoDao;
+        this.compraDao = compraDao;
         this.inscripcionService = inscripcionService;
         this.progresoService = progresoService;
         this.ejercicioService = ejercicioService;
@@ -108,12 +112,20 @@ public class CursoService {
                 .collect(Collectors.toSet())
             : Set.of();
 
+        Set<Integer> comprados = esEstudiante
+            ? compraDao.listarPorEstudiante(idEstudiante)
+                .stream()
+                .map(compra -> compra.getIdModulo())
+                .collect(Collectors.toSet())
+            : Set.of();
+
         return cursoDao.buscarModulos(q, pageable)
             .map(modulo -> construirCursoView(
                 modulo,
                 progresos.get(modulo.getIdModulo()),
                 esEstudiante,
-                inscritos.contains(modulo.getIdModulo())
+                inscritos.contains(modulo.getIdModulo()),
+                comprados.contains(modulo.getIdModulo())
             ));
     }
 
@@ -165,10 +177,23 @@ public class CursoService {
             .map(Inscripcion::getIdModulo)
             .collect(Collectors.toSet());
 
+        Set<Integer> comprados = compraDao.listarPorEstudiante(idEstudiante)
+            .stream()
+            .map(compra -> compra.getIdModulo())
+            .collect(Collectors.toSet());
+
         String filtro = q == null ? "" : q.trim().toLowerCase(Locale.ROOT);
 
         List<Modulo> modulos = cursoDao.listarModulos().stream()
-            .filter(modulo -> inscritos.contains(modulo.getIdModulo()) == soloInscritos)
+            .filter(modulo -> {
+                boolean accesible = esAccesible(modulo, comprados);
+                boolean inscrito = inscritos.contains(modulo.getIdModulo()) && accesible;
+
+                // "Mis cursos" solo muestra inscripciones con acceso; el catálogo
+                // sí ofrece los premium bloqueados, aunque exista una inscripción
+                // histórica, para que el estudiante pueda comprarlos.
+                return soloInscritos ? inscrito : !inscrito;
+            })
             .filter(modulo -> coincide(modulo, filtro))
             .toList();
 
@@ -182,7 +207,8 @@ public class CursoService {
                 modulo,
                 progresos.get(modulo.getIdModulo()),
                 true,
-                inscritos.contains(modulo.getIdModulo())
+                inscritos.contains(modulo.getIdModulo()),
+                comprados.contains(modulo.getIdModulo())
             ))
             .toList();
 
@@ -195,15 +221,38 @@ public class CursoService {
 
     @Transactional(readOnly = true)
     public long contarInscritos(Integer idEstudiante) {
-        return inscripcionDao.contarPorEstudiante(idEstudiante);
+        Set<Integer> comprados = modulosComprados(idEstudiante);
+
+        return inscripcionDao.listarPorEstudiante(idEstudiante).stream()
+            .map(Inscripcion::getIdModulo)
+            .distinct()
+            .filter(idModulo -> cursoDao.buscarModulo(idModulo)
+                .map(modulo -> esAccesible(modulo, comprados))
+                .orElse(false))
+            .count();
     }
 
     @Transactional(readOnly = true)
     public long contarDisponibles(Integer idEstudiante) {
-        return Math.max(
-            cursoDao.contarModulos() - inscripcionDao.contarPorEstudiante(idEstudiante),
-            0
-        );
+        Set<Integer> inscritos = inscripcionDao.listarPorEstudiante(idEstudiante).stream()
+            .map(Inscripcion::getIdModulo)
+            .collect(Collectors.toSet());
+        Set<Integer> comprados = modulosComprados(idEstudiante);
+
+        return cursoDao.listarModulos().stream()
+            .filter(modulo -> !(inscritos.contains(modulo.getIdModulo())
+                && esAccesible(modulo, comprados)))
+            .count();
+    }
+
+    private Set<Integer> modulosComprados(Integer idEstudiante) {
+        return compraDao.listarPorEstudiante(idEstudiante).stream()
+            .map(compra -> compra.getIdModulo())
+            .collect(Collectors.toSet());
+    }
+
+    private boolean esAccesible(Modulo modulo, Set<Integer> comprados) {
+        return !modulo.isPremium() || comprados.contains(modulo.getIdModulo());
     }
 
     /**
@@ -236,7 +285,9 @@ public class CursoService {
             nivel,
             inicial(modulo.getTitulo()),
             cursoDao.listarVideos(modulo.getIdModulo()).size(),
-            cursoDao.listarEjercicios(modulo.getIdModulo()).size()
+            cursoDao.listarEjercicios(modulo.getIdModulo()).size(),
+            modulo.isPremium(),
+            modulo.getPrecio()
         );
     }
 
@@ -260,7 +311,8 @@ public class CursoService {
     }
 
     @Transactional(readOnly = true)
-    public CursoDetalleView detalle(        Integer idModulo,
+    public CursoDetalleView detalle(
+        Integer idModulo,
         Integer idEstudiante,
         boolean esEstudiante
     ) {
@@ -274,6 +326,9 @@ public class CursoService {
             ? progresoDao.buscar(idEstudiante, idModulo).orElse(null)
             : null;
 
+        boolean comprado = esEstudiante && compraDao.existe(idEstudiante, idModulo);
+        boolean bloqueado = esEstudiante && modulo.isPremium() && !comprado;
+
         int porcentaje = progreso == null || progreso.getPorcentaje() == null
             ? 0
             : progreso.getPorcentaje().intValue();
@@ -282,20 +337,24 @@ public class CursoService {
             ? new HashSet<>(progresoDao.idsVideosCompletados(idEstudiante))
             : Set.of();
 
-        List<VideoView> videoViews = videos.stream()
-            .map(video -> new VideoView(
-                video.getIdVideo(),
-                video.getTitulo(),
-                video.getUrl(),
-                video.getDuracion(),
-                video.getDuracionMinutos(),
-                videosCompletados.contains(video.getIdVideo())
-            ))
-            .toList();
+        List<VideoView> videoViews = bloqueado
+            ? List.of()
+            : videos.stream()
+                .map(video -> new VideoView(
+                    video.getIdVideo(),
+                    video.getTitulo(),
+                    video.getUrl(),
+                    video.getDuracion(),
+                    video.getDuracionMinutos(),
+                    videosCompletados.contains(video.getIdVideo())
+                ))
+                .toList();
 
-        List<EjercicioView> ejercicioViews = ejercicios.stream()
-            .map(ejercicio -> ejercicioService.toView(ejercicio, idEstudiante))
-            .toList();
+        List<EjercicioView> ejercicioViews = bloqueado
+            ? List.of()
+            : ejercicios.stream()
+                .map(ejercicio -> ejercicioService.toView(ejercicio, idEstudiante))
+                .toList();
 
         int duracionTotal = videos.stream()
             .map(Video::getDuracion)
@@ -311,6 +370,7 @@ public class CursoService {
             .orElse(videoViews.isEmpty() ? null : videoViews.get(0));
 
         boolean inscrito = esEstudiante
+            && !bloqueado
             && inscripcionDao.existe(idEstudiante, idModulo);
 
         return new CursoDetalleView(
@@ -319,7 +379,9 @@ public class CursoService {
                 modulo.getTitulo(),
                 modulo.getDescripcion(),
                 modulo.getNivel(),
-                modulo.getOrden()
+                modulo.getOrden(),
+                modulo.isPremium(),
+                modulo.getPrecio()
             ),
             videoViews,
             ejercicioViews,
@@ -329,16 +391,29 @@ public class CursoService {
             progreso == null ? null : progreso.getCalificacion(),
             esEstudiante,
             inscrito,
-            videoViews.size() + ejercicioViews.size(),
-            videoViews.size(),
-            ejercicioViews.size(),
+            videos.size() + ejercicios.size(),
+            videos.size(),
+            ejercicios.size(),
             totalMinutos,
-            siguienteVideo
+            bloqueado ? null : siguienteVideo,
+            modulo.isPremium(),
+            modulo.getPrecio(),
+            comprado,
+            bloqueado
         );
     }
 
     @Transactional
     public void inscribir(Integer idModulo, Integer idEstudiante) {
+        Modulo modulo = cursoDao.buscarModulo(idModulo)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Módulo no encontrado"));
+
+        if (modulo.isPremium() && !compraDao.existe(idEstudiante, idModulo)) {
+            throw new ReglaNegocioException(
+                "Este curso es premium. Compra el curso para habilitar su contenido."
+            );
+        }
+
         inscripcionService.inscribir(idEstudiante, idModulo);
     }
 
@@ -349,6 +424,11 @@ public class CursoService {
 
     @Transactional
     public void marcarVideoCompletado(Integer idEstudiante, Integer idVideo) {
+        Video video = cursoDao.buscarVideo(idVideo)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Video no encontrado"));
+
+        verificarAcceso(idEstudiante, video.getIdModulo());
+
         progresoService.marcarVideoCompletado(idEstudiante, idVideo);
     }
 
@@ -358,7 +438,26 @@ public class CursoService {
         Integer idEjercicio,
         String respuesta
     ) {
+        Ejercicio ejercicio = cursoDao.buscarEjercicio(idEjercicio)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Ejercicio no encontrado"));
+
+        verificarAcceso(idEstudiante, ejercicio.getIdModulo());
+
         return ejercicioService.responder(idEstudiante, idEjercicio, respuesta);
+    }
+
+    /**
+     * Impide consumir contenido premium sin una compra registrada.
+     */
+    private void verificarAcceso(Integer idEstudiante, Integer idModulo) {
+        Modulo modulo = cursoDao.buscarModulo(idModulo)
+            .orElseThrow(() -> new RecursoNoEncontradoException("Módulo no encontrado"));
+
+        if (modulo.isPremium() && !compraDao.existe(idEstudiante, idModulo)) {
+            throw new ReglaNegocioException(
+                "Este curso es premium. Compra el curso para habilitar su contenido."
+            );
+        }
     }
 
     // ------------------------------------------------------------------
@@ -428,6 +527,8 @@ public class CursoService {
         modulo.setDescripcion(request.descripcion());
         modulo.setNivel(normalizarNivel(request.nivel()));
         modulo.setIdDocente(idDocente);
+        modulo.setPremium(request.esPremium());
+        modulo.setPrecio(request.esPremium() ? request.precio() : BigDecimal.ZERO);
         modulo.setOrden(
             request.orden() == null ? cursoDao.siguienteOrdenModulo() : request.orden()
         );
@@ -450,6 +551,8 @@ public class CursoService {
         modulo.setTitulo(request.titulo());
         modulo.setDescripcion(request.descripcion());
         modulo.setNivel(normalizarNivel(request.nivel()));
+        modulo.setPremium(request.esPremium());
+        modulo.setPrecio(request.esPremium() ? request.precio() : BigDecimal.ZERO);
 
         if (request.orden() != null) {
             modulo.setOrden(request.orden());
@@ -669,11 +772,14 @@ public class CursoService {
         Modulo modulo,
         Progreso progreso,
         boolean esEstudiante,
-        boolean inscrito
+        boolean inscrito,
+        boolean comprado
     ) {
         int porcentaje = progreso == null || progreso.getPorcentaje() == null
             ? 0
             : progreso.getPorcentaje().intValue();
+
+        boolean accesible = !modulo.isPremium() || comprado;
 
         return new CursoView(
             modulo.getIdModulo(),
@@ -687,7 +793,11 @@ public class CursoService {
             accion(porcentaje),
             coverClase(modulo.getNivel()),
             inicial(modulo.getTitulo()),
-            esEstudiante && inscrito
+            esEstudiante && inscrito && accesible,
+            modulo.isPremium(),
+            modulo.getPrecio(),
+            comprado,
+            accesible
         );
     }
 
@@ -748,7 +858,9 @@ public class CursoService {
             modulo.getTitulo(),
             modulo.getDescripcion(),
             modulo.getNivel(),
-            modulo.getOrden()
+            modulo.getOrden(),
+            modulo.isPremium(),
+            modulo.getPrecio()
         );
     }
 

@@ -43,7 +43,7 @@ Eso explica varias decisiones que, vistas desde fuera, pueden parecer arbitraria
 
 | Rol | Para qué existe | Qué puede hacer |
 | --- | --- | --- |
-| `ESTUDIANTE` | Persona que aprende | Ver sus cursos y el catálogo, inscribirse, marcar videos, responder ejercicios, descargar certificados |
+| `ESTUDIANTE` | Persona que aprende | Ver sus cursos y el catálogo, inscribirse, comprar cursos premium, marcar videos, responder ejercicios, descargar certificados |
 | `PADRE` | Acompañamiento familiar | Ver su perfil y su panel; no accede al catálogo ni al contenido |
 | `DOCENTE` | Autor de contenido | Ver y editar solo los módulos que tiene asignados, revisar el avance de sus alumnos |
 | `ADMINISTRADOR` | Gestión académica | Usuarios, contenido, postulaciones, reportes y panel general |
@@ -53,7 +53,9 @@ Eso explica varias decisiones que, vistas desde fuera, pueden parecer arbitraria
 
 **Estudiante.** Se registra en `/registro/estudiante`, entra al catálogo, se inscribe en un
 módulo, ve los videos, marca cada uno como completado y responde los ejercicios. El porcentaje
-sube a medida que completa contenido. Al llegar a 100 % puede descargar el certificado.
+sube a medida que completa contenido. Al llegar a 100 % puede descargar el certificado. Si el
+módulo es premium, primero lo compra desde el detalle; la compra queda registrada y desbloquea
+el contenido al instante.
 
 **Docente.** No se registra solo. Envía una postulación en `/registro/docente` con su nivel de
 Lengua de Señas Peruana, certificación, experiencia en TI y portafolio. Un administrador la
@@ -207,6 +209,12 @@ Los paquetes de `com.mundomanitas`:
 | `web` | `ControllerAdvice` global, navegación del sidebar y errores de vistas |
 | `exception` | Excepciones de negocio |
 
+**Reparto del código.** El backend es Java de extremo a extremo. De los 204 archivos fuente,
+149 son Java (73 %) y suman 10.811 líneas; el resto es la capa de presentación (HTML, CSS) y
+los scripts de apoyo (SQL, PowerShell, configuración). Si se mide solo la lógica de aplicación
+—Java, SQL, configuración y scripts, sin plantillas ni hojas de estilo—, Java representa cerca
+del 90 %. El único JavaScript de la aplicación es el de la landing.
+
 ### 3.2 Por qué DAO si ya existe Spring Data
 
 Es una decisión heredada del alcance del curso: la rúbrica pide una capa DAO explícita. En la
@@ -283,13 +291,14 @@ handler global. La excepción debe llevar un mensaje útil, en español, sin jer
 | `rol_modulo` | Qué secciones ve cada rol en el sidebar |
 | `usuario` | Cuenta, correo, contraseña BCrypt, rol, estado, intentos fallidos y token de recuperación |
 | `estudiante` | Perfil académico: grado, edad, nivel de estudio |
-| `modulo` | Curso o módulo; incluye `idDocente` (responsable) |
+| `modulo` | Curso o módulo; incluye `idDocente` (responsable), `premium` y `precio` |
 | `video` | Videos de un módulo, con URL, duración y orden |
 | `ejercicio` | Ejercicios, con tipo, contenido JSON y respuesta esperada |
 | `inscripcion` | Matrícula de un estudiante en un módulo |
 | `progreso` | Porcentaje, calificación y fechas por estudiante y módulo |
 | `video_progreso` | Marca de video completado |
 | `intento_ejercicio` | Cada intento, con respuesta, resultado y puntaje |
+| `compra` | Compra simulada de un curso premium: monto, referencia, método y fecha |
 | `postulacion_docente` | Solicitud de alta docente y su resolución |
 
 Los identificadores se guardan en minúsculas (`idmodulo`, `idestudiante`) porque PostgreSQL
@@ -306,6 +315,9 @@ sorpresas.
   elimina primero videos, ejercicios y progreso, y después el módulo.
 - `inscripcion` también es única por estudiante y módulo; la lógica de servicio devuelve la
   inscripción existente en lugar de duplicarla.
+- `compra` es única por `(idestudiante, idmodulo)`: la restricción `uk_compra_estudiante_modulo`
+  impide cobrar dos veces el mismo curso. La compra guarda `monto`, `referencia`, `metodoPago`
+  (`SIMULADO`) y `fechaCompra` para que quede auditable.
 
 ### 4.3 Flyway
 
@@ -317,11 +329,12 @@ Las migraciones están en `src/main/resources/db/migration`:
 | `V2__security_progress_and_indexes.sql` | Bloqueo y recuperación de cuentas, inscripción, progreso de videos, intentos e índices |
 | `V3__course_owner.sql` | `modulo.idDocente` para el panel docente |
 | `V4__teacher_applications.sql` | `postulacion_docente` |
+| `V5__premium_courses.sql` | `modulo.premium`, `modulo.precio`, tabla `compra` y el curso demo premium (módulo 3, `S/ 49.90`) |
 
 Reglas de oro:
 
 1. **No edites una migración ya aplicada.** Flyway guarda un checksum; si cambia, la aplicación
-   no arranca. Para corregir algo, crea `V5__descripcion.sql`.
+   no arranca. Para corregir algo, crea `V6__descripcion.sql`.
 2. Usa `IF NOT EXISTS` cuando tenga sentido; la siembra y las migraciones se ejecutan sobre bases
    que pueden tener datos.
 3. Prueba la migración contra una base limpia y contra una base con datos. No basta con que
@@ -469,20 +482,26 @@ Orden recomendado de hojas:
 <link rel="stylesheet" th:href="@{/css/<pagina>.css}">   <!-- al final -->
 ```
 
-### 6.2 Dos lenguajes visuales
+### 6.2 Un solo lenguaje visual
 
-El interior de la aplicación usa un estilo editorial: fondo crema, tipografía con serifas en
-los títulos, bordes finos, acentos en rojo y verde oliva. La página pública de inicio usa
-**claymorphism**: tarjetas con volumen, bordes claros, sombras suaves, teal y naranja.
+Toda la plataforma comparte el lenguaje de la página pública: fondo crema (`#fff9ef`), tinta
+verde profunda, acentos **teal** (`#0f766e`) y **clay** (`#c2410c`), tipografías redondeadas
+(**Baloo 2** para títulos y **Nunito** para texto) y tarjetas suaves con bordes cálidos.
 
-No son un sistema único y no conviene fusionarlos. La landing está aislada a propósito:
+Los tokens viven en `base.css` (`--primary`, `--accent`, `--paper`, `--surface`, `--radius-*`,
+`--shadow-*`) y los reutilizan todas las hojas. `components.css` define botones, badges,
+formularios, tablas y estados; `layout.css` define el sidebar claro y la topbar; cada pantalla
+aporta su hoja específica (`dashboard.css`, `cursos.css`, `curso-detalle.css`, `perfil.css`,
+`panel.css`, `login.css`, `auth.css`).
+
+La landing conserva su aislamiento técnico para no cargar el CSS de la aplicación:
 
 - `landing.html` no incluye `base.css` ni `layout.css`.
-- `landing.css` define sus propios tokens (`--lp-*`) y todas las reglas cuelgan de `body.lp`.
+- `landing.css` define sus propios tokens (`--lp-*`), pero replica la misma paleta y tipografías.
 - `landing.js` es el único JavaScript de la página.
 
-Si algún día se unifican, el trabajo es de diseño, no un simple `@import`. Mezclar los dos
-sistemas hoy rompería los paneles.
+Si cambias un color o una tipografía, actualiza ambos lados: los tokens de `base.css` y las
+variables `--lp-*` de `landing.css`. La coherencia visual es parte de la rúbrica de UI/UX.
 
 ### 6.3 La landing
 
@@ -542,7 +561,10 @@ curso pasan a una columna y se ocultan los flotantes decorativos que taparían e
 ### 7.1 Catálogo
 
 `GET /cursos` acepta `q`, `page` y `vista`. Para un estudiante, `vista=mis` muestra sus
-inscripciones y `vista=explorar` los módulos disponibles. La paginación es de 6 elementos.
+inscripciones con acceso y `vista=explorar` los módulos que aún no cursa. Un curso premium
+bloqueado aparece en el catálogo aunque exista una inscripción histórica: así el estudiante
+siempre encuentra el botón de compra. Los contadores de las pestañas usan la misma regla, por
+eso "Mis cursos" y "Explorar catálogo" suman el total de módulos. La paginación es de 6 elementos.
 Para docentes y administradores, el catálogo es global y sin pestañas.
 
 La búsqueda se hace en el servicio, sobre título y descripción, sin distinguir mayúsculas.
@@ -568,10 +590,32 @@ formulario y flash:
 - `POST /cursos/{id}/inscripcion/cancelar`
 - `POST /cursos/{id}/videos/{idVideo}/completar`
 - `POST /cursos/{id}/ejercicios/{idEjercicio}/responder`
+- `POST /cursos/{id}/comprar` (solo cursos premium)
 
 Los ejercicios tienen tres tipos (`cuestionario`, `completar`, `abierta`). La respuesta correcta
 se guarda en JSON y se compara en `EjercicioService`; el intento se registra siempre, con
 puntaje y resultado.
+
+### 7.3.1 Cursos premium y compra simulada
+
+Un módulo puede marcarse como premium desde `/admin/contenido` (checkbox y precio). Las reglas
+viven en `CursoService` y `CompraService`:
+
+1. `CursoService.detalle` calcula `comprado` y `bloqueado`. Si el curso es premium y no hay
+   compra, devuelve listas vacías de videos y ejercicios: el contenido no viaja al HTML.
+2. `POST /cursos/{id}/comprar` llama a `CompraService.comprar`, que valida que el módulo exista,
+   que sea premium y que tenga precio mayor que cero.
+3. La compra se guarda en `compra` con estado `PAGADA`, método `SIMULADO` y una referencia
+   `MM-<estudiante>-<modulo>-<fecha>`. No se contacta ninguna pasarela: el pago es una simulación
+   académica.
+4. Comprar también crea la inscripción y el registro de progreso en 0 %. Si el estudiante vuelve
+   a comprar, el servicio devuelve la compra existente y no duplica el cobro.
+5. `CursoService.inscribir`, `marcarVideoCompletado` y `responder` llaman a `verificarAcceso`:
+   sin compra no se puede consumir el contenido premium aunque se conozca la URL.
+
+En la vista, el curso bloqueado muestra el paywall (`premium-paywall`), el precio y el botón de
+compra. Tras comprar, la tarjeta cambia a "Comprado", el módulo aparece en "Mis cursos" y el
+contenido queda disponible.
 
 ### 7.4 Panel docente
 
@@ -683,6 +727,7 @@ PostgreSQL.
 | `PanelServiceTests` | KPIs globales y del docente, distribución, alumnos |
 | `PostulacionServiceTests` | Validación, alta pendiente, aprobación, rechazo |
 | `PostulacionApiTests` | Postulación por API y permisos |
+| `CompraServiceTests` | Compra premium, idempotencia, precio inválido, paywall y acceso al contenido |
 | `DatosInicialesTests` | Siembra idempotente, roles, módulos y postulación demo |
 
 ### 9.2 Ejecutar
@@ -875,6 +920,7 @@ de las dos primeras.
 | La postulación docente | `templates/registro-docente.html`, `service/PostulacionService.java`, `service/PostulacionValidator.java` |
 | El catálogo | `templates/cursos.html`, `static/css/cursos.css`, `controller/CursosController.java`, `service/CursoService.java` |
 | El detalle y el progreso | `templates/curso-detalle.html`, `static/css/curso-detalle.css`, `service/ProgresoService.java`, `service/EjercicioService.java` |
+| La compra premium | `service/CompraService.java`, `dao/CompraDao.java`, `entity/Compra.java`, `templates/cursos.html`, `templates/curso-detalle.html` |
 | El panel docente | `templates/docente/*`, `controller/DocenteController.java`, `service/PanelService.java` |
 | La administración | `templates/admin/*`, `controller/Admin*.java`, `static/css/panel.css` |
 | Los reportes | `service/ReporteService.java`, `service/CertificadoService.java`, `controller/ReporteController.java` |
@@ -902,9 +948,10 @@ aparecer en el menú, porque el menú se lee de la base.
 
 Esta sección existe para que nadie tenga que redescubrir el contexto a los golpes.
 
-- **Solo el módulo 3 tiene videos y ejercicios.** Los otros tres existen como catálogo y tienen
-  progreso demo, pero no contenido. La landing lo maneja ocultando los conteos en cero. La
-  solución de fondo es cargar contenido, no maquillar la vista.
+- **Solo el módulo 3 tiene videos y ejercicios.** Es el curso premium de demostración
+  (`S/ 49.90`) y sirve para mostrar el paywall y el desbloqueo. Los otros tres existen como
+  catálogo y tienen progreso demo, pero no contenido. La landing lo maneja ocultando los
+  conteos en cero. La solución de fondo es cargar contenido, no maquillar la vista.
 - **Los testimonios de la landing son estáticos.** No hay tabla ni moderación. Si el producto
   crece, esto debería pasar a base de datos con aprobación.
 - **La capa DAO es más gruesa de lo necesario.** Se mantiene por el alcance académico. No es
@@ -937,17 +984,18 @@ Esta sección existe para que nadie tenga que redescubrir el contexto a los golp
 
 ## 16. Checklist de entrega
 
-- [ ] `.\mvnw.cmd test` en verde.
-- [ ] `.\mvnw.cmd -DskipTests package` sin errores.
-- [ ] Landing en 1440 px y 390 px sin solapamientos.
-- [ ] Login con los cinco roles.
-- [ ] `/admin/usuarios`, `/admin/postulaciones`, `/admin/contenido` con estilos completos.
-- [ ] `/docente/cursos` y `/docente/cursos/{id}` solo con cursos asignados.
-- [ ] `/cursos/3` con videos, ejercicios y progreso.
+- [x] `.\mvnw.cmd test` en verde (85 pruebas).
+- [x] `.\mvnw.cmd -DskipTests package` sin errores.
+- [x] Landing en 1440 px y 390 px sin solapamientos.
+- [x] Login con los cinco roles.
+- [x] `/admin/usuarios`, `/admin/postulaciones`, `/admin/contenido` con estilos completos.
+- [x] `/docente/cursos` y `/docente/cursos/{id}` solo con cursos asignados.
+- [x] `/cursos/3` con videos, ejercicios y progreso.
+- [x] Compra premium registrada en `compra` y curso desbloqueado.
 - [ ] Certificado generado al 100 %.
 - [ ] `scripts/verificar-local.ps1` sin fallos.
-- [ ] README y manual actualizados si cambió una ruta o un comando.
-- [ ] Sin secretos en el diff.
+- [x] README y manual actualizados si cambió una ruta o un comando.
+- [x] Sin secretos en el diff.
 
 ---
 

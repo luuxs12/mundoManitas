@@ -29,11 +29,11 @@
                 </div>
 
                 <div class="topbar-user">
-                    <div class="user-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">A</div>
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">A</div>
 
                     <div class="user-info">
-                        <strong th:text="${#authentication.name}">admin@mundomanitas.com</strong>
-                        <span>Administración</span>
+                        <strong th:text="${nombre}">Admin Mundo Manitas</strong>
+                        <span th:text="${tipo}">administrador</span>
                     </div>
                 </div>
             </header>

@@ -54,9 +54,19 @@
 
                 <div class="course-detail-copy">
 
-                    <span class="section-label" th:text="${#strings.toUpperCase(modulo.nivel)}">
-                        BÁSICO
-                    </span>
+                    <div class="hero-kicker">
+                        <span class="section-label" th:text="${#strings.toUpperCase(modulo.nivel)}">
+                            BÁSICO
+                        </span>
+
+                        <span class="badge badge-premium" th:if="${premium}">
+                            Curso premium
+                        </span>
+
+                        <span class="badge badge-active" th:if="${premium and comprado}">
+                            Comprado
+                        </span>
+                    </div>
 
                     <h1 th:text="${modulo.titulo}">
                         Nombre del módulo
@@ -98,9 +108,9 @@
 
                     </div>
 
-                    <div class="inline-form detail-actions" th:if="${esEstudiante}">
+                    <div class="inline-form detail-actions" th:if="${esEstudiante and !bloqueado}">
 
-                        <form th:if="${!inscrito}"
+                        <form th:if="${!inscrito and (!premium or comprado)}"
                               th:action="@{/cursos/{id}/inscribirse(id=${modulo.idModulo})}"
                               method="post">
                             <button class="btn btn-primary" type="submit">
@@ -126,7 +136,7 @@
 
                 </div>
 
-                <div class="detail-progress-card" th:if="${esEstudiante}">
+                <div class="detail-progress-card" th:if="${esEstudiante and !bloqueado}">
 
                     <span>Tu progreso</span>
 
@@ -142,11 +152,67 @@
 
                 </div>
 
+                <div class="detail-lock-card" th:if="${bloqueado}">
+
+                    <span class="detail-lock-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="4" y="10" width="16" height="10" rx="2.5"></rect>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                        </svg>
+                    </span>
+
+                    <strong>Contenido bloqueado</strong>
+                    <small>Compra el curso para ver los videos, los ejercicios y tu avance.</small>
+
+                </div>
+
             </section>
 
-            <section class="course-content-layout">
+            <section class="premium-paywall" th:if="${bloqueado}">
 
-                <section class="modules-container card">
+                <div class="premium-paywall-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="4" y="10" width="16" height="10" rx="2.5"></rect>
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                        <circle cx="12" cy="15" r="1.4"></circle>
+                    </svg>
+                </div>
+
+                <div class="premium-paywall-copy">
+                    <span class="section-label">CONTENIDO PREMIUM</span>
+                    <h2>Desbloquea el curso completo</h2>
+                    <p>
+                        Este módulo incluye <strong th:text="|${totalVideos} videos|">0 videos</strong> y
+                        <strong th:text="|${totalEjercicios} ejercicios|">0 ejercicios</strong>.
+                        Al comprarlo se registra tu acceso y queda disponible en “Mis cursos”.
+                    </p>
+
+                    <ul class="premium-benefits">
+                        <li>Acceso inmediato a todos los videos y ejercicios.</li>
+                        <li>Seguimiento de progreso y certificado al completarlo.</li>
+                        <li>Compra registrada en tu historial académico.</li>
+                    </ul>
+                </div>
+
+                <div class="premium-paywall-buy">
+                    <span>Precio del curso</span>
+                    <strong th:text="|S/ ${#numbers.formatDecimal(precio, 1, 2)}|">S/ 49.90</strong>
+                    <small>Pago simulado · sin tarjeta</small>
+
+                    <form th:action="@{/cursos/{id}/comprar(id=${modulo.idModulo})}" method="post">
+                        <button class="btn btn-buy btn-full" type="submit">
+                            Comprar y desbloquear
+                        </button>
+                    </form>
+                </div>
+
+            </section>
+
+            <section class="course-content-layout" th:if="${!bloqueado}">
+
+                <section class="modules-container card" th:if="${!bloqueado}">
 
                     <div class="card-heading">
 
@@ -170,7 +236,8 @@
                                 <h3 th:text="${modulo.titulo}">Módulo</h3>
                             </div>
 
-                            <strong class="module-state" th:classappend="${estadoClase}" th:text="${estado}"
+                            <strong class="module-state" th:classappend="${bloqueado ? 'locked' : estadoClase}"
+                                th:text="${bloqueado ? 'BLOQUEADO' : estado}"
                                 th:if="${esEstudiante}">
                                 EN PROGRESO
                             </strong>
@@ -290,7 +357,7 @@
 
                         </div>
 
-                        <div class="module-empty" th:if="${#lists.isEmpty(videos) and #lists.isEmpty(ejercicios)}">
+                        <div class="module-empty" th:if="${!bloqueado and #lists.isEmpty(videos) and #lists.isEmpty(ejercicios)}">
                             <strong>Este módulo aún no tiene contenido registrado.</strong>
                             <span>Los videos y ejercicios aparecerán aquí cuando sean agregados.</span>
                         </div>
@@ -301,7 +368,24 @@
 
                 <aside class="course-side-card card">
 
-                    <div th:if="${siguienteVideo != null}">
+                    <div th:if="${bloqueado}">
+                        <span class="section-label">ACCESO</span>
+                        <h3>Curso premium</h3>
+                        <p>
+                            Compra el curso para habilitar los videos, los ejercicios y el
+                            seguimiento de tu progreso.
+                        </p>
+
+                        <div class="side-price" th:text="|S/ ${#numbers.formatDecimal(precio, 1, 2)}|">
+                            S/ 49.90
+                        </div>
+
+                        <form th:action="@{/cursos/{id}/comprar(id=${modulo.idModulo})}" method="post">
+                            <button class="btn btn-buy btn-full" type="submit">Comprar curso</button>
+                        </form>
+                    </div>
+
+                    <div th:if="${!bloqueado and siguienteVideo != null}">
 
                         <span class="section-label">CONTENIDO</span>
 
@@ -332,7 +416,7 @@
 
                     </div>
 
-                    <div class="side-empty" th:if="${siguienteVideo == null}">
+                    <div class="side-empty" th:if="${!bloqueado and siguienteVideo == null}">
                         <span class="section-label">CONTENIDO</span>
                         <h3>Módulo registrado</h3>
                         <p>No hay videos disponibles en este módulo.</p>

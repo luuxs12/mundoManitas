@@ -29,11 +29,11 @@
                 </div>
 
                 <div class="topbar-user">
-                    <div class="user-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">A</div>
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">A</div>
 
                     <div class="user-info">
-                        <strong th:text="${#authentication.name}">admin@mundomanitas.com</strong>
-                        <span>Administración</span>
+                        <strong th:text="${nombre}">Admin Mundo Manitas</strong>
+                        <span th:text="${tipo}">administrador</span>
                     </div>
                 </div>
             </header>
@@ -119,22 +119,22 @@
                             </button>
                         </div>
                     </form>
-
-                    <aside class="create-aside">
-                        <h4>Antes de guardar</h4>
-                        <p>Revisa que el correo no esté duplicado y que el rol coincida con las funciones que tendrá el usuario.</p>
-
-                        <ul class="check-list">
-                            <li>El correo se usará como nombre de usuario para iniciar sesión.</li>
-                            <li>El rol define las pantallas y permisos disponibles.</li>
-                            <li>Puedes cambiar el estado o editar los datos después de crear la cuenta.</li>
-                        </ul>
-
-                        <div class="create-aside-note">
-                            Si el usuario es docente, considera asignarle un módulo desde la sección de contenido.
-                        </div>
-                    </aside>
                 </div>
+
+                <aside class="create-aside">
+                    <h4>Antes de guardar</h4>
+                    <p>Revisa que el correo no esté duplicado y que el rol coincida con las funciones que tendrá el usuario.</p>
+
+                    <ul class="check-list">
+                        <li>El correo se usará como nombre de usuario para iniciar sesión.</li>
+                        <li>El rol define las pantallas y permisos disponibles.</li>
+                        <li>Puedes cambiar el estado o editar los datos después de crear la cuenta.</li>
+                    </ul>
+
+                    <div class="create-aside-note">
+                        Si el usuario es docente, considera asignarle un módulo desde la sección de contenido.
+                    </div>
+                </aside>
             </section>
 
             <form class="toolbar" method="get" th:action="@{/admin/usuarios}">

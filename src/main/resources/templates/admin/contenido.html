@@ -28,11 +28,11 @@
                 </div>
 
                 <div class="topbar-user">
-                    <div class="user-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">A</div>
+                    <div class="user-avatar" th:text="${#strings.substring(nombre, 0, 1)}">A</div>
 
                     <div class="user-info">
-                        <strong th:text="${#authentication.name}">docente@mundomanitas.com</strong>
-                        <span th:text="${soloMisCursos ? 'Docente' : 'Administración'}">Gestión académica</span>
+                        <strong th:text="${nombre}">Docente Mundo Manitas</strong>
+                        <span th:text="${tipo}">docente</span>
                     </div>
                 </div>
             </header>
@@ -72,6 +72,12 @@
                                    placeholder="Nombre del módulo">
                         </div>
 
+                        <div class="form-field span-full">
+                            <label for="descripcion">Descripción</label>
+                            <input class="form-control" id="descripcion" name="descripcion" maxlength="255"
+                                   placeholder="Resumen breve del módulo">
+                        </div>
+
                         <div class="form-field">
                             <label for="nivel">Nivel</label>
                             <select class="form-control" id="nivel" name="nivel">
@@ -87,10 +93,18 @@
                                    placeholder="1">
                         </div>
 
-                        <div class="form-field span-full">
-                            <label for="descripcion">Descripción</label>
-                            <input class="form-control" id="descripcion" name="descripcion" maxlength="255"
-                                   placeholder="Resumen breve del módulo">
+                        <div class="form-field">
+                            <label class="check-line" for="premium">
+                                <input type="checkbox" id="premium" name="premium" value="true">
+                                <span>Curso premium</span>
+                            </label>
+                            <small>El estudiante deberá comprarlo para acceder.</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="precio">Precio del curso (S/)</label>
+                            <input class="form-control" type="number" id="precio" name="precio" min="0"
+                                   step="0.10" placeholder="0.00">
                         </div>
                     </div>
 
@@ -113,7 +127,7 @@
                     </div>
 
                     <div class="table-wrapper" th:if="${!#lists.isEmpty(modulos)}">
-                        <table class="data-table">
+                        <table class="data-table content-table">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -125,17 +139,23 @@
 
                             <tbody>
                                 <th:block th:each="modulo : ${modulos}">
-                                    <tr>
+                                    <tr th:classappend="${modulo.idModulo == idModulo} ? 'is-selected' : ''">
                                         <td th:text="${modulo.orden}">1</td>
                                         <td>
                                             <a th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}"
                                                 th:text="${modulo.titulo}">Módulo</a>
+                                            <span class="badge badge-active badge-inline"
+                                                th:if="${modulo.idModulo == idModulo}">En edición</span>
                                             <span class="cell-sub" th:if="${modulo.descripcion}"
                                                 th:text="${modulo.descripcion}">Descripción</span>
                                         </td>
                                         <td>
                                             <span class="badge badge-muted"
                                                 th:text="${#strings.capitalize(modulo.nivel)}">Básico</span>
+                                            <span class="badge badge-premium" th:if="${modulo.premium}"
+                                                th:text="|Premium · S/ ${#numbers.formatDecimal(modulo.precio, 1, 2)}|">
+                                                Premium
+                                            </span>
                                         </td>
                                         <td>
                                             <form class="inline-form"
@@ -154,10 +174,16 @@
                                                     th:action="@{/admin/modulos/{id}(id=${modulo.idModulo})}"
                                                     method="post">
                                                     <div class="form-grid">
-                                                        <div class="form-field">
+                                                        <div class="form-field span-full">
                                                             <label>Título</label>
                                                             <input class="form-control" name="titulo"
                                                                 th:value="${modulo.titulo}" required maxlength="100">
+                                                        </div>
+
+                                                        <div class="form-field span-full">
+                                                            <label>Descripción</label>
+                                                            <input class="form-control" name="descripcion"
+                                                                maxlength="255" th:value="${modulo.descripcion}">
                                                         </div>
 
                                                         <div class="form-field">
@@ -179,9 +205,17 @@
                                                         </div>
 
                                                         <div class="form-field">
-                                                            <label>Descripción</label>
-                                                            <input class="form-control" name="descripcion"
-                                                                maxlength="255" th:value="${modulo.descripcion}">
+                                                            <label class="check-line">
+                                                                <input type="checkbox" name="premium" value="true"
+                                                                    th:checked="${modulo.premium}">
+                                                                <span>Curso premium</span>
+                                                            </label>
+                                                        </div>
+
+                                                        <div class="form-field">
+                                                            <label>Precio (S/)</label>
+                                                            <input class="form-control" type="number" name="precio"
+                                                                min="0" step="0.10" th:value="${modulo.precio}">
                                                         </div>
                                                     </div>
 
@@ -205,6 +239,14 @@
                 </section>
 
                 <aside class="panel-stack">
+
+                    <div class="selected-module" th:if="${moduloSeleccionado != null}">
+                        <span class="section-label">MÓDULO EN EDICIÓN</span>
+                        <strong th:text="${moduloSeleccionado.titulo}">Fundamentos de Java</strong>
+                        <small th:text="|Módulo ${moduloSeleccionado.orden} · ${#strings.capitalize(moduloSeleccionado.nivel)}|">
+                            Módulo 3 · Intermedio
+                        </small>
+                    </div>
 
                     <section class="panel-card card" th:if="${idModulo != null}">
                         <div class="card-heading">
@@ -357,7 +399,11 @@
                     <div>
                         <span>AGREGAR CONTENIDO</span>
                         <h3>Nuevo video o ejercicio</h3>
-                        <p>Añade material al módulo seleccionado. Los cambios se reflejan de inmediato para los estudiantes.</p>
+                        <p>
+                            Añade material a
+                            <strong th:text="${moduloSeleccionado.titulo}">Fundamentos de Java</strong>.
+                            Los cambios se reflejan de inmediato para los estudiantes.
+                        </p>
                     </div>
                 </div>
 

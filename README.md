@@ -70,9 +70,10 @@ Entidades principales:
 
 - `Usuario`, `Rol`, `ModuloSistema` (`rol_modulo` define el menú por rol).
 - `Estudiante` (perfil académico del usuario estudiante).
-- `Modulo` (curso), `Video`, `Ejercicio`.
+- `Modulo` (curso), `Video`, `Ejercicio`. Un módulo puede ser `premium` y tener `precio`.
 - `Progreso` (avance por estudiante y módulo).
 - `Inscripcion` (matrícula del estudiante en un módulo).
+- `Compra` (compra simulada de un curso premium: monto, referencia, método y fecha).
 - `VideoProgreso` (video visto por estudiante).
 - `IntentoEjercicio` (respuestas y resultado de cada intento).
 - `PostulacionDocente` (solicitud de alta docente con `EstadoPostulacion`: pendiente, aprobada o rechazada).
@@ -85,6 +86,7 @@ El esquema se crea y evoluciona con Flyway:
 | `V2__security_progress_and_indexes.sql` | Bloqueo/recuperación de cuentas, inscripción, progreso de videos, intentos, índices y restricciones |
 | `V3__course_owner.sql` | Docente responsable de cada módulo (`Modulo.idDocente`) para el panel docente |
 | `V4__teacher_applications.sql` | Postulaciones docentes (`postulacion_docente`): validación de LSP y experiencia en TI antes de crear la cuenta |
+| `V5__premium_courses.sql` | Cursos premium (`modulo.premium`, `modulo.precio`), tabla `compra` y módulo 3 de demostración (`S/ 49.90`) |
 
 En desarrollo y producción `spring.jpa.hibernate.ddl-auto=validate`: Hibernate solo valida, Flyway
 es la única fuente de verdad del esquema.
@@ -140,9 +142,23 @@ Roles y accesos:
 
 | Rol | Vista principal | Qué muestra |
 | --- | --- | --- |
-| Estudiante | `/dashboard`, `/cursos` | Cursos inscritos y catálogo por pestañas, progreso por módulo |
+| Estudiante | `/dashboard`, `/cursos` | Cursos inscritos y catálogo por pestañas, progreso por módulo y compra de cursos premium |
 | Docente | `/docente/cursos` | KPIs de sus cursos, avance por alumno y acceso al editor de contenido |
 | Administrador / Sistemas | `/admin` | KPIs globales, usuarios por rol, rendimiento y finalización por curso |
+
+### Cursos premium
+
+Un docente o administrador puede marcar un módulo como premium y asignarle precio en
+`/admin/contenido`. El estudiante lo ve en el catálogo con su precio; al abrir el detalle
+aparece el paywall y el botón de compra.
+
+La compra es **simulada**: `CompraService` registra el monto, la referencia, el método
+(`SIMULADO`) y la fecha en la tabla `compra`, y crea la inscripción. No se integra ninguna
+pasarela de pago. La restricción única `(idestudiante, idmodulo)` impide cobrar dos veces el
+mismo curso, y `CursoService` bloquea los videos y ejercicios hasta que exista la compra.
+
+El módulo 3 (`Fundamentos de Java`, `S/ 49.90`) es el curso premium de demostración porque ya
+tiene videos y ejercicios cargados.
 
 ---
 

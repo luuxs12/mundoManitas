@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Archivo+Black&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap");
 
 * {
     margin: 0;
@@ -7,55 +7,68 @@
 }
 
 :root {
-    /* Identidad editorial: tinta, papel y acentos terrosos que conviven entre sí */
-    --primary: #1b1916;
-    --primary-dark: #0d0c0a;
-    --primary-soft: #efe9dd;
+    /* ------------------------------------------------------------------
+       Identidad Mundo Manitas: crema, tinta verde y acentos teal/clay.
+       El mismo lenguaje de la página pública se reutiliza en toda la app.
+       ------------------------------------------------------------------ */
+    --primary: #0f766e;
+    --primary-dark: #0b5f59;
+    --primary-bright: #14b8a6;
+    --primary-soft: #d8f3ea;
+    --primary-soft-deep: #bfe8dc;
 
-    --accent: #b8472a;
-    --accent-dark: #97371f;
-    --accent-soft: #f7e4db;
-    --highlight: #dfe8b4;
+    --accent: #c2410c;
+    --accent-dark: #9a3412;
+    --accent-bright: #f97316;
+    --accent-soft: #ffe3d3;
+    --highlight: #fff3bf;
 
-    --ink: #1b1916;
-    --ink-soft: #46423a;
-    --muted: #6f6a5f;
-    --muted-dark: #544f45;
+    --ink: #10302e;
+    --ink-soft: #2f4f4b;
+    --muted: #5f7d78;
+    --muted-dark: #41625d;
 
-    --paper: #f6f3ec;
-    --paper-deep: #e8e3d7;
-    --surface: #fffdf8;
-    --surface-alt: #faf7f0;
+    --paper: #fff9ef;
+    --paper-deep: #f6ead6;
+    --surface: #fffdf7;
+    --surface-alt: #fbf4e7;
+    --surface-mint: #f0faf6;
 
-    --border: #ddd7c9;
-    --border-strong: #c3b9a6;
-    --border-light: #ece7dc;
+    --border: #e8dcc8;
+    --border-strong: #d6c4a6;
+    --border-light: #f1e8d8;
 
-    --success: #44663f;
-    --success-soft: #e7efe1;
+    --success: #0f766e;
+    --success-soft: #d8f3ea;
 
-    --info: #375a68;
-    --info-soft: #e4eef0;
+    --info: #1d4ed8;
+    --info-soft: #e5eaff;
 
-    --warning: #8b5a20;
-    --warning-soft: #f8edda;
+    --warning: #b45309;
+    --warning-soft: #fff3bf;
 
-    --danger: #9c3a28;
-    --danger-soft: #f9e5df;
+    --danger: #b91c1c;
+    --danger-soft: #fee4e2;
 
-    --radius-xs: 8px;
-    --radius-sm: 10px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
+    --radius-xs: 10px;
+    --radius-sm: 14px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
 
-    --shadow-card: 0 1px 0 rgba(27, 25, 22, .04), 0 18px 34px -30px rgba(27, 25, 22, .55);
-    --shadow-raised: 0 14px 30px -22px rgba(27, 25, 22, .5);
+    --shadow-card:
+        0 1px 0 rgba(255, 255, 255, .9) inset,
+        0 2px 4px rgba(16, 48, 46, .04),
+        0 18px 36px -30px rgba(16, 48, 46, .45);
+    --shadow-raised:
+        0 2px 0 rgba(255, 255, 255, .8) inset,
+        0 18px 32px -20px rgba(16, 48, 46, .35);
+    --shadow-pop: 0 24px 60px -32px rgba(16, 48, 46, .5);
 
-    --sidebar-width: 264px;
+    --sidebar-width: 268px;
 
-    --font-sans: "Archivo", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --font-display: "Archivo Black", "Arial Black", "Segoe UI", system-ui, sans-serif;
+    --font-sans: "Nunito", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Baloo 2", "Nunito", "Segoe UI", system-ui, sans-serif;
 
     --font-xs: 11px;
     --font-sm: 13px;
@@ -85,30 +98,36 @@ body {
     min-height: 100vh;
     font-family: var(--font-sans);
     font-size: var(--font-md);
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--ink);
     background: var(--paper);
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 h1,
 h2 {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 700;
     color: var(--ink);
-    letter-spacing: -.025em;
-    line-height: 1.1;
+    letter-spacing: -.02em;
+    line-height: 1.08;
     text-wrap: balance;
 }
 
 h3,
-h4 {
-    font-family: var(--font-sans);
-    font-weight: 700;
+h4,
+h5 {
+    font-family: var(--font-display);
+    font-weight: 600;
     color: var(--ink);
-    letter-spacing: -.012em;
-    line-height: 1.25;
+    letter-spacing: -.01em;
+    line-height: 1.22;
     text-wrap: balance;
+}
+
+p {
+    line-height: 1.65;
 }
 
 a {
@@ -121,6 +140,7 @@ input,
 textarea,
 select {
     font-family: inherit;
+    color: inherit;
 }
 
 button {
@@ -129,6 +149,7 @@ button {
 
 svg {
     display: block;
+    flex-shrink: 0;
 }
 
 input,
@@ -136,7 +157,36 @@ textarea {
     outline: none;
 }
 
+img {
+    max-width: 100%;
+}
+
 ::selection {
     background: var(--highlight);
     color: var(--ink);
+}
+
+:focus-visible {
+    outline: 3px solid rgba(20, 184, 166, .38);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border: 3px solid var(--paper);
+    border-radius: 999px;
+    background: #d8c9b0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #c2ae90;
 }

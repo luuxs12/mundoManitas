@@ -1,9 +1,12 @@
 package com.mundomanitas.controller;
 
+import com.mundomanitas.entity.Usuario;
 import com.mundomanitas.exception.RecursoNoEncontradoException;
 import com.mundomanitas.exception.ReglaNegocioException;
 import com.mundomanitas.service.CursoService;
 import com.mundomanitas.service.PostulacionService;
+import com.mundomanitas.service.UsuarioActualService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,20 +26,27 @@ public class AdminPostulacionController {
 
     private final PostulacionService postulacionService;
     private final CursoService cursoService;
+    private final UsuarioActualService usuarioActual;
 
     public AdminPostulacionController(
         PostulacionService postulacionService,
-        CursoService cursoService
+        CursoService cursoService,
+        UsuarioActualService usuarioActual
     ) {
         this.postulacionService = postulacionService;
         this.cursoService = cursoService;
+        this.usuarioActual = usuarioActual;
     }
 
     @GetMapping("/admin/postulaciones")
-    public String postulaciones(Model model) {
+    public String postulaciones(Authentication authentication, Model model) {
+        Usuario usuario = usuarioActual.obtener(authentication);
+
         model.addAttribute("postulaciones", postulacionService.listar());
         model.addAttribute("pendientes", postulacionService.contarPendientes());
         model.addAttribute("modulos", cursoService.listarModulosAdmin());
+        model.addAttribute("nombre", usuario.getNombre());
+        model.addAttribute("tipo", usuario.getTipo());
 
         return "admin/postulaciones";
     }

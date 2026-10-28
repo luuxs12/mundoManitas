@@ -2,6 +2,8 @@ package com.mundomanitas.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "modulo")
 public class Modulo {
@@ -29,6 +31,15 @@ public class Modulo {
      */
     @Column(name = "idDocente")
     private Integer idDocente;
+
+    /**
+     * Un módulo premium solo se habilita después de registrar su compra.
+     */
+    @Column(name = "premium", nullable = false)
+    private boolean premium = false;
+
+    @Column(name = "precio", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precio = BigDecimal.ZERO;
 
     public Integer getIdModulo() {
         return idModulo;
@@ -76,5 +87,21 @@ public class Modulo {
 
     public void setIdDocente(Integer idDocente) {
         this.idDocente = idDocente;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public void setPremium(boolean premium) {
+        this.premium = premium;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio == null ? BigDecimal.ZERO : precio;
     }
 }

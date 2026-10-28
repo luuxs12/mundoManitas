@@ -2,9 +2,12 @@ package com.mundomanitas.controller;
 
 import com.mundomanitas.dto.api.UsuarioDto;
 import com.mundomanitas.dto.api.UsuarioRequest;
+import com.mundomanitas.entity.Usuario;
 import com.mundomanitas.exception.ReglaNegocioException;
+import com.mundomanitas.service.UsuarioActualService;
 import com.mundomanitas.service.UsuarioService;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,18 +20,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AdminUsuarioController {
 
     private final UsuarioService usuarioService;
+    private final UsuarioActualService usuarioActual;
 
-    public AdminUsuarioController(UsuarioService usuarioService) {
+    public AdminUsuarioController(
+        UsuarioService usuarioService,
+        UsuarioActualService usuarioActual
+    ) {
         this.usuarioService = usuarioService;
+        this.usuarioActual = usuarioActual;
     }
 
     @GetMapping("/admin/usuarios")
     public String usuarios(
         @RequestParam(defaultValue = "") String q,
         @RequestParam(defaultValue = "0") int page,
+        Authentication authentication,
         Model model
     ) {
         Page<UsuarioDto> usuarios = usuarioService.listar(q, page, 10);
+        Usuario usuario = usuarioActual.obtener(authentication);
 
         model.addAttribute("usuarios", usuarios.getContent());
         model.addAttribute("pagina", usuarios.getNumber());
@@ -36,6 +46,8 @@ public class AdminUsuarioController {
         model.addAttribute("totalUsuarios", usuarios.getTotalElements());
         model.addAttribute("q", q);
         model.addAttribute("roles", usuarioService.listarRoles());
+        model.addAttribute("nombre", usuario.getNombre());
+        model.addAttribute("tipo", usuario.getTipo());
 
         return "admin/usuarios";
     }

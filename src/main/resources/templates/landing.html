@@ -157,6 +157,10 @@
                 <div class="lp-course-cover" th:classappend="|is-${curso.nivelClave}|">
                     <span class="lp-course-letter" th:text="${curso.inicial}">J</span>
                     <span class="lp-course-level" th:text="${curso.nivel}">Básico</span>
+                    <span class="lp-course-premium" th:if="${curso.premium}"
+                          th:text="|Premium · S/ ${#numbers.formatDecimal(curso.precio, 1, 2)}|">
+                        Premium
+                    </span>
                 </div>
 
                 <div class="lp-course-body">

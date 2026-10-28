@@ -1,5 +1,7 @@
 package com.mundomanitas.dto.view;
 
+import java.math.BigDecimal;
+
 /**
  * DTO de vista para la tarjeta de un módulo en el listado de cursos.
  */
@@ -17,6 +19,10 @@ public class CursoView {
     private final String coverClase;
     private final String inicial;
     private final boolean inscrito;
+    private final boolean premium;
+    private final BigDecimal precio;
+    private final boolean comprado;
+    private final boolean accesible;
 
     public CursoView(
         Integer idModulo,
@@ -30,7 +36,11 @@ public class CursoView {
         String accion,
         String coverClase,
         String inicial,
-        boolean inscrito
+        boolean inscrito,
+        boolean premium,
+        BigDecimal precio,
+        boolean comprado,
+        boolean accesible
     ) {
         this.idModulo = idModulo;
         this.titulo = titulo;
@@ -44,6 +54,10 @@ public class CursoView {
         this.coverClase = coverClase;
         this.inicial = inicial;
         this.inscrito = inscrito;
+        this.premium = premium;
+        this.precio = precio == null ? BigDecimal.ZERO : precio;
+        this.comprado = comprado;
+        this.accesible = accesible;
     }
 
     public Integer getIdModulo() {
@@ -92,5 +106,21 @@ public class CursoView {
 
     public boolean isInscrito() {
         return inscrito;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public boolean isComprado() {
+        return comprado;
+    }
+
+    public boolean isAccesible() {
+        return accesible;
     }
 }

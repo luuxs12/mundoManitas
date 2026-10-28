@@ -758,6 +758,20 @@ body.lp :focus-visible {
     text-transform: uppercase;
 }
 
+.lp-course-premium {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(194, 65, 12, .96);
+    color: #fffdf7;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    box-shadow: 0 6px 14px -8px rgba(16, 48, 46, .7);
+}
+
 .lp-course-body {
     padding: 20px;
     display: flex;

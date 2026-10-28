@@ -1,11 +1,15 @@
 package com.mundomanitas.dto.api;
 
+import java.math.BigDecimal;
+
 public record ModuloDto(
     Integer idModulo,
     String titulo,
     String descripcion,
     String nivel,
-    Integer orden
+    Integer orden,
+    boolean premium,
+    BigDecimal precio
 ) {
     public Integer getIdModulo() {
         return idModulo;
@@ -25,5 +29,13 @@ public record ModuloDto(
 
     public Integer getOrden() {
         return orden;
+    }
+
+    public boolean isPremium() {
+        return premium;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
     }
 }

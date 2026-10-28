@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+
 /**
  * Gestión de contenido compartida por docentes y administración.
  *
@@ -43,6 +45,7 @@ public class AdminContenidoController {
         Model model
     ) {
         Integer idDocente = idDocenteDe(authentication);
+        Usuario usuario = usuarioActual.obtener(authentication);
         var modulos = cursoService.listarModulosAdmin(idDocente);
 
         Integer seleccionado = idModulo;
@@ -55,9 +58,19 @@ public class AdminContenidoController {
             cursoService.verificarPropiedad(seleccionado, idDocente);
         }
 
+        final Integer idSeleccionado = seleccionado;
+
+        var moduloSeleccionado = modulos.stream()
+            .filter(modulo -> modulo.idModulo().equals(idSeleccionado))
+            .findFirst()
+            .orElse(null);
+
         model.addAttribute("modulos", modulos);
         model.addAttribute("idModulo", seleccionado);
+        model.addAttribute("moduloSeleccionado", moduloSeleccionado);
         model.addAttribute("soloMisCursos", idDocente != null);
+        model.addAttribute("nombre", usuario.getNombre());
+        model.addAttribute("tipo", usuario.getTipo());
 
         if (seleccionado != null) {
             model.addAttribute("videos", cursoService.listarVideosAdmin(seleccionado));
@@ -73,12 +86,14 @@ public class AdminContenidoController {
         @RequestParam(required = false) String descripcion,
         @RequestParam String nivel,
         @RequestParam(required = false) Integer orden,
+        @RequestParam(defaultValue = "false") boolean premium,
+        @RequestParam(required = false) BigDecimal precio,
         Authentication authentication,
         RedirectAttributes flash
     ) {
         try {
             cursoService.crearModulo(
-                new ModuloRequest(titulo, descripcion, nivel, orden),
+                new ModuloRequest(titulo, descripcion, nivel, orden, premium, precio),
                 idDocenteDe(authentication)
             );
             flash.addFlashAttribute("exito", "Módulo creado correctamente.");
@@ -103,13 +118,15 @@ public class AdminContenidoController {
         @RequestParam(required = false) String descripcion,
         @RequestParam String nivel,
         @RequestParam(required = false) Integer orden,
+        @RequestParam(defaultValue = "false") boolean premium,
+        @RequestParam(required = false) BigDecimal precio,
         Authentication authentication,
         RedirectAttributes flash
     ) {
         try {
             cursoService.actualizarModulo(
                 id,
-                new ModuloRequest(titulo, descripcion, nivel, orden),
+                new ModuloRequest(titulo, descripcion, nivel, orden, premium, precio),
                 idDocenteDe(authentication)
             );
             flash.addFlashAttribute("exito", "Módulo actualizado correctamente.");

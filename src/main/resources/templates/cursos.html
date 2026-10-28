@@ -110,8 +110,12 @@
                             EN PROGRESO
                         </span>
 
-                        <span class="course-badge new" th:if="${esEstudiante and vista == 'explorar'}">
+                        <span class="course-badge new" th:if="${esEstudiante and vista == 'explorar' and !curso.premium}">
                             DISPONIBLE
+                        </span>
+
+                        <span class="course-badge premium" th:if="${curso.premium}">
+                            PREMIUM
                         </span>
 
                         <strong th:text="${curso.inicial}">M</strong>
@@ -123,6 +127,14 @@
                         <div class="learning-tags">
                             <span class="learning-category" th:text="${#strings.toUpperCase(curso.nivel)}">
                                 BÁSICO
+                            </span>
+
+                            <span class="badge badge-premium" th:if="${curso.premium and !curso.comprado}">
+                                S/ <span th:text="${#numbers.formatDecimal(curso.precio, 1, 2)}">49.90</span>
+                            </span>
+
+                            <span class="badge badge-active" th:if="${curso.premium and curso.comprado}">
+                                Comprado
                             </span>
 
                             <span class="badge badge-info" th:if="${curso.inscrito}">
@@ -144,7 +156,7 @@
 
                         </div>
 
-                        <div class="learning-progress" th:if="${esEstudiante and vista == 'mis'}">
+                        <div class="learning-progress" th:if="${esEstudiante and vista == 'mis' and curso.accesible}">
 
                             <div>
                                 <span>Tu progreso</span>
@@ -157,7 +169,24 @@
 
                         </div>
 
-                        <a th:href="@{/cursos/{id}(id=${curso.idModulo})}" class="btn btn-primary course-button">
+                        <form class="course-buy-form"
+                              th:if="${esEstudiante and curso.premium and !curso.accesible}"
+                              th:action="@{/cursos/{id}/comprar(id=${curso.idModulo})}"
+                              method="post">
+                            <button class="btn btn-buy course-button" type="submit">
+                                <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="4" y="10" width="16" height="10" rx="2"></rect>
+                                    <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                                </svg>
+                                <span th:text="|Comprar · S/ ${#numbers.formatDecimal(curso.precio, 1, 2)}|">
+                                    Comprar
+                                </span>
+                            </button>
+                        </form>
+
+                        <a th:unless="${esEstudiante and curso.premium and !curso.accesible}"
+                           th:href="@{/cursos/{id}(id=${curso.idModulo})}" class="btn btn-primary course-button">
                             <span th:text="${esEstudiante ? curso.accion : 'Ver módulo'}">Ver módulo</span>
 
                             <svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
