@@ -48,57 +48,92 @@
                 </div>
             </section>
 
-            <section class="card" style="padding: 24px; margin-bottom: 26px;">
-                <div class="card-heading">
+            <section class="create-panel card">
+                <div class="create-panel-head">
                     <div>
-                        <span>NUEVO USUARIO</span>
+                        <span class="section-label">NUEVO USUARIO</span>
                         <h3>Registrar una cuenta</h3>
+                        <p>Crea el acceso inicial de un usuario y asígnale el rol y estado que tendrá dentro de la plataforma.</p>
                     </div>
                 </div>
 
-                <form th:action="@{/admin/usuarios}" method="post">
-                    <div class="form-grid">
-                        <div class="form-field">
-                            <label for="nombre">Nombre completo</label>
-                            <input class="form-control" id="nombre" name="nombre" required maxlength="100">
+                <div class="create-panel-body">
+                    <form class="create-form" th:action="@{/admin/usuarios}" method="post">
+                        <div class="form-section">
+                            <div class="form-section-head">
+                                <h4>Datos de la persona</h4>
+                                <span>01</span>
+                            </div>
+                            <div class="form-grid two">
+                                <div class="form-field">
+                                    <label for="nombre">Nombre completo</label>
+                                    <input class="form-control" id="nombre" name="nombre" required maxlength="100"
+                                           placeholder="Nombre y apellido">
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="email">Correo electrónico</label>
+                                    <input class="form-control" type="email" id="email" name="email" required maxlength="100"
+                                           placeholder="correo@ejemplo.com">
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-field">
-                            <label for="email">Correo electrónico</label>
-                            <input class="form-control" type="email" id="email" name="email" required maxlength="100">
+                        <div class="form-section">
+                            <div class="form-section-head">
+                                <h4>Acceso y permisos</h4>
+                                <span>02</span>
+                            </div>
+                            <div class="form-grid two">
+                                <div class="form-field">
+                                    <label for="contrasena">Contraseña inicial</label>
+                                    <input class="form-control" type="password" id="contrasena" name="contrasena"
+                                           minlength="8" required placeholder="Al menos 8 caracteres">
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="rol">Rol</label>
+                                    <select class="form-control" id="rol" name="rol" required>
+                                        <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}"></option>
+                                    </select>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="activo">Estado</label>
+                                    <select class="form-control" id="activo" name="activo">
+                                        <option value="true">Activo</option>
+                                        <option value="false">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-field">
-                            <label for="contrasena">Contraseña inicial</label>
-                            <input class="form-control" type="password" id="contrasena" name="contrasena"
-                                   minlength="8" required>
+                        <div class="form-actions">
+                            <p class="form-hint">
+                                La contraseña debe tener al menos 8 caracteres, con mayúscula,
+                                minúscula, número y carácter especial. El usuario podrá cambiarla desde su perfil.
+                            </p>
+                            <button class="btn btn-primary" type="submit">
+                                Crear usuario
+                            </button>
                         </div>
+                    </form>
 
-                        <div class="form-field">
-                            <label for="rol">Rol</label>
-                            <select class="form-control" id="rol" name="rol" required>
-                                <option th:each="rol : ${roles}" th:value="${rol}" th:text="${rol}"></option>
-                            </select>
+                    <aside class="create-aside">
+                        <h4>Antes de guardar</h4>
+                        <p>Revisa que el correo no esté duplicado y que el rol coincida con las funciones que tendrá el usuario.</p>
+
+                        <ul class="check-list">
+                            <li>El correo se usará como nombre de usuario para iniciar sesión.</li>
+                            <li>El rol define las pantallas y permisos disponibles.</li>
+                            <li>Puedes cambiar el estado o editar los datos después de crear la cuenta.</li>
+                        </ul>
+
+                        <div class="create-aside-note">
+                            Si el usuario es docente, considera asignarle un módulo desde la sección de contenido.
                         </div>
-
-                        <div class="form-field">
-                            <label for="activo">Estado</label>
-                            <select class="form-control" id="activo" name="activo">
-                                <option value="true">Activo</option>
-                                <option value="false">Inactivo</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" type="submit" style="margin-top: 18px;">
-                        Crear usuario
-                    </button>
-                </form>
-
-                <p class="auth-hint">
-                    La contraseña debe tener al menos 8 caracteres, con mayúscula,
-                    minúscula, número y carácter especial.
-                </p>
+                    </aside>
+                </div>
             </section>
 
             <form class="toolbar" method="get" th:action="@{/admin/usuarios}">
@@ -145,11 +180,11 @@
                                     </form>
                                 </div>
 
-                                <details style="margin-top: 10px;">
+                                <details class="edit-details">
                                     <summary>Editar</summary>
 
                                     <form th:action="@{/admin/usuarios/{id}(id=${usuario.id})}" method="post"
-                                          style="margin-top: 12px;">
+                                          class="stack-form">
                                         <div class="form-grid">
                                             <div class="form-field">
                                                 <label>Nombre</label>
@@ -187,8 +222,7 @@
                                             </div>
                                         </div>
 
-                                        <button class="btn btn-primary" type="submit"
-                                                style="margin-top: 14px;">
+                                        <button class="btn btn-primary" type="submit">
                                             Guardar cambios
                                         </button>
                                     </form>

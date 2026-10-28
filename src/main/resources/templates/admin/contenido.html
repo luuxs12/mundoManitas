@@ -56,7 +56,7 @@
                 </div>
             </section>
 
-            <section class="card panel-card" style="margin-bottom: 18px;">
+            <section class="card panel-card section-block">
                 <div class="card-heading">
                     <div>
                         <span>NUEVO MÓDULO</span>
@@ -65,10 +65,11 @@
                 </div>
 
                 <form th:action="@{/admin/modulos}" method="post">
-                    <div class="form-grid">
-                        <div class="form-field">
+                    <div class="form-grid two">
+                        <div class="form-field span-full">
                             <label for="titulo">Título</label>
-                            <input class="form-control" id="titulo" name="titulo" required maxlength="100">
+                            <input class="form-control" id="titulo" name="titulo" required maxlength="100"
+                                   placeholder="Nombre del módulo">
                         </div>
 
                         <div class="form-field">
@@ -82,22 +83,25 @@
 
                         <div class="form-field">
                             <label for="orden">Orden (opcional)</label>
-                            <input class="form-control" type="number" id="orden" name="orden" min="1">
+                            <input class="form-control" type="number" id="orden" name="orden" min="1"
+                                   placeholder="1">
                         </div>
 
-                        <div class="form-field">
+                        <div class="form-field span-full">
                             <label for="descripcion">Descripción</label>
-                            <input class="form-control" id="descripcion" name="descripcion" maxlength="255">
+                            <input class="form-control" id="descripcion" name="descripcion" maxlength="255"
+                                   placeholder="Resumen breve del módulo">
                         </div>
                     </div>
 
-                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;">
-                        Crear módulo
-                    </button>
+                    <div class="form-actions">
+                        <p class="form-hint">El módulo se creará y quedará disponible en el catálogo de cursos.</p>
+                        <button class="btn btn-primary" type="submit">Crear módulo</button>
+                    </div>
                 </form>
             </section>
 
-            <section class="panel-grid">
+            <section class="panel-grid offset">
 
                 <section class="panel-card card">
                     <div class="card-heading">
@@ -181,8 +185,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <button class="btn btn-primary btn-sm" type="submit"
-                                                        style="margin-top: 14px;">
+                                                    <button class="btn btn-primary btn-sm" type="submit">
                                                         Guardar cambios
                                                     </button>
                                                 </form>
@@ -226,7 +229,7 @@
                                     </form>
                                 </div>
 
-                                <details style="margin-bottom: 10px;">
+                                <details class="edit-details">
                                     <summary>Editar video</summary>
 
                                     <form class="stack-form"
@@ -258,8 +261,7 @@
                                                 min="1" th:value="${video.orden}">
                                         </div>
 
-                                        <button class="btn btn-primary btn-sm" type="submit"
-                                            style="margin-top: 12px;">
+                                        <button class="btn btn-primary btn-sm" type="submit">
                                             Guardar cambios
                                         </button>
                                     </form>
@@ -295,7 +297,7 @@
                                     </form>
                                 </div>
 
-                                <details style="margin-bottom: 10px;">
+                                <details class="edit-details">
                                     <summary>Editar ejercicio</summary>
 
                                     <form class="stack-form"
@@ -333,8 +335,7 @@
                                                 th:text="${ejercicio.respuestaCorrecta}"></textarea>
                                         </div>
 
-                                        <button class="btn btn-primary btn-sm" type="submit"
-                                            style="margin-top: 12px;">
+                                        <button class="btn btn-primary btn-sm" type="submit">
                                             Guardar cambios
                                         </button>
                                     </form>
@@ -351,79 +352,87 @@
 
             </section>
 
-            <section class="card panel-card" th:if="${idModulo != null}" style="margin-top: 18px;">
+            <section class="card panel-card section-block" th:if="${idModulo != null}">
                 <div class="card-heading">
                     <div>
                         <span>AGREGAR CONTENIDO</span>
                         <h3>Nuevo video o ejercicio</h3>
+                        <p>Añade material al módulo seleccionado. Los cambios se reflejan de inmediato para los estudiantes.</p>
                     </div>
                 </div>
 
-                <form th:action="@{/admin/videos}" method="post" style="margin-bottom: 26px;">
-                    <input type="hidden" name="idModulo" th:value="${idModulo}">
+                <div class="form-columns">
+                    <form class="form-block" th:action="@{/admin/videos}" method="post">
+                        <h4><span>VIDEO</span></h4>
+                        <input type="hidden" name="idModulo" th:value="${idModulo}">
 
-                    <div class="form-grid">
-                        <div class="form-field">
-                            <label>Título del video</label>
-                            <input class="form-control" name="titulo" required maxlength="100">
+                        <div class="form-grid two">
+                            <div class="form-field">
+                                <label>Título del video</label>
+                                <input class="form-control" name="titulo" required maxlength="100"
+                                       placeholder="Nombre del video">
+                            </div>
+
+                            <div class="form-field">
+                                <label>URL</label>
+                                <input class="form-control" name="url" required maxlength="255"
+                                       placeholder="https://...">
+                            </div>
+
+                            <div class="form-field">
+                                <label>Duración (segundos)</label>
+                                <input class="form-control" type="number" name="duracion" min="0" placeholder="0">
+                            </div>
+
+                            <div class="form-field">
+                                <label>Orden (opcional)</label>
+                                <input class="form-control" type="number" name="orden" min="1" placeholder="1">
+                            </div>
                         </div>
 
-                        <div class="form-field">
-                            <label>URL</label>
-                            <input class="form-control" name="url" required maxlength="255">
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="submit">Agregar video</button>
+                        </div>
+                    </form>
+
+                    <form class="form-block" th:action="@{/admin/ejercicios}" method="post">
+                        <h4><span>EJERCICIO</span></h4>
+                        <input type="hidden" name="idModulo" th:value="${idModulo}">
+
+                        <div class="form-grid two">
+                            <div class="form-field">
+                                <label>Título del ejercicio</label>
+                                <input class="form-control" name="titulo" required maxlength="100"
+                                       placeholder="Nombre del ejercicio">
+                            </div>
+
+                            <div class="form-field">
+                                <label>Tipo</label>
+                                <select class="form-control" name="tipo">
+                                    <option value="cuestionario">Cuestionario</option>
+                                    <option value="completar">Completar</option>
+                                    <option value="abierta">Respuesta abierta</option>
+                                </select>
+                            </div>
+
+                            <div class="form-field span-full">
+                                <label>Contenido (JSON)</label>
+                                <textarea class="form-control" name="contenido" rows="3"
+                                          placeholder='{"pregunta":"...","opciones":["a","b"]}'></textarea>
+                            </div>
+
+                            <div class="form-field span-full">
+                                <label>Respuesta correcta (JSON)</label>
+                                <textarea class="form-control" name="respuestaCorrecta" rows="3"
+                                          placeholder='{"respuesta":"..."}'></textarea>
+                            </div>
                         </div>
 
-                        <div class="form-field">
-                            <label>Duración (segundos)</label>
-                            <input class="form-control" type="number" name="duracion" min="0">
+                        <div class="form-actions">
+                            <button class="btn btn-primary" type="submit">Agregar ejercicio</button>
                         </div>
-
-                        <div class="form-field">
-                            <label>Orden (opcional)</label>
-                            <input class="form-control" type="number" name="orden" min="1">
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;">
-                        Agregar video
-                    </button>
-                </form>
-
-                <form th:action="@{/admin/ejercicios}" method="post">
-                    <input type="hidden" name="idModulo" th:value="${idModulo}">
-
-                    <div class="form-grid">
-                        <div class="form-field">
-                            <label>Título del ejercicio</label>
-                            <input class="form-control" name="titulo" required maxlength="100">
-                        </div>
-
-                        <div class="form-field">
-                            <label>Tipo</label>
-                            <select class="form-control" name="tipo">
-                                <option value="cuestionario">Cuestionario</option>
-                                <option value="completar">Completar</option>
-                                <option value="abierta">Respuesta abierta</option>
-                            </select>
-                        </div>
-
-                        <div class="form-field">
-                            <label>Contenido (JSON)</label>
-                            <textarea class="form-control" name="contenido" rows="3"
-                                placeholder='{"pregunta":"...","opciones":["a","b"]}'></textarea>
-                        </div>
-
-                        <div class="form-field">
-                            <label>Respuesta correcta (JSON)</label>
-                            <textarea class="form-control" name="respuestaCorrecta" rows="3"
-                                placeholder='{"respuesta":"..."}'></textarea>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" type="submit" style="margin-top: 16px;">
-                        Agregar ejercicio
-                    </button>
-                </form>
+                    </form>
+                </div>
             </section>
 
         </main>

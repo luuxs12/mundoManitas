@@ -98,7 +98,7 @@
 
                     </div>
 
-                    <div class="inline-form" th:if="${esEstudiante}" style="margin-top: 18px;">
+                    <div class="inline-form detail-actions" th:if="${esEstudiante}">
 
                         <form th:if="${!inscrito}"
                               th:action="@{/cursos/{id}/inscribirse(id=${modulo.idModulo})}"
@@ -267,13 +267,11 @@
                                     </span>
 
                                     <form th:if="${esEstudiante}"
-                                          class="inline-form"
-                                          style="margin-top: 10px;"
+                                          class="inline-form answer-form"
                                           th:action="@{/cursos/{id}/ejercicios/{idEjercicio}/responder(id=${modulo.idModulo}, idEjercicio=${ejercicio.idEjercicio})}"
                                           method="post">
 
-                                        <input class="form-control"
-                                               style="max-width: 320px;"
+                                        <input class="form-control answer-input"
                                                type="text"
                                                name="respuesta"
                                                required

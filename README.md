@@ -363,7 +363,17 @@ Para producción real:
 
 ---
 
-## 12. Autoría
+## 12. Criterios de evaluación
+
+El detalle de cómo se cumplen los criterios de **Desarrollo de la Solución Informática**
+(MVC, TDD, DAO, SOLID, seguridad y librerías de apoyo) y de **Control de Versiones**
+(Git/GitHub, entregas versionadas y documentación) está en:
+
+- [`docs/CRITERIOS-EVALUACION.md`](docs/CRITERIOS-EVALUACION.md)
+
+---
+
+## 13. Autoría
 
 Proyecto Integrador I — Ingeniería de Software.
 Plataforma educativa inclusiva **Mundo Manitas** para la comunidad sorda.

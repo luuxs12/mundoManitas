@@ -62,7 +62,7 @@
 
             <div th:replace="~{fragments/panel/kpi :: grid(${kpis})}"></div>
 
-            <section class="panel-grid" style="margin-top: 18px;">
+            <section class="panel-grid offset">
 
                 <section class="panel-card card" id="rendimiento">
 
@@ -90,7 +90,7 @@
                                     <td>
                                         <a th:href="@{/admin/contenido(idModulo=${curso.idModulo})}"
                                             th:text="${curso.titulo}">Curso</a>
-                                        <span class="badge badge-muted" style="margin-left: 6px;"
+                                        <span class="badge badge-muted badge-inline"
                                             th:text="${curso.nivel}">nivel</span>
                                     </td>
                                     <td th:text="${curso.docente}">Docente</td>

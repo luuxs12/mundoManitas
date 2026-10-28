@@ -7,40 +7,41 @@
 }
 
 :root {
-    /* Identidad editorial: tinta, papel y acentos de alto contraste */
-    --primary: #171512;
-    --primary-dark: #000000;
-    --primary-soft: #ece7dc;
+    /* Identidad editorial: tinta, papel y acentos terrosos que conviven entre sí */
+    --primary: #1b1916;
+    --primary-dark: #0d0c0a;
+    --primary-soft: #efe9dd;
 
-    --accent: #e8441f;
-    --accent-soft: #fde7df;
-    --highlight: #d6f24f;
+    --accent: #b8472a;
+    --accent-dark: #97371f;
+    --accent-soft: #f7e4db;
+    --highlight: #dfe8b4;
 
-    --ink: #171512;
-    --ink-soft: #47423a;
-    --muted: #6d675d;
-    --muted-dark: #514c43;
+    --ink: #1b1916;
+    --ink-soft: #46423a;
+    --muted: #6f6a5f;
+    --muted-dark: #544f45;
 
-    --paper: #f4f1e9;
-    --paper-deep: #e7e2d6;
+    --paper: #f6f3ec;
+    --paper-deep: #e8e3d7;
     --surface: #fffdf8;
     --surface-alt: #faf7f0;
 
-    --border: #dcd5c6;
-    --border-strong: #c3b9a5;
-    --border-light: #eae5d9;
+    --border: #ddd7c9;
+    --border-strong: #c3b9a6;
+    --border-light: #ece7dc;
 
-    --success: #1f6b46;
-    --success-soft: #e2f1e7;
+    --success: #44663f;
+    --success-soft: #e7efe1;
 
-    --info: #1e4f8f;
-    --info-soft: #e3edf9;
+    --info: #375a68;
+    --info-soft: #e4eef0;
 
-    --warning: #a35a12;
-    --warning-soft: #fbeedb;
+    --warning: #8b5a20;
+    --warning-soft: #f8edda;
 
-    --danger: #a52d1c;
-    --danger-soft: #fbe6e1;
+    --danger: #9c3a28;
+    --danger-soft: #f9e5df;
 
     --radius-xs: 8px;
     --radius-sm: 10px;
@@ -48,10 +49,10 @@
     --radius-lg: 16px;
     --radius-xl: 20px;
 
-    --shadow-card: 0 1px 0 rgba(23, 21, 18, .04), 0 16px 30px -28px rgba(23, 21, 18, .55);
-    --shadow-raised: 0 12px 26px -20px rgba(23, 21, 18, .5);
+    --shadow-card: 0 1px 0 rgba(27, 25, 22, .04), 0 18px 34px -30px rgba(27, 25, 22, .55);
+    --shadow-raised: 0 14px 30px -22px rgba(27, 25, 22, .5);
 
-    --sidebar-width: 252px;
+    --sidebar-width: 264px;
 
     --font-sans: "Archivo", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
     --font-display: "Archivo Black", "Arial Black", "Segoe UI", system-ui, sans-serif;
@@ -63,6 +64,17 @@
     --font-xl: 20px;
     --font-2xl: 30px;
     --font-3xl: 40px;
+
+    /* Escala de espacio y controles para mantener ritmo vertical constante */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+    --control-height: 46px;
 }
 
 html {
@@ -73,6 +85,7 @@ body {
     min-height: 100vh;
     font-family: var(--font-sans);
     font-size: var(--font-md);
+    line-height: 1.5;
     color: var(--ink);
     background: var(--paper);
     -webkit-font-smoothing: antialiased;

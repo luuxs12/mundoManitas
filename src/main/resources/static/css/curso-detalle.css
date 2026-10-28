@@ -351,6 +351,20 @@
     }
 }
 
+.detail-actions {
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.answer-form {
+    margin-top: 12px;
+    gap: 10px;
+}
+
+.answer-input {
+    max-width: 340px;
+}
+
 @media (max-width: 760px) {
     .course-detail-hero {
         padding: 28px 24px;
@@ -372,5 +386,9 @@
 
     .module-header {
         flex-wrap: wrap;
+    }
+
+    .answer-input {
+        max-width: none;
     }
 }

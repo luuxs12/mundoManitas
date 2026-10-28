@@ -1,7 +1,6 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="grid(kpis)" class="kpi-grid">
     <a class="kpi-card" th:each="kpi : ${kpis}" th:classappend="|tone-${kpi.tono}|" th:href="${kpi.ruta}">
-        <span class="kpi-head">
-            <span class="kpi-label" th:text="${kpi.etiqueta}">Indicador</span>
+        <span class="kpi-top">
             <span class="kpi-icon" aria-hidden="true">
                 <th:block th:switch="${kpi.icono}">
                     <svg th:case="'curso'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"></path></svg>
@@ -14,11 +13,14 @@
                     <svg th:case="*" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l2.5 2"></path></svg>
                 </th:block>
             </span>
+
+            <span class="kpi-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+            </span>
         </span>
+
+        <span class="kpi-label" th:text="${kpi.etiqueta}">Indicador</span>
         <strong class="kpi-value" th:text="${kpi.valor}">0</strong>
         <span class="kpi-detail" th:text="${kpi.detalle}">Detalle del indicador</span>
-        <span class="kpi-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
-        </span>
     </a>
 </div>

@@ -127,7 +127,7 @@
 
             </section>
 
-            <section class="panel-grid" style="margin-top: 18px;">
+            <section class="panel-grid offset">
 
                 <section class="panel-card card">
 
@@ -229,11 +229,11 @@
                                 <h3>Mantén el curso al día</h3>
                             </div>
                         </div>
-                        <p style="color: var(--muted-dark); font-size: 12.5px; line-height: 1.6;">
+                        <p class="panel-copy">
                             Puedes agregar videos y ejercicios, o retirar los que ya no correspondan.
                             Los cambios se reflejan de inmediato para los estudiantes inscritos.
                         </p>
-                        <a class="btn btn-primary btn-full" style="margin-top: 14px;"
+                        <a class="btn btn-primary btn-full"
                             th:href="@{/admin/contenido(idModulo=${modulo.idModulo})}">
                             Abrir editor
                         </a>

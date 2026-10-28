@@ -4,19 +4,19 @@
 
 .dashboard-welcome {
     position: relative;
-    min-height: 190px;
-    margin-top: 26px;
-    padding: 34px 38px;
+    min-height: 200px;
+    margin-top: 28px;
+    padding: 38px 42px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 30px;
+    gap: 32px;
     overflow: hidden;
     border: 1px solid var(--border);
     border-left: 4px solid var(--accent);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     background:
-        linear-gradient(115deg, rgba(232, 68, 31, .06), transparent 46%),
+        linear-gradient(118deg, var(--accent-soft), transparent 52%),
         var(--surface);
     box-shadow: var(--shadow-card);
 }
@@ -112,25 +112,25 @@
    ------------------------------------------------------------------ */
 
 .stats-grid {
-    margin-top: 18px;
+    margin-top: 20px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
+    gap: 16px;
 }
 
 .kpi-grid {
-    margin-top: 18px;
+    margin-top: 20px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
 }
 
 .stat-card {
-    min-height: 96px;
-    padding: 18px;
+    min-height: 104px;
+    padding: 20px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 15px;
     border-radius: var(--radius-lg);
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
@@ -142,18 +142,18 @@ a.stat-card:hover {
 }
 
 .stat-icon {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
 }
 
 .stat-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 19px;
+    height: 19px;
 }
 
 .stat-icon.purple {
@@ -182,14 +182,14 @@ a.stat-card:hover {
 }
 
 .stat-card span {
-    color: var(--muted);
-    font-size: 12px;
+    color: var(--muted-dark);
+    font-size: 12.5px;
 }
 
 .stat-card strong {
-    margin-top: 5px;
+    margin-top: 6px;
     font-family: var(--font-display);
-    font-size: 26px;
+    font-size: 28px;
     line-height: 1;
 }
 
@@ -198,13 +198,16 @@ a.stat-card:hover {
     --tone: var(--primary);
     --tone-soft: var(--primary-soft);
     position: relative;
+    min-height: 168px;
+    padding: 20px 20px 18px;
     display: flex;
     flex-direction: column;
-    padding: 18px 18px 17px;
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    background: var(--surface);
+    background:
+        linear-gradient(155deg, var(--tone-soft) 0%, transparent 58%),
+        var(--surface);
     box-shadow: var(--shadow-card);
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
 }
@@ -218,9 +221,14 @@ a.stat-card:hover {
 }
 
 .kpi-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    border-color: var(--tone);
     box-shadow: var(--shadow-raised);
+}
+
+.kpi-card:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--tone-soft), var(--shadow-raised);
 }
 
 .kpi-card.tone-ok {
@@ -248,85 +256,84 @@ a.stat-card:hover {
     --tone-soft: var(--accent-soft);
 }
 
-.kpi-head {
+.kpi-top {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: 12px;
 }
 
 .kpi-icon {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
     background: var(--tone-soft);
     color: var(--tone);
 }
 
 .kpi-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
 }
 
 .kpi-label {
     display: block;
-    padding-top: 6px;
+    margin-top: 18px;
     color: var(--muted-dark);
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: .1em;
+    letter-spacing: .12em;
     line-height: 1.35;
     text-transform: uppercase;
 }
 
 .kpi-value {
     display: block;
-    margin-top: 12px;
+    margin-top: 6px;
     font-family: var(--font-display);
-    font-size: 32px;
+    font-size: 34px;
     line-height: 1;
-    letter-spacing: -.02em;
+    letter-spacing: -.025em;
 }
 
 .kpi-detail {
     display: block;
-    margin-top: 7px;
-    padding-right: 26px;
+    margin-top: 8px;
     color: var(--muted);
-    font-size: 11.5px;
-    line-height: 1.45;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .kpi-arrow {
-    position: absolute;
-    right: 16px;
-    bottom: 15px;
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--border);
     border-radius: 50%;
-    background: var(--tone-soft);
-    color: var(--tone);
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: opacity .16s ease, transform .16s ease;
+    background: var(--surface);
+    color: var(--muted-dark);
+    transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
 }
 
 .kpi-card:hover .kpi-arrow,
 .kpi-card:focus-visible .kpi-arrow {
-    opacity: 1;
-    transform: none;
+    border-color: var(--tone);
+    background: var(--tone);
+    color: #fffdf8;
+    transform: translateX(2px);
 }
 
 .kpi-arrow svg {
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
 }
 
 /* ------------------------------------------------------------------
@@ -334,14 +341,14 @@ a.stat-card:hover {
    ------------------------------------------------------------------ */
 
 .dashboard-grid {
-    margin-top: 18px;
+    margin-top: 20px;
     display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(270px, .85fr);
-    gap: 18px;
+    grid-template-columns: minmax(0, 1.65fr) minmax(280px, .85fr);
+    gap: 20px;
 }
 
 .dashboard-card {
-    padding: 24px;
+    padding: 26px;
 }
 
 .continue-course {
